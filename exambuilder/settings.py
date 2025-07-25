@@ -20,7 +20,10 @@ OPEN_AI_KEY = os.getenv('OPENAI_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['exambuilder-efae14d59f03.herokuapp.com']
+ALLOWED_HOSTS = [
+    'exambuilder.herokuapp.com',
+    'localhost',
+]
 
 LOGGING = {
     'version': 1,
