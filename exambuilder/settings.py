@@ -21,7 +21,7 @@ OPEN_AI_KEY = os.getenv('OPENAI_API_KEY')
 DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = [
-    'exambuilder.herokuapp.com',
+    'exambuilder-efae14d59f03.herokuapp.com',
     'localhost',
 ]
 
