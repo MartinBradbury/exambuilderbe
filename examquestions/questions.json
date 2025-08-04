@@ -448,7 +448,7 @@
         ]
     }
   ],
-  
+
   "Cells": [
     {
       "question": "Name two organelles found in eukaryotic cells that are not in prokaryotic cells. [1 mark]",
@@ -760,8 +760,1459 @@
         "Cell becomes flaccid"
       ]
     }
+  ],
+
+  "Lipids": [
+    {
+      "question": "State the three elements found in all lipids. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Carbon (C)", "Hydrogen (H)", "Oxygen (O)"]
+    },
+    {
+      "question": "Name the components that form a triglyceride. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Glycerol", "Three fatty acids"]
+    },
+    {
+      "question": "What type of bond forms between glycerol and fatty acids in a triglyceride? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Ester bond"]
+    },
+    {
+      "question": "Why are lipids insoluble in water? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Lipids are non-polar molecules"]
+    },
+    {
+      "question": "Explain why lipids are good for long-term energy storage. [2 marks]",
+      "mark": 2,
+      "mark_scheme": ["High ratio of energy-rich C–H bonds", "Insoluble (no osmotic effect)"]
+    },
+    {
+      "question": "Describe the emulsion test for lipids. [2 marks]",
+      "mark": 2,
+      "mark_scheme": ["Mix sample with ethanol and water", "Milky emulsion indicates lipid presence"]
+    },
+    {
+      "question": "Give two functions of lipids in living organisms. [2 marks]",
+      "mark": 2,
+      "mark_scheme": ["Energy storage", "Insulation (thermal or electrical)"]
+    },
+    {
+      "question": "Explain how saturated and unsaturated fatty acids differ structurally. [2 marks]",
+      "mark": 2,
+      "mark_scheme": ["Saturated have no C=C; unsaturated have one or more double bonds", "Unsaturated have kinks, affecting packing and fluidity"]
+    },
+    {
+      "question": "Describe the structure of phospholipids and their role in membranes. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Hydrophilic phosphate head and hydrophobic fatty acid tails",
+        "Form bilayer in aqueous environments",
+        "Control permeability and compartmentalisation"
+      ]
+    },
+    {
+      "question": "Explain how cholesterol influences membrane fluidity. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Fits between phospholipid tails",
+        "Disrupts tight packing at low temp, reduces permeability",
+        "Buffers fluidity at high temperature"
+      ]
+    },
+    {
+      "question": "Compare triglycerides and phospholipids. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Triglycerides: 3 fatty acids + glycerol; phospholipids: 2 fatty acids + phosphate head",
+        "Triglycerides are entirely hydrophobic; phospholipids have hydrophilic head",
+        "Triglycerides for energy storage; phospholipids for membrane structure",
+        "Phospholipids form bilayers; triglycerides form droplets"
+      ]
+    },
+    {
+      "question": "Describe one way lipids contribute to waterproofing in plants and animals. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Waxy layers (cuticle) in plants prevent water loss",
+        "Sebum protects skin and hair by forming waterproof barrier"
+      ]
+    },
+    {
+      "question": "Explain why lipids are more efficient energy storage than carbohydrates. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Higher energy density (more C–H bonds)",
+        "Insoluble — no osmotic effect",
+        "Lightweight compared to hydrated carbohydrates like glycogen"
+      ]
+    },
+    {
+      "question": "Outline the role of lipids in buoyancy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Lipids are less dense than water",
+        "Buoyancy aids aquatic organisms (e.g. adipose tissue in marine mammals)"
+      ]
+    },
+    {
+      "question": "Give two structural differences between saturated and unsaturated fatty acids. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Saturated have no double bonds; unsaturated contain C=C",
+        "Saturated chains are straight; unsaturated have kinks"
+      ]
+    },
+    {
+      "question": "Explain how the structure of phospholipids allows membrane flexibility. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fatty acid tails can move (fluid layer)",
+        "Bilayer structure allows lateral movement of proteins and lipids"
+      ]
+    },
+    {
+      "question": "Describe one advantage and one disadvantage of waterproof lipid coatings. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Advantage: prevents dehydration; disadvantage: may hinder gas exchange"
+      ]
+    },
+    {
+      "question": "Explain how lipids are digested in the small intestine. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Lipids emulsified by bile salts to increase surface area",
+        "Lipase enzymes hydrolyse triglycerides into fatty acids and glycerol",
+        "Products absorbed as micelles into intestinal cells"
+      ]
+    },
+    {
+      "question": "Describe the role of lipid droplets within cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Store energy reserves in adipocytes or liver cells",
+        "Prevent osmotic imbalance by storing fats in non-polar form"
+      ]
+    },
+    {
+      "question": "Explain why essential fatty acids must be obtained through diet. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Humans cannot synthesise certain fatty acids",
+        "They must be ingested for cell membrane function and hormone synthesis"
+      ]
+    },
+    {
+      "question": "Outline how lipids aid nerve impulse transmission. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Myelin sheath is rich in lipids",
+        "Insulates axons, speeds electrical conduction"
+      ]
+    },
+    {
+      "question": "Explain the use of lipids as insulation in mammals. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Adipose tissue beneath skin contains lipids",
+        "Reduces heat loss and conserves body temperature"
+      ]
+    },
+    {
+      "question": "Compare the energy yield from lipids and carbohydrates during aerobic respiration. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Lipids produce more ATP per gram due to longer hydrocarbon chains",
+        "Carbohydrates quicker to mobilise; lipids stored slower",
+        "Lipids yield slower energy release; carbohydrates yield rapidly at onset",
+        "Lipids better for long-term storage; carbohydrates for quick energy"
+      ]
+    },
+    {
+      "question": "Explain why phospholipids are amphipathic. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrophilic phosphate head interacts with water",
+        "Hydrophobic fatty acid tails avoid water"
+      ]
+    },
+    {
+      "question": "Describe how phospholipids self-assemble in water. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Tails cluster to avoid water, heads face outward",
+        "Forms bilayer structure"
+      ]
+    },
+    {
+      "question": "Explain the term ‘lipoprotein’ in transport. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Complexes of lipid and protein",
+        "Enable transport of lipids in blood (e.g., HDL and LDL)"
+      ]
+    },
+    {
+      "question": "Describe one medical risk associated with saturated fats. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "High saturated fat intake linked to atherosclerosis",
+        "Increased cardiovascular disease risk"
+      ]
+    },
+    {
+      "question": "Explain how omega-3 fatty acids benefit health. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Help regulate blood pressure and reduce inflammation",
+        "Vital for brain and eye development"
+      ]
+    },    
+    {
+      "question": "Compare the structure and role of triglycerides and steroids. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Triglycerides: glycerol + 3 fatty acids; steroids: four fused carbon rings",
+        "Triglycerides for energy storage; steroids for hormones & membrane stability",
+        "Steroids are rigid; triglycerides flexible oils or fats",
+        "Steroids are non-polar but have complex ring structure"
+      ]
+    },
+    {
+      "question": "Explain how lipids are metabolized to produce ATP. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Fatty acids undergo beta-oxidation into acetyl-CoA",
+        "Enter Krebs cycle and electron transport chain",
+        "Generate large amounts of ATP"
+      ]
+    },
+    {
+      "question": "Describe the general chemical formula of fatty acids. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "COOH (carboxyl group) + hydrocarbon tail",
+        "General formula: R–COOH"
+      ]
+    },
+    {
+      "question": "Explain why lipids have a higher energy content per gram than proteins. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Fatty acids have more reduced carbon atoms",
+        "Yield more energy when oxidised",
+        "Proteins contain nitrogen and may be deaminated (less efficient)"
+      ]
+    },
+    {
+      "question": "Outline how lipids are involved in vitamin absorption. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fat-soluble vitamins (A, D, E, K) dissolve in lipid molecules",
+        "Absorbed along with dietary fats via micelles"
+      ]
+    },
+    {
+      "question": "Explain how lipids can act as chemical messengers. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Steroid hormones are lipid-derived",
+        "Cross cell membranes easily",
+        "Bind to nuclear receptors to regulate gene expression"
+      ]
+    },
+    {
+      "question": "Describe how changes in fatty acid saturation affect membrane function at different temperatures. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "At low temp: more unsaturated ensures fluidity via kinks",
+        "At high temp: more saturated helps maintain structure",
+        "Organisms adjust saturation for membrane homeostasis"
+      ]
+    },
+    {
+      "question": "Compare roles of lipids in seed plants and animals. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Plants store lipids in seeds as energy for germination",
+        "Animals store lipids in adipose tissue for insulation and energy",
+        "Seed lipids support early growth; animal lipids support long-term survival",
+        "Both provide structural roles (e.g., seed membrane, animal cell membranes)"
+      ]
+    }
+  ],
+
+    "Proteins": [ 
+      {
+        "question": "Name two elements in proteins that are not found in carbohydrates. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Nitrogen (N)", "Sulphur (S)"]
+      },
+      {
+        "question": "What is the basic building block of proteins? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Amino acid"]
+      },
+      {
+        "question": "Which bond links amino acids together in a polypeptide chain? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Peptide bond"]
+      },
+      {
+        "question": "Define the primary structure of a protein. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Sequence of amino acids in a polypeptide"]
+      },
+      {
+        "question": "What is meant by the secondary structure of a protein? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Folding into α‑helix or β‑pleated sheets due to hydrogen bonding"]
+      },
+      {
+        "question": "Name the level of protein structure formed by multiple polypeptide chains. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Quaternary"]
+      },
+      {
+        "question": "Outline the four levels of protein structure. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Primary – amino acid sequence",
+          "Secondary – H‑bonds form α‑helix or β‑sheets",
+          "Tertiary – 3D folding via ionic, disulfide, hydrogen interactions",
+          "Quaternary – multiple polypeptide subunits"
+        ]
+      },
+      {
+        "question": "Explain how peptide bonds form. [2 marks]",
+        "mark": 2,
+        "mark_scheme": ["Condensation reaction between amino and carboxyl groups", "Water molecule released"]
+      },
+      {
+        "question": "What is the purpose of the biuret test? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["To test for presence of peptide bonds (protein)"]
+      },
+      {
+        "question": "Describe how to conduct the biuret test. [2 marks]",
+        "mark": 2,
+        "mark_scheme": ["Add sodium hydroxide, then copper sulfate", "Purple colour indicates protein"]
+      },
+      {
+        "question": "Give two differences between fibrous and globular proteins. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Fibrous are structural and insoluble; globular are functional and soluble",
+          "Fibrous are long and tough; globular are compact"
+        ]
+      },
+      {
+        "question": "Explain how the tertiary structure of an enzyme determines its specificity. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Active site formed by 3D folding",
+          "Specific shape for substrate binding (lock and key or induced fit)",
+          "Incorrect folding prevents function (denaturation)"
+        ]
+      },
+      {
+        "question": "Describe the role of hydrogen bonds in protein secondary structure. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Form between carbonyl (C=O) and amine (N–H)",
+          "Stabilise α‑helix and β‑pleated sheet formations"
+        ]
+      },
+      {
+        "question": "Explain why collagen is strong and insoluble. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Fibrous protein with triple helix structure",
+          "Cross-links between molecules",
+          "Insoluble due to tight packing and H-bonds"
+        ]
+      },
+      {
+        "question": "Describe the role of haemoglobin in the body. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Globular protein in red blood cells",
+          "Transports oxygen from lungs to tissues"
+        ]
+      },
+      {
+        "question": "Explain how globular proteins are suited to their roles. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Compact and soluble in aqueous environments",
+          "Flexible structure allows interactions",
+          "Functional activity (e.g., enzymes, hormones, transport)"
+        ]
+      },
+      {
+        "question": "Outline the function of fibrous proteins in the body. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Provide structural support (e.g., collagen in tendons)",
+          "Tough and insoluble"
+        ]
+      },
+      {
+        "question": "Explain how a protein’s shape can be altered. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Changes in pH/temp disrupt H‑bonds and ionic interactions",
+          "Leads to denaturation and loss of function"
+        ]
+      },
+      {
+        "question": "Describe how enzymes act as biological catalysts. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Lower activation energy for reactions",
+          "Speed up metabolic reactions without being used up"
+        ]
+      },
+      {
+        "question": "Explain the induced-fit model of enzyme action. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Active site changes shape to fit substrate",
+          "Enhances binding and catalysis"
+        ]
+      },
+      {
+        "question": "Compare the effect of temperature and pH on enzyme activity. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Both can alter enzyme structure",
+          "High temp or extreme pH denature enzymes",
+          "Low temperature slows rate of collisions",
+          "Enzymes have optimum pH and temperature"
+        ]
+      },
+      {
+        "question": "Explain how competitive inhibitors affect enzyme activity. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Bind to active site instead of substrate",
+          "Increase substrate concentration reduces inhibition"
+        ]
+      },
+      {
+        "question": "Explain how non-competitive inhibitors work. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Bind to allosteric site",
+          "Alter enzyme shape, reducing activity regardless of substrate concentration"
+        ]
+      },
+      {
+        "question": "Describe the impact of denaturation on protein function. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Changes tertiary/secondary structure",
+          "Active site altered — enzyme no longer works"
+        ]
+      },
+      {
+        "question": "Explain the importance of enzymes in digestion. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Break down large food molecules into absorbable units",
+          "Each enzyme specific to substrate"
+        ]
+      },
+      {
+        "question": "Describe how amino acid sequence affects protein function. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Even a single change can alter folding",
+          "Loss or gain of function (e.g., sickle cell haemoglobin mutation)"
+        ]
+      },
+      {
+        "question": "Explain how enzyme concentration influences reaction rate. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "More enzyme increases rate (more active sites)",
+          "Plateaus when substrate becomes limiting"
+        ]
+      },
+      {
+        "question": "Describe the role of coenzymes in enzymatic reactions. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Organic molecules that assist enzymes",
+          "Transfer chemical groups or electrons"
+        ]
+      },
+      {
+        "question": "Explain how vitamins function as coenzymes. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Many are precursors for coenzymes (e.g., vitamin B derivatives)",
+          "Essential for catalytic activity"
+        ]
+      },
+      {
+        "question": "Compare competitive and noncompetitive inhibitors. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Competitive: binds active site; noncompetitive: binds allosteric site",
+          "Competitive inhibition reversed by excess substrate; noncompetitive is not",
+          "Both reduce enzyme activity"
+        ]
+      },
+      {
+        "question": "Describe how protein structure is stabilised. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Ionic bonds between R groups",
+          "Disulfide bridges and hydrogen bonds"
+        ]
+      },
+      {
+        "question": "Explain the role of globular proteins in transport and immunity. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Transport – haemoglobin carries oxygen",
+          "Immunity – antibodies bind antigens",
+          "Both are soluble and functional proteins"
+        ]
+      },
+      {
+        "question": "Describe how enzymes are regulated by feedback inhibition. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "End-product binds to enzyme (allosteric site)",
+          "Prevents overproduction of product"
+        ]
+      },
+      {
+        "question": "Explain why enzymes are sensitive to pH. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "pH alters ionisation of R groups",
+          "Disrupts bonding and active site shape"
+        ]
+      },
+      {
+        "question": "Outline how proteins are involved in cell signalling. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Receptor proteins bind ligands",
+          "Initiate cascade for cellular response"
+        ]
+      },
+      {
+        "question": "Explain how antibodies bind antigens. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Variable regions match specific antigen shapes",
+          "Binding neutralises pathogen or marks for destruction"
+        ]
+      },
+      {
+        "question": "Describe the structural role of keratin. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Fibrous protein in hair, nails, skin",
+          "Hard and insoluble; rich in disulfide bridges"
+        ]
+      },
+      {
+        "question": "Explain how haemoglobin’s structure allows O₂ transport. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Quaternary structure with heme groups",
+          "Each heme reversibly binds O₂",
+          "Co-operative binding increases efficiency"
+        ]
+      }
+    ],
+
+    "Water": [
+      {
+        "question": "State two elements found in a water molecule. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Hydrogen", "Oxygen"]
+      },
+      {
+        "question": "What type of bond holds hydrogen atoms to oxygen in a water molecule? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Covalent bond"]
+      },
+      {
+        "question": "What is the name of the bond between water molecules? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Hydrogen bond"]
+      },
+      {
+        "question": "Explain why water is a polar molecule. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Oxygen is more electronegative than hydrogen",
+          "Creates partial negative (O) and partial positive (H) regions"
+        ]
+      },
+      {
+        "question": "State one function of water in the cytoplasm. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Solvent for chemical reactions"]
+      },
+      {
+        "question": "Name two roles of water in living organisms. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Solvent for metabolic reactions",
+          "Temperature regulation via evaporation"
+        ]
+      },
+      {
+        "question": "Explain the role of water in thermoregulation in humans. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Evaporation of sweat removes heat",
+          "High latent heat of vaporisation allows effective cooling"
+        ]
+      },
+      {
+        "question": "Why is water a good solvent for ionic substances? [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Water is polar",
+          "Attracts and surrounds ions to dissolve them"
+        ]
+      },
+      {
+        "question": "Describe the significance of water’s high specific heat capacity. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Absorbs lots of heat before temperature changes",
+          "Helps maintain stable environments for organisms"
+        ]
+      },
+      {
+        "question": "Explain how cohesion in water helps transport in plants. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Hydrogen bonding causes water molecules to stick together",
+          "Allows continuous water column in xylem for transpiration pull"
+        ]
+      },
+      {
+        "question": "Describe two ways in which water is important to biological processes. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Used in hydrolysis reactions",
+          "Provides medium for transport in blood and xylem"
+        ]
+      },
+      {
+        "question": "What is meant by the term 'latent heat of vaporisation'? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Energy required to turn liquid into gas without temperature change"]
+      },
+      {
+        "question": "Explain why ice floats on water. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Ice is less dense than liquid water",
+          "Hydrogen bonds hold water molecules apart in a lattice"
+        ]
+      },
+      {
+        "question": "Explain the importance of ice floating for aquatic life. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Insulates water below",
+          "Prevents entire body from freezing, allowing life to continue"
+        ]
+      },
+      {
+        "question": "Describe the cohesive properties of water. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Hydrogen bonds cause water molecules to stick together",
+          "Allows water transport in xylem"
+        ]
+      },
+      {
+        "question": "State what is meant by adhesion in relation to water. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Water molecules stick to other surfaces"]
+      },
+      {
+        "question": "What property of water allows insects to walk on its surface? [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Surface tension from cohesion between water molecules"]
+      },
+      {
+        "question": "Give an example of a biological reaction where water is a reactant. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Hydrolysis of ATP", "Digestion of starch/proteins"]
+      },
+      {
+        "question": "Why does water have a high boiling point compared to other molecules its size? [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Hydrogen bonding between molecules",
+          "Requires more energy to break bonds"
+        ]
+      },
+      {
+        "question": "Explain why water is important in digestion. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Involved in hydrolysis reactions",
+          "Acts as solvent for digestive enzymes"
+        ]
+      },
+      {
+        "question": "Describe how water’s properties support metabolic processes in cells. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Solvent for enzyme and substrate interactions",
+          "Medium for transport",
+          "Used in hydrolysis and condensation reactions"
+        ]
+      },
+      {
+        "question": "Describe three thermal properties of water that benefit living organisms. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "High specific heat capacity – stable temperature",
+          "High latent heat – effective cooling",
+          "High boiling point – remains liquid over wide range"
+        ]
+      },
+      {
+        "question": "Explain how the polarity of water allows it to act as a solvent. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Slight charges on O and H atoms",
+          "Attract ions and polar molecules",
+          "Separate and dissolve solutes"
+        ]
+      },
+      {
+        "question": "Describe the role of water in photosynthesis. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Source of electrons and protons in light-dependent reactions",
+          "Oxygen released as by-product"
+        ]
+      },
+      {
+        "question": "How does water support aquatic organisms? [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Provides buoyancy",
+          "Stable environment due to thermal properties"
+        ]
+      },
+      {
+        "question": "Explain how hydrogen bonding leads to water’s high surface tension. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Molecules at surface held tightly together by hydrogen bonds",
+          "Forms strong cohesive layer at surface"
+        ]
+      },
+      {
+        "question": "Describe the role of water in the blood. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Solvent for nutrients, gases, and waste",
+          "Allows circulation and temperature regulation"
+        ]
+      },
+      {
+        "question": "Outline four biological roles of water. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Solvent",
+          "Thermal stability",
+          "Transport medium",
+          "Metabolic reactions (e.g., hydrolysis)"
+        ]
+      },
+      {
+        "question": "Explain how water’s polarity allows it to support capillary action. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Polarity causes adhesion to walls of tubes",
+          "Cohesion between water molecules",
+          "Results in upward movement"
+        ]
+      },
+      {
+        "question": "Explain why aquatic environments remain stable despite seasonal temperature changes. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Water has high specific heat capacity",
+          "Absorbs heat without large temperature change",
+          "Protects aquatic organisms from rapid fluctuations"
+        ]
+      },
+      {
+        "question": "Describe the role of water in maintaining cell turgor in plants. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Water enters vacuole by osmosis",
+          "Provides pressure against cell wall to support structure"
+        ]
+      },
+      {
+        "question": "Give one reason why water is an effective transport medium in animals. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Water is a solvent"]
+      },
+      {
+        "question": "Describe how water molecules are arranged in ice. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Hydrogen bonds hold molecules in open lattice",
+          "Less dense than liquid water"
+        ]
+      },
+      {
+        "question": "Explain how water’s high heat of vaporisation is beneficial for cooling the body. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Evaporation of sweat removes large amounts of heat",
+          "Prevents overheating"
+        ]
+      },
+      {
+        "question": "Describe how water acts as a buffer in cells. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Resists sudden changes in temperature",
+          "Maintains optimum enzyme activity"
+        ]
+      },
+      {
+        "question": "Explain the significance of water being transparent. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Allows light to pass through for photosynthesis in aquatic plants"]
+      },
+      {
+        "question": "How does water contribute to lubrication in the body? [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Major component of synovial fluid",
+          "Reduces friction between joints"
+        ]
+      },
+      {
+        "question": "Describe the structure of a water molecule. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Two hydrogen atoms covalently bonded to one oxygen atom",
+          "Bent shape due to lone electron pairs on oxygen"
+        ]
+      },
+      {
+        "question": "Give one way in which water aids seed germination. [1 mark]",
+        "mark": 1,
+        "mark_scheme": ["Activates enzymes that initiate metabolism"]
+      }
+    ],
+
+  "Nucleic Acids": [
+    {
+      "question": "Name the monomer of nucleic acids. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Nucleotide"]
+    },
+    {
+      "question": "State the three components of a nucleotide. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Phosphate group", "Pentose sugar", "Nitrogenous base"]
+    },
+    {
+      "question": "Name the pentose sugar found in DNA. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Deoxyribose"]
+    },
+    {
+      "question": "Which nitrogenous bases are purines? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Adenine", "Guanine"]
+    },
+    {
+      "question": "What type of bond forms between complementary bases in DNA? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Hydrogen bond"]
+    },
+    {
+      "question": "State the base pairing rules in DNA. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A pairs with T",
+        "C pairs with G"
+      ]
+    },
+    {
+      "question": "What is the function of mRNA? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Carries genetic code from DNA to ribosomes for protein synthesis"]
+    },
+    {
+      "question": "Compare DNA and RNA in terms of structure. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "DNA is double-stranded; RNA is single-stranded",
+        "DNA has deoxyribose; RNA has ribose"
+      ]
+    },
+    {
+      "question": "Explain the role of tRNA in protein synthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Carries specific amino acids to ribosome",
+        "Matches anticodon with codon on mRNA"
+      ]
+    },
+    {
+      "question": "Describe the structure of DNA. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Double helix",
+        "Sugar-phosphate backbone",
+        "Base pairs joined by hydrogen bonds"
+      ]
+    },
+    {
+      "question": "What bond links nucleotides in a strand of DNA? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Phosphodiester bond"]
+    },
+    {
+      "question": "Describe semi-conservative DNA replication. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Each new DNA molecule contains one original and one new strand",
+        "DNA helicase unzips strands",
+        "DNA polymerase adds complementary nucleotides"
+      ]
+    },
+    {
+      "question": "Name the enzyme that joins DNA nucleotides during replication. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["DNA polymerase"]
+    },
+    {
+      "question": "What is the role of DNA helicase in replication? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Unwinds DNA by breaking hydrogen bonds"]
+    },
+    {
+      "question": "Explain why DNA replication is described as semi-conservative. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Each new molecule retains one original strand",
+        "Other strand is newly synthesised"
+      ]
+    },
+    {
+      "question": "State two functions of DNA in cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Stores genetic information",
+        "Template for protein synthesis"
+      ]
+    },
+    {
+      "question": "How is the structure of DNA related to its function? [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Stable molecule due to double helix",
+        "Base sequence codes for proteins",
+        "Easily replicated due to complementary base pairing"
+      ]
+    },
+    {
+      "question": "Why is it important that hydrogen bonds are weak in DNA? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Allows strands to separate for replication",
+        "Requires less energy to break"
+      ]
+    },
+    {
+      "question": "What is a gene? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["A sequence of DNA bases coding for a polypeptide"]
+    },
+    {
+      "question": "Describe the role of ATP in cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Provides energy for cellular processes",
+        "Releases energy when hydrolysed to ADP and Pi"
+      ]
+    },
+    {
+      "question": "Describe the structure of an ATP molecule. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Adenine base, ribose sugar, three phosphate groups"
+      ]
+    },
+    {
+      "question": "How is energy released from ATP? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrolysis of bond between phosphates",
+        "Catalysed by ATP hydrolase"
+      ]
+    },
+    {
+      "question": "Explain the role of hydrogen bonds in stabilising DNA. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hold complementary bases together",
+        "Allow double helix to maintain shape"
+      ]
+    },
+    {
+      "question": "Explain how the complementary nature of DNA is important for replication. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ensures accurate copying of genetic code",
+        "A always pairs with T; C with G"
+      ]
+    },
+    {
+      "question": "What is the difference between a DNA nucleotide and an RNA nucleotide? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "DNA has deoxyribose; RNA has ribose",
+        "DNA uses thymine; RNA uses uracil"
+      ]
+    },
+    {
+      "question": "Describe the process of transcription. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "RNA polymerase binds to DNA",
+        "Separates strands and assembles mRNA",
+        "mRNA leaves nucleus to ribosome"
+      ]
+    },
+    {
+      "question": "Describe the function of rRNA. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Forms part of ribosome and catalyses peptide bond formation"]
+    },
+    {
+      "question": "State one difference in the structure of ATP and a DNA nucleotide. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["ATP has three phosphate groups; DNA nucleotide has one"]
+    },
+    {
+      "question": "Describe the Meselson-Stahl experiment. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Bacteria grown in 15N, then transferred to 14N",
+        "After one replication: DNA was intermediate density",
+        "After two: half light, half intermediate",
+        "Supports semi-conservative replication"
+      ]
+    },
+    {
+      "question": "What is the function of DNA ligase in DNA replication? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Joins Okazaki fragments on lagging strand"]
+    },
+    {
+      "question": "Compare the structures of DNA and ATP. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Both contain phosphate, pentose sugar, nitrogenous base",
+        "DNA: deoxyribose; ATP: ribose",
+        "DNA: base can be A, T, C, G; ATP: always adenine"
+      ]
+    },
+    {
+      "question": "Explain how a mutation in DNA might lead to a non-functional protein. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Changes base sequence of gene",
+        "Leads to different amino acid sequence",
+        "Alters protein shape/function"
+      ]
+    },
+    {
+      "question": "Explain why DNA replication is necessary before cell division. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ensures each daughter cell receives identical genetic material"
+      ]
+    },
+    {
+      "question": "Outline how DNA can be extracted from plant tissue. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Grind tissue to break cell walls",
+        "Add detergent to dissolve membranes",
+        "Add salt to precipitate DNA",
+        "Filter and precipitate DNA with ethanol"
+      ]
+    },
+    {
+      "question": "Describe how a change in base sequence can result in a genetic disorder. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Alters codon",
+        "Changes amino acid sequence",
+        "Results in non-functional or harmful protein"
+      ]
+    },
+    {
+      "question": "Describe the structure and role of messenger RNA. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Single-stranded",
+        "Carries genetic code from DNA to ribosome",
+        "Codons correspond to amino acids"
+      ]
+    },
+    {
+      "question": "Describe how the structure of DNA enables it to carry genetic information. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Sequence of bases codes for amino acids",
+        "Double helix protects bases",
+        "Complementary base pairing allows accurate replication",
+        "Long molecule stores large amount of information"
+      ]
+    },
+    {
+      "question": "Explain the role of codons in translation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Each codon corresponds to an amino acid",
+        "tRNA matches codon with anticodon"
+      ]
+    },
+    {
+      "question": "Summarise the central dogma of molecular biology. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "DNA → RNA → Protein",
+        "Genetic information flows from DNA to protein synthesis"
+      ]
+    }
+  ],
+  
+  "Planning Experiments": [
+    {
+      "question": "What is a dependent variable? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["The variable that is measured in an experiment"]
+    },
+    {
+      "question": "Define the term ‘control variable’. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["A variable that is kept constant to ensure a fair test"]
+    },
+    {
+      "question": "What is meant by a ‘hypothesis’? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["A testable prediction about the relationship between variables"]
+    },
+    {
+      "question": "Give one reason why repeats are important in experiments. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["To identify anomalies or increase reliability"]
+    },
+    {
+      "question": "State what is meant by a ‘valid experiment’. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["An experiment that tests what it claims to test (fair test)"]
+    },
+    {
+      "question": "Explain why it is important to identify control variables. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ensures only the independent variable affects the dependent variable",
+        "Improves the validity of the experiment"
+      ]
+    },
+    {
+      "question": "Give one way to improve the reliability of results. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Repeat the experiment and calculate a mean"]
+    },
+    {
+      "question": "Why is it important to use a control group in a biological investigation? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Allows comparison to a standard treatment or baseline",
+        "Helps determine the actual effect of the independent variable"
+      ]
+    },
+    {
+      "question": "Describe the difference between qualitative and quantitative data. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Qualitative: descriptive (e.g., colour, smell)",
+        "Quantitative: numerical (e.g., temperature, volume)"
+      ]
+    },
+    {
+      "question": "State two features of a good experimental method. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Clearly identifies variables",
+        "Allows collection of valid and reliable data"
+      ]
+    },
+    {
+      "question": "Describe what is meant by the term ‘random error’. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Unpredictable variation in measurements due to chance"]
+    },
+    {
+      "question": "What is the purpose of using a water bath in enzyme experiments? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["To maintain a constant temperature"]
+    },
+    {
+      "question": "Explain how to ensure results are valid. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Control all variables except the independent one",
+        "Use a suitable control group or baseline"
+      ]
+    },
+    {
+      "question": "Why is a large sample size important in biological investigations? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Reduces effect of anomalies",
+        "Improves reliability and represents population more accurately"
+      ]
+    },
+    {
+      "question": "Explain the role of replicates in experimental design. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Increase reliability of data",
+        "Help identify and exclude anomalies"
+      ]
+    },
+    {
+      "question": "How can data be displayed to show correlation? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Scatter graph"]
+    },
+    {
+      "question": "Describe how a line graph differs from a bar chart. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Line graphs show continuous data",
+        "Bar charts show discrete/categorical data"
+      ]
+    },
+    {
+      "question": "How would you assess the accuracy of an experiment? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Compare results with expected or known values",
+        "Use appropriate equipment and calibration"
+      ]
+    },
+    {
+      "question": "Define systematic error and give an example. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Consistent error in the same direction",
+        "E.g. uncalibrated balance always reads 0.2g too high"
+      ]
+    },
+    {
+      "question": "State how a risk assessment can be used in planning experiments. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["To identify hazards and plan safety precautions"]
+    },
+    {
+      "question": "Outline how you would investigate the effect of temperature on enzyme activity. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Use substrate and enzyme solutions at different temperatures",
+        "Keep pH, enzyme/substrate concentration constant",
+        "Measure rate of reaction (e.g., product formation)",
+        "Repeat and calculate mean"
+      ]
+    },
+    {
+      "question": "Why is it important to record units when collecting data? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Ensures clarity and allows valid comparison"]
+    },
+    {
+      "question": "Describe the importance of a calibration curve. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Allows determination of unknown values from known standards",
+        "Improves accuracy of measurements"
+      ]
+    },
+    {
+      "question": "Explain the difference between precision and accuracy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Precision: how close repeated results are to each other",
+        "Accuracy: how close results are to the true value"
+      ]
+    },
+    {
+      "question": "Explain how to improve the accuracy of measuring temperature. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use a digital thermometer with small increments",
+        "Take readings at eye level"
+      ]
+    },
+    {
+      "question": "Give two reasons for using distilled water in experiments. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "No impurities to affect results",
+        "Standardises solvent across tests"
+      ]
+    },
+    {
+      "question": "Explain why biological replicates are used in fieldwork. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Account for natural variation",
+        "Improve reliability of data",
+        "Allow meaningful averages"
+      ]
+    },
+    {
+      "question": "Outline key safety considerations when working with bacterial cultures. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Sterilise equipment before and after",
+        "Use aseptic technique",
+        "Dispose of cultures safely (e.g., autoclaving)"
+      ]
+    },
+    {
+      "question": "Why should an experiment be peer-reviewed? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["To validate methodology and reliability of findings"]
+    },
+    {
+      "question": "How can you assess the reproducibility of results? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Compare with other groups’/published data",
+        "Check if same results obtained under same conditions"
+      ]
+    },
+    {
+      "question": "Plan an investigation to compare vitamin C content in fruits. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Independent variable: type of fruit",
+        "Dependent variable: volume of DCPIP decolourised",
+        "Control variables: temperature, DCPIP concentration",
+        "Use same mass of fruit extract",
+        "Repeat and calculate mean for each fruit",
+        "Use calibration curve with known vitamin C concentration"
+      ]
+    },
+    {
+      "question": "Describe how to test for reducing sugars in a sample. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Add Benedict’s reagent",
+        "Heat in water bath",
+        "Red precipitate indicates reducing sugar"
+      ]
+    },
+    {
+      "question": "Explain how sample size affects the validity of conclusions. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Larger sample reduces effect of anomalies",
+        "Makes results more representative"
+      ]
+    },
+    {
+      "question": "Describe how to calculate the percentage change in mass. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["(Final – Initial) / Initial × 100"]
+    },
+    {
+      "question": "Explain how repeating measurements and calculating a mean improves reliability. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Reduces impact of anomalies",
+        "Gives more consistent estimate"
+      ]
+    },
+    {
+      "question": "What is the purpose of a blank in colorimetry? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Calibrates the colorimeter",
+        "Ensures measurements are due to sample not solvent"
+      ]
+    },
+    {
+      "question": "Design an investigation to measure the rate of photosynthesis. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Use aquatic plant like Elodea",
+        "Measure oxygen produced (e.g., gas syringe)",
+        "Independent variable: light intensity",
+        "Control temperature, CO₂, plant size",
+        "Take readings over time",
+        "Repeat for reliability"
+      ]
+    },
+    {
+      "question": "Explain how you would identify an anomalous result. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Value differs significantly from others",
+        "Does not fit pattern of results"
+      ]
+    },
+    {
+      "question": "What are the ethical considerations when planning experiments on animals? [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Avoid unnecessary harm or distress",
+        "Use minimum number needed",
+        "Use alternatives where possible"
+      ]
+    },
+    {
+      "question": "How do you determine if a conclusion is valid? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Based on data collected",
+        "Only supported if variables were properly controlled"
+      ]
+    }
   ]
 }
+
+
+  
+
 
      
   
