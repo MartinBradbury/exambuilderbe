@@ -23,6 +23,7 @@ DEBUG = os.getenv('DEBUG')
 ALLOWED_HOSTS = [
     'exambuilder-efae14d59f03.herokuapp.com',
     'localhost',
+    '127.0.0.1',
 ]
 
 LOGGING = {

@@ -9,28 +9,46 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from pathlib import Path
+import random
+
+FALLBACK_QUESTION_PATH = Path(__file__).resolve().parent / "/examquestions/questions/questions.json"
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_exam_questions(request):
-    topic_id = request.data.get("topic_id")  # ✅ frontend sends topic_id
+    topic_id = request.data.get("topic_id")
     exam_board = request.data.get("exam_board")
-    number = request.data.get("number_of_questions")
+    number = int(request.data.get("number_of_questions"))
 
     if not all([topic_id, exam_board, number]):
         return Response({"error": "Missing required fields"}, status=400)
 
     try:
-        # ✅ Retrieve the BiologyTopic instance
         topic = BiologyTopic.objects.get(id=topic_id)
 
-        # Use the topic's name for AI generation
-        ai_response = generate_questions(topic.topic, exam_board, number)
-        questions = ai_response.get("questions", [])
+        # 🟡 Step 1: Load fallback questions from JSON
+        with open(FALLBACK_QUESTION_PATH) as f:
+            all_fallback_questions = json.load(f)
 
-        # Sum total marks from generated questions
-        total_available = sum(q.get("total_marks", 0) for q in questions)
+        # 🟡 Step 2: Filter fallback questions by topic
+        topic_fallback = [q for q in all_fallback_questions if q["topic"].lower() == topic.topic.lower()]
 
-        # ✅ Save session with the topic instance (not just the ID)
+        fallback_count = number // 2
+        ai_count = number - fallback_count
+
+        # Limit fallback to what's available
+        fallback_selected = random.sample(topic_fallback, min(fallback_count, len(topic_fallback)))
+
+        # 🟡 Step 3: Generate the remaining questions via OpenAI
+        ai_response = generate_questions(topic.topic, exam_board, ai_count)
+        ai_questions = ai_response.get("questions", [])
+
+        combined_questions = ai_questions + fallback_selected
+        random.shuffle(combined_questions)
+
+        total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+
         session = QuestionSession.objects.create(
             user=request.user,
             topic=topic,
@@ -40,16 +58,17 @@ def generate_exam_questions(request):
         )
 
         return Response({
-            "questions": questions,
+            "questions": combined_questions,
             "session_id": session.id
         }, status=200)
 
     except BiologyTopic.DoesNotExist:
         return Response({"error": "Invalid topic selected"}, status=400)
     except json.JSONDecodeError:
-        return Response({"error": "Invalid JSON returned from OpenAI"}, status=500)
+        return Response({"error": "Invalid JSON format"}, status=500)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
 
 
 @api_view(['POST'])
