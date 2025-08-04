@@ -12,7 +12,15 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 import random
 
-FALLBACK_QUESTION_PATH = Path(__file__).resolve().parent.parent / "questions.json"
+# Get the directory this Python file is in
+BASE_DIR = Path(__file__).resolve().parent
+
+# Build full path to the questions.json file
+FALLBACK_FILE = BASE_DIR / "questions.json"
+
+# Load the JSON
+with open(FALLBACK_FILE, "r", encoding="utf-8") as f:
+    data = json.load(f)
 
 
 @api_view(['POST'])
