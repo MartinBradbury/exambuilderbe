@@ -28,12 +28,13 @@ def generate_exam_questions(request):
     try:
         topic = BiologyTopic.objects.get(id=topic_id)
 
-        # 🟡 Step 1: Load fallback questions from JSON
-        with open(FALLBACK_QUESTION_PATH) as f:
+        with open(FALLBACK_QUESTION_PATH, "r", encoding="utf-8") as f:
             all_fallback_questions = json.load(f)
 
-        # 🟡 Step 2: Filter fallback questions by topic
-        topic_fallback = [q for q in all_fallback_questions if q["topic"].lower() == topic.topic.lower()]
+        # If your JSON is structured like { "Carbohydrates": [ { ... }, { ... } ] }
+        topic_name = topic.topic  # e.g. "Carbohydrates"
+        topic_fallback = all_fallback_questions.get(topic_name, [])
+
 
         fallback_count = number // 2
         ai_count = number - fallback_count
