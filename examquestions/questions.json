@@ -447,7 +447,321 @@
         "Insoluble – does not dissolve in water and provides long-lasting support"
         ]
     }
+  ],
+  
+  "Cells": [
+    {
+      "question": "Name two organelles found in eukaryotic cells that are not in prokaryotic cells. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Nucleus", "Mitochondria", "Endoplasmic reticulum", "Golgi apparatus", "Chloroplasts"]
+    },
+    {
+      "question": "State the function of the nucleus. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Contains genetic material (DNA)", "Controls cell activities by regulating gene expression"]
+    },
+    {
+      "question": "What is the role of ribosomes? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Site of protein synthesis"]
+    },
+    {
+      "question": "Give one difference between the cell wall of plants and prokaryotic cells. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Plants: made of cellulose; Prokaryotic: made of peptidoglycan"]
+    },
+    {
+      "question": "Define ‘resolution’ in microscopy. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Minimum distance two points can be separated and still seen as separate"]
+    },
+    {
+      "question": "Explain why electron microscopes give higher resolution than light microscopes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Electrons have shorter wavelength than light",
+        "Therefore can resolve objects closer together"
+      ]
+    },
+    {
+      "question": "Describe one advantage and one disadvantage of using electron microscopes compared to light microscopes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Advantage: higher resolution",
+        "Disadvantage: expensive; complex preparation; cannot image live cells"
+      ]
+    },
+    {
+      "question": "Explain the function of the plasma membrane in cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Controls movement of substances in and out of cells",
+        "Maintains internal environment"
+      ]
+    },
+    {
+      "question": "What are phospholipids and what is their role in the cell membrane? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Molecules with hydrophilic head and hydrophobic tails",
+        "Form bilayer; control permeability"
+      ]
+    },
+    {
+      "question": "Describe the fluid mosaic model of membrane structure. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Phospholipid bilayer forms fluid matrix",
+        "Proteins float like mosaic; channel, carrier, receptor",
+        "Cholesterol molecules add stability"
+      ]
+    },
+    {
+      "question": "Compare facilitated diffusion and active transport. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Facilitated diffusion uses protein channels; passive (no ATP)",
+        "Active transport uses carrier proteins; requires ATP",
+        "Active can move substances against concentration gradient"
+      ]
+    },
+    {
+      "question": "Describe how water moves across cell membranes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "By osmosis",
+        "Movement from high to low water potential through partially permeable membrane"
+      ]
+    },
+    {
+      "question": "How does increasing surface area to volume ratio affect diffusion in cells? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Larger surface area relative to volume increases rate of diffusion",
+        "Reduces distance for substances to travel"
+      ]
+    },
+    {
+      "question": "Explain how gas exchange surfaces in multicellular organisms are adapted for efficient diffusion. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Large surface area",
+        "Thin layers",
+        "Steep concentration gradient maintained"
+      ]
+    },
+    {
+      "question": "State one example of a specialized cell in animals and its function. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Neutrophil – engulfs pathogens", "Red blood cell – carries oxygen"]
+    },
+    {
+      "question": "Give one difference between animal and plant cells. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Animal cells lack cell wall, chloroplasts; have centrioles"]
+    },
+    {
+      "question": "Define ‘differentiation’ in cells. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Process by which cells become specialized in structure and function"]
+    },
+    {
+      "question": "Explain why muscle cells contain many mitochondria. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Muscle cells need ATP for contraction",
+        "Mitochondria are site of aerobic respiration"
+      ]
+    },
+    {
+      "question": "Describe the structure and function of a root hair cell. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Long extension (root hair) increases surface area",
+        "Thin-walled for water/mineral absorption"
+      ]
+    },
+    {
+      "question": "What is meant by the term ‘multicellular’? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Organism composed of many cells with division of labor"]
+    },
+    {
+      "question": "Explain how stem cells differ from differentiated cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Stem cells are unspecialized and can divide",
+        "Can differentiate into multiple cell types"
+      ]
+    },
+    {
+      "question": "Describe how sodium ions are transported out of cells via active transport. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Carrier protein binds sodium ions",
+        "ATP provides energy; changes shape",
+        "Sodium released outside cell against gradient"
+      ]
+    },
+    {
+      "question": "Explain the role of carrier proteins in glucose uptake into cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Carrier specific for glucose binds it",
+        "Changes conformation to allow glucose into cell",
+        "Down concentration gradient (facilitated diffusion) or uses ATP in co-transport with sodium"
+      ]
+    },
+    {
+      "question": "Compare prokaryotic and eukaryotic cells in terms of genetic material. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Prokaryotic: one circular DNA molecule free in cytoplasm",
+        "Eukaryotic: chromosomes in a nucleus"
+      ]
+    },
+    {
+      "question": "Explain how phospholipids contribute to the impermeability of the cell membrane to water-soluble substances. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrophobic tails repel water-soluble molecules",
+        "Only small non-polar molecules pass freely"
+      ]
+    },
+    {
+      "question": "Describe how the structure of the cell surface membrane allows cell communication. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Proteins act as receptors for signals",
+        "Glycoproteins act as cell markers",
+        "Allows cells to respond to signals (e.g., hormones)"
+      ]
+    },
+    {
+      "question": "Outline two ways in which the structure of red blood cells is suited to their function. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Biconcave shape increases surface area",
+        "No nucleus to leave more space for hemoglobin",
+        "Flexible – fits capillaries"
+      ]
+    },
+    {
+      "question": "Explain why most cells are microscopic in size. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Large surface area to volume ratio is needed",
+        "Ensures sufficient diffusion for substances"
+      ]
+    },
+    {
+      "question": "Describe the role of cholesterol in the cell membrane. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fits between phospholipids",
+        "Stabilises membrane; reduces permeability to small water-soluble molecules"
+      ]
+    },
+    {
+      "question": "Explain how the rough endoplasmic reticulum is involved in protein synthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ribosomes on RER synthesise proteins",
+        "Proteins folded and transported to Golgi apparatus"
+      ]
+    },
+    {
+      "question": "Describe the function of lysosomes. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Contain digestive enzymes; break down waste and pathogens"]
+    },
+    {
+      "question": "Explain why a high surface area:volume ratio is more efficient for exchange surfaces in the lungs. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "More surface area allows more gas exchange",
+        "Thin alveolar walls and high capillary density maintain gradient"
+      ]
+    },
+    {
+      "question": "Describe the function of the cytoskeleton. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Provides structure and shape",
+        "Enables movement of organelles or whole cell"
+      ]
+    },
+    {
+      "question": "Explain how diffusion across cell membranes can be affected by temperature. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Higher temperature increases kinetic energy",
+        "More frequent collisions with membrane",
+        "Increases rate of diffusion"
+      ]
+    },
+    {
+      "question": "Outline the advantages of a light microscope. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Can view live cells",
+        "Inexpensive and portable"
+      ]
+    },
+    {
+      "question": "Compare the roles of rough and smooth endoplasmic reticulum. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Rough ER: synthesises proteins (has ribosomes)",
+        "Smooth ER: synthesises lipids and detoxifies"
+      ]
+    },
+    {
+      "question": "Explain how surface proteins assist in cell recognition by the immune system. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Glycoproteins on surface act as antigens or markers",
+        "Recognised by antibodies or immune cells",
+        "Trigger immune response"
+      ]
+    },
+    {
+      "question": "Describe how ion channels differ from carrier proteins. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ion channels form pores allowing passive movement of ions",
+        "Carrier proteins bind and transport specific molecules; may use ATP"
+      ]
+    },
+    {
+      "question": "Explain the importance of differentiation in the development of complex organisms. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Specialised cells perform specific functions more efficiently",
+        "Allows division of labour",
+        "Enables multicellular organisms to develop tissues/organs"
+      ]
+    },
+    {
+      "question": "Describe how gas exchange surfaces are maintained in active tissues. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Maintains steep concentration gradient via blood flow",
+        "Ventilation replenishes gases",
+        "Large surface area maintained (e.g. alveoli)"
+      ]
+    },
+    {
+      "question": "Explain how plasmolysis occurs in plant cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Loss of water by osmosis",
+        "Cell membrane pulls away from cell wall",
+        "Cell becomes flaccid"
+      ]
+    }
   ]
-} 
+}
+
      
   
