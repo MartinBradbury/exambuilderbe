@@ -1,110 +1,153 @@
-
 {
   "Carbohydrates": [
     {
-      "question": "What three elements are found in all carbohydrates?",
+      "question": "What three elements are found in all carbohydrates? [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Carbon (C)", "Hydrogen (H)", "Oxygen (O)"]
+      "mark_scheme": [
+        "Carbon (C)",
+        "Hydrogen (H)",
+        "Oxygen (O)"
+      ]
     },
     {
-      "question": "Define a monosaccharide.",
+      "question": "Define a monosaccharide. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["A single (simple) sugar unit (monomer)"]
+      "mark_scheme": [
+        "A single (simple) sugar unit (monomer)"
+      ]
     },
     {
-      "question": "Give two examples of monosaccharides.",
+      "question": "Give two examples of monosaccharides. [2 marks]",
       "mark": 2,
-      "mark_scheme": ["Glucose", "Fructose", "Galactose"] 
+      "mark_scheme": [
+        "Glucose",
+        "Fructose",
+        "Galactose"
+      ]
     },
     {
-      "question": "What is the molecular formula of glucose?",
+      "question": "What is the molecular formula of glucose? [1 mark]",
       "mark": 1,
-      "mark_scheme": ["C₆H₁₂O₆"]
+      "mark_scheme": [
+        "C\u2086H\u2081\u2082O\u2086"
+      ]
     },
     {
-      "question": "Explain the difference between α- and β-glucose.",
+      "question": "Explain the difference between \u03b1- and \u03b2-glucose. [2 marks]",
       "mark": 2,
-      "mark_scheme": ["They are isomers: differ in orientation of H and OH on carbon 1", "α-glucose has OH below ring, β-glucose above ring"]
+      "mark_scheme": [
+        "They are isomers: differ in orientation of H and OH on carbon 1",
+        "\u03b1-glucose has OH below ring, \u03b2-glucose above ring"
+      ]
     },
     {
-      "question": "What type of reaction joins monosaccharides to form disaccharides?",
+      "question": "What type of reaction joins monosaccharides to form disaccharides? [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Condensation reaction"]
+      "mark_scheme": [
+        "Condensation reaction"
+      ]
     },
     {
-      "question": "What bond is formed when two monosaccharides join?",
+      "question": "What bond is formed when two monosaccharides join? [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Glycosidic bond"]
+      "mark_scheme": [
+        "Glycosidic bond"
+      ]
     },
     {
-      "question": "What are the three disaccharides students must know in OCR biology?",
+      "question": "What are the three disaccharides students must know in OCR biology? [3 marks]",
       "mark": 3,
-      "mark_scheme": ["Maltose (glucose + glucose)", "Lactose (glucose + galactose)", "Sucrose (glucose + fructose)"]
+      "mark_scheme": [
+        "Maltose (glucose + glucose)",
+        "Lactose (glucose + galactose)",
+        "Sucrose (glucose + fructose)"
+      ]
     },
     {
-      "question": "Describe hydrolysis in terms of carbohydrate breakdown.",
+      "question": "Describe hydrolysis in terms of carbohydrate breakdown. [2 marks]",
       "mark": 2,
-      "mark_scheme": ["Addition of water", "Breaks glycosidic bonds to yield monosaccharides"]
+      "mark_scheme": [
+        "Addition of water",
+        "Breaks glycosidic bonds to yield monosaccharides"
+      ]
     },
     {
-      "question": "State the formula for a disaccharide in terms of the monosaccharide formula.",
+      "question": "State the formula for a disaccharide in terms of the monosaccharide formula. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["(CₙH₂ₙOₙ)₂ – H₂O"]
+      "mark_scheme": [
+        "(C\u2099H\u2082\u2099O\u2099)\u2082 \u2013 H\u2082O"
+      ]
     },
     {
-      "question": "Name two polysaccharides formed from α-glucose.",
+      "question": "Name two polysaccharides formed from \u03b1-glucose. [2 marks]",
       "mark": 2,
-      "mark_scheme": ["Starch", "Glycogen"]
+      "mark_scheme": [
+        "Starch",
+        "Glycogen"
+      ]
     },
     {
-      "question": "Describe the structure of amylose.",
+      "question": "Describe the structure of amylose. [2 marks]",
       "mark": 2,
-      "mark_scheme": ["Unbranched", "1→4 glycosidic bonds", "Coiled (spiral) structure"]
+      "mark_scheme": [
+        "Unbranched",
+        "1\u21924 glycosidic bonds",
+        "Coiled (spiral) structure"
+      ]
     },
     {
-      "question": "Describe the structure of amylopectin.",
+      "question": "Describe the structure of amylopectin. [3 marks]",
       "mark": 3,
-      "mark_scheme": ["Branched", "1→4 and 1→6 glycosidic bonds", "Side branches allow rapid hydrolysis"]
+      "mark_scheme": [
+        "Branched",
+        "1\u21924 and 1\u21926 glycosidic bonds",
+        "Side branches allow rapid hydrolysis"
+      ]
     },
     {
-      "question": "Explain how the structure of glycogen relates to its function.",
+      "question": "Explain how the structure of glycogen relates to its function. [4 marks]",
       "mark": 4,
       "mark_scheme": [
-        "Highly branched (1→4 and 1→6 bonds)",
+        "Highly branched (1\u21924 and 1\u21926 bonds)",
         "Compact for storage",
         "Many ends allow rapid glucose release"
       ]
     },
     {
-      "question": "Describe the structure of cellulose.",
+      "question": "Describe the structure of cellulose. [3 marks]",
       "mark": 3,
       "mark_scheme": [
-        "β-glucose units",
-        "1→4 glycosidic bonds",
+        "\u03b2-glucose units",
+        "1\u21924 glycosidic bonds",
         "Straight, unbranched chains forming microfibrils"
       ]
     },
     {
-      "question": "Explain why cellulose is strong and suitable for cell walls.",
+      "question": "Explain why cellulose is strong and suitable for cell walls. [3 marks]",
       "mark": 3,
       "mark_scheme": [
         "Straight chains held by hydrogen bonds",
         "Microfibrils provide tensile strength",
-        "Insoluble – maintains cell structure"
+        "Insoluble \u2013 maintains cell structure"
       ]
     },
     {
-      "question": "State one function of glucose in living organisms.",
+      "question": "State one function of glucose in living organisms. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Energy source", "Building block for larger molecules"]
+      "mark_scheme": [
+        "Energy source",
+        "Building block for larger molecules"
+      ]
     },
     {
-      "question": "Give one use of starch in plants.",
+      "question": "Give one use of starch in plants. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Energy storage"]
+      "mark_scheme": [
+        "Energy storage"
+      ]
     },
     {
-      "question": "Explain why polysaccharides are better for storage than monosaccharides.",
+      "question": "Explain why polysaccharides are better for storage than monosaccharides. [3 marks]",
       "mark": 3,
       "mark_scheme": [
         "Insoluble (no osmotic effect)",
@@ -113,42 +156,42 @@
       ]
     },
     {
-      "question": "Outline how reducing sugars can be detected.",
+      "question": "Outline how reducing sugars can be detected. [2 marks]",
       "mark": 2,
       "mark_scheme": [
-        "Benedict’s test (blue → red precipitate)",
+        "Benedict\u2019s test (blue \u2192 red precipitate)",
         "Requires heating"
       ]
     },
     {
-      "question": "Why is sucrose a non-reducing sugar?",
+      "question": "Why is sucrose a non-reducing sugar? [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "No free aldehyde or ketone group",
-        "Does not react directly with Benedict’s reagent unless hydrolysed"
+        "Does not react directly with Benedict\u2019s reagent unless hydrolysed"
       ]
     },
     {
-      "question": "Explain how to test for non-reducing sugars like sucrose.",
+      "question": "Explain how to test for non-reducing sugars like sucrose. [3 marks]",
       "mark": 3,
       "mark_scheme": [
         "Hydrolyse (e.g. heat with dilute acid)",
         "Neutralise solution",
-        "Carry out Benedict’s test to detect the released reducing monosaccharides"
+        "Carry out Benedict\u2019s test to detect the released reducing monosaccharides"
       ]
     },
     {
-      "question": "Compare and contrast starch and cellulose.",
+      "question": "Compare and contrast starch and cellulose. [5 marks]",
       "mark": 5,
       "mark_scheme": [
-        "Starch composed of α-glucose; cellulose of β-glucose",
+        "Starch composed of \u03b1-glucose; cellulose of \u03b2-glucose",
         "Starch has helical (amylose) and branched (amylopectin) forms; cellulose is straight chains",
         "Starch used for storage; cellulose for structural support",
         "Amylose/amylopectin insoluble but digestible by animals; cellulose insoluble and indigestible"
       ]
     },
     {
-      "question": "Explain the roles of hydrogen bonding in cellulose structure and function.",
+      "question": "Explain the roles of hydrogen bonding in cellulose structure and function. [4 marks]",
       "mark": 4,
       "mark_scheme": [
         "Hydrogen bonds form between hydroxyl groups on adjacent chains",
@@ -158,16 +201,16 @@
       ]
     },
     {
-      "question": "Describe the primary structure of glycogen.",
+      "question": "Describe the primary structure of glycogen. [3 marks]",
       "mark": 3,
       "mark_scheme": [
-        "α-glucose units",
-        "Joined by 1→4 glycosidic bonds",
-        "1→6 glycosidic linkages at branching points"
+        "\u03b1-glucose units",
+        "Joined by 1\u21924 glycosidic bonds",
+        "1\u21926 glycosidic linkages at branching points"
       ]
     },
     {
-      "question": "How does the branching in glycogen enhance its function?",
+      "question": "How does the branching in glycogen enhance its function? [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "More branch ends for enzyme action",
@@ -175,7 +218,7 @@
       ]
     },
     {
-      "question": "Explain why polysaccharides are often used as energy storage molecules.",
+      "question": "Explain why polysaccharides are often used as energy storage molecules. [4 marks]",
       "mark": 4,
       "mark_scheme": [
         "Compact & insoluble",
@@ -185,22 +228,28 @@
       ]
     },
     {
-      "question": "What is meant by the term 'polysaccharide'?",
+      "question": "What is meant by the term 'polysaccharide'? [1 mark]",
       "mark": 1,
-      "mark_scheme": ["A polymer of many monosaccharide units"]
+      "mark_scheme": [
+        "A polymer of many monosaccharide units"
+      ]
     },
     {
-      "question": "Give one biological role of glycogen.",
+      "question": "Give one biological role of glycogen. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Animal energy storage (especially in liver and muscle)"]
+      "mark_scheme": [
+        "Animal energy storage (especially in liver and muscle)"
+      ]
     },
     {
-      "question": "State how maltose is formed.",
+      "question": "State how maltose is formed. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Two glucose molecules joined via condensation forming a glycosidic bond"]
+      "mark_scheme": [
+        "Two glucose molecules joined via condensation forming a glycosidic bond"
+      ]
     },
     {
-      "question": "Why is maltose a reducing sugar?",
+      "question": "Why is maltose a reducing sugar? [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "Has a free aldehyde group on one glucose unit",
@@ -208,7 +257,7 @@
       ]
     },
     {
-      "question": "Describe an advantage of branching in polysaccharides like glycogen.",
+      "question": "Describe an advantage of branching in polysaccharides like glycogen. [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "More ends available for enzyme attack",
@@ -216,7 +265,7 @@
       ]
     },
     {
-      "question": "Explain why plants store starch instead of glucose.",
+      "question": "Explain why plants store starch instead of glucose. [3 marks]",
       "mark": 3,
       "mark_scheme": [
         "Starch is insoluble (avoids osmotic problems)",
@@ -225,7 +274,7 @@
       ]
     },
     {
-      "question": "Outline the difference in solubility between monosaccharides and polysaccharides.",
+      "question": "Outline the difference in solubility between monosaccharides and polysaccharides. [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "Monosaccharides are water soluble",
@@ -233,7 +282,7 @@
       ]
     },
     {
-      "question": "Explain how the ring structure of glucose contributes to its function.",
+      "question": "Explain how the ring structure of glucose contributes to its function. [3 marks]",
       "mark": 3,
       "mark_scheme": [
         "Ring structure stable in aqueous solution",
@@ -242,36 +291,38 @@
       ]
     },
     {
-      "question": "Distinguish between reducing and non-reducing sugars with examples.",
+      "question": "Distinguish between reducing and non-reducing sugars with examples. [3 marks]",
       "mark": 3,
       "mark_scheme": [
-        "Reducing sugars can reduce Benedict’s reagent (e.g. glucose, maltose)",
+        "Reducing sugars can reduce Benedict\u2019s reagent (e.g. glucose, maltose)",
         "Non-reducing sugars cannot unless hydrolysed first (e.g. sucrose)"
       ]
     },
     {
-      "question": "Describe why cellulose cannot be digested by most animals.",
+      "question": "Describe why cellulose cannot be digested by most animals. [2 marks]",
       "mark": 2,
       "mark_scheme": [
-        "β-glycosidic bonds require cellulase enzyme",
+        "\u03b2-glycosidic bonds require cellulase enzyme",
         "Most animals lack cellulase"
       ]
     },
     {
-      "question": "Explain how the test for reducing sugars works.",
+      "question": "Explain how the test for reducing sugars works. [2 marks]",
       "mark": 2,
       "mark_scheme": [
-        "Reducing sugar donates electrons to blue Cu²⁺ in Benedict’s solution",
-        "Forms red Cu₂O precipitate"
+        "Reducing sugar donates electrons to blue Cu\u00b2\u207a in Benedict\u2019s solution",
+        "Forms red Cu\u2082O precipitate"
       ]
     },
     {
-      "question": "Write one structural difference between amylose and amylopectin.",
+      "question": "Write one structural difference between amylose and amylopectin. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Amylose is unbranched; amylopectin is branched"]
+      "mark_scheme": [
+        "Amylose is unbranched; amylopectin is branched"
+      ]
     },
     {
-      "question": "Explain why glucose is transported in blood as monosaccharide.",
+      "question": "Explain why glucose is transported in blood as monosaccharide. [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "Soluble in blood plasma",
@@ -279,7 +330,7 @@
       ]
     },
     {
-      "question": "Describe how condensation reactions are involved in carbohydrate metabolism.",
+      "question": "Describe how condensation reactions are involved in carbohydrate metabolism. [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "Condensation joins monosaccharides by removing water",
@@ -287,7 +338,7 @@
       ]
     },
     {
-      "question": "Explain how hydrolysis reactions are important after digestion.",
+      "question": "Explain how hydrolysis reactions are important after digestion. [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "Hydrolysis adds water to break glycosidic bonds",
@@ -295,20 +346,22 @@
       ]
     },
     {
-      "question": "State one function of cellulose in plants.",
+      "question": "State one function of cellulose in plants. [1 mark]",
       "mark": 1,
-      "mark_scheme": ["Strength/support in plant cell walls"]
+      "mark_scheme": [
+        "Strength/support in plant cell walls"
+      ]
     },
     {
-      "question": "Give a similarity and a difference between starch and glycogen.",
+      "question": "Give a similarity and a difference between starch and glycogen. [3 marks]",
       "mark": 3,
       "mark_scheme": [
-        "Similarity: both are α-glucose polymers used for storage",
+        "Similarity: both are \u03b1-glucose polymers used for storage",
         "Difference: glycogen is more highly branched than starch"
       ]
     },
     {
-      "question": "Why are polysaccharides suited for long‑term energy storage?",
+      "question": "Why are polysaccharides suited for long\u2011term energy storage? [4 marks]",
       "mark": 4,
       "mark_scheme": [
         "Insoluble (avoids osmotic issues)",
@@ -318,16 +371,16 @@
       ]
     },
     {
-      "question": "Describe how the physical properties of starch relate to its role.",
+      "question": "Describe how the physical properties of starch relate to its role. [3 marks]",
       "mark": 3,
       "mark_scheme": [
-        "Insoluble – no osmotic effect",
+        "Insoluble \u2013 no osmotic effect",
         "Compact coiled or branched structure suitable for storage",
         "Easily hydrolysed when energy needed"
       ]
     },
     {
-      "question": "Explain the function of reducing sugars in metabolism.",
+      "question": "Explain the function of reducing sugars in metabolism. [2 marks]",
       "mark": 2,
       "mark_scheme": [
         "Provide energy via respiration",
@@ -335,7 +388,7 @@
       ]
     },
     {
-        "question": "Compare and contrast the structure and function of starch and cellulose in plants.",
+        "question": "Compare and contrast the structure and function of starch and cellulose in plants. [6 marks]",
         "mark": 6,
         "mark_scheme": [
         "Both are polysaccharides composed of glucose monomers",
@@ -347,7 +400,7 @@
         ]
     },
     {
-        "question": "Describe how the structure of glycogen makes it an effective energy storage molecule in animals.",
+        "question": "Describe how the structure of glycogen makes it an effective energy storage molecule in animals. [6 marks]",
         "mark": 6,
         "mark_scheme": [
         "Made of α-glucose units linked by 1→4 and 1→6 glycosidic bonds",
@@ -359,7 +412,7 @@
         ]
     },
     {
-        "question": "Explain how disaccharides and polysaccharides are formed and broken down in biological systems.",
+        "question": "Explain how disaccharides and polysaccharides are formed and broken down in biological systems. [6 marks]",
         "mark": 6,
         "mark_scheme": [
         "Formed by condensation reactions between monosaccharides",
@@ -371,7 +424,7 @@
         ]
     },
     {
-        "question": "Describe how you would test for the presence of reducing and non-reducing sugars in a solution.",
+        "question": "Describe how you would test for the presence of reducing and non-reducing sugars in a solution. [6 marks]",
         "mark": 6,
         "mark_scheme": [
         "Add Benedict’s reagent to solution and heat in water bath",
@@ -383,7 +436,7 @@
         ]
     },
     {
-        "question": "Explain how the structure of cellulose contributes to its function in plant cell walls.",
+        "question": "Explain how the structure of cellulose contributes to its function in plant cell walls. [6 marks]",
         "mark": 6,
         "mark_scheme": [
         "Made from β-glucose monomers joined by 1→4 glycosidic bonds",
