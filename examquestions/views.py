@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 import random
 
-FALLBACK_QUESTION_PATH = Path(__file__).resolve().parent / "examquestions/questions/questions.json"
+FALLBACK_QUESTION_PATH = Path(__file__).resolve().parent.parent / "questions.json"
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
