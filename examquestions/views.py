@@ -42,7 +42,7 @@ def generate_exam_questions(request):
         # Limit fallback to what's available
         fallback_selected = random.sample(topic_fallback, min(fallback_count, len(topic_fallback)))
 
-        # 🟡 Step 3: Generate the remaining questions via OpenAI
+        # Generate the remaining questions via OpenAI
         ai_response = generate_questions(topic.topic, exam_board, ai_count)
         ai_questions = ai_response.get("questions", [])
 
@@ -70,7 +70,6 @@ def generate_exam_questions(request):
         return Response({"error": "Invalid JSON format"}, status=500)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-
 
 
 @api_view(['POST'])
@@ -139,6 +138,7 @@ def submit_question_session(request):
         return Response({"error": "Session not found"}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+ 
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
