@@ -21,13 +21,13 @@ OPEN_AI_KEY = os.getenv('OPENAI_API_KEY')
 DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = [
-    'exambuilder-efae14d59f03.herokuapp.com',
+    'exambuilder.herokuapp.com',
     'localhost',
     '127.0.0.1',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://exambuilder-efae14d59f03.herokuapp.com",
+    "https://exambuilder.herokuapp.com",
     "http://localhost",
     "http://127.0.0.1",
 ]
