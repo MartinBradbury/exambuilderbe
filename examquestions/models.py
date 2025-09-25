@@ -1,23 +1,82 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from accounts.models import CustomUser
 
-
 class BiologyTopic(models.Model):
-    topic = models.CharField(max_length = 255, blank=True, null=True)
+    # Treat this as the "Module" title
+    topic = models.CharField(max_length=255, unique=True)  # required + unique
+
+    class Meta:
+        ordering = ["topic"]
 
     def __str__(self):
         return self.topic
 
-    
+
+class BiologySubTopic(models.Model):
+    # FK renamed to 'topic' (parent), and related_name pluralised
+    topic = models.ForeignKey(
+        BiologyTopic,
+        on_delete=models.CASCADE,
+        related_name="subtopics",
+    )
+    title = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ["topic__topic", "title"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["topic", "title"],
+                name="uniq_subtopic_per_topic",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.topic} – {self.title}"
+
+
+class BiologySubCategory(models.Model):
+    subtopic = models.ForeignKey(
+        BiologySubTopic,
+        on_delete=models.CASCADE,
+        related_name="subcategories",
+    )
+    title = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ["subtopic__topic__topic", "subtopic__title", "title"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["subtopic", "title"],
+                name="uniq_subcategory_per_subtopic",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.subtopic} – {self.title}"
+
+
 class QuestionSession(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     topic = models.ForeignKey(BiologyTopic, on_delete=models.CASCADE)
+
+    # OPTIONAL: allow narrower targeting
+    subtopic = models.ForeignKey(
+        BiologySubTopic, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    subcategory = models.ForeignKey(
+        BiologySubCategory, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
     exam_board = models.CharField(max_length=50)
-    number_of_questions = models.IntegerField()
-    total_score = models.IntegerField(default=0)
-    total_available = models.IntegerField(default=0)
+    number_of_questions = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    total_score = models.PositiveIntegerField(default=0)
+    total_available = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     feedback = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self):
         return (
@@ -27,3 +86,14 @@ class QuestionSession(models.Model):
             f"Score: {self.total_score}/{self.total_available} | "
             f"{self.created_at.strftime('%d %b %Y')}"
         )
+
+    def clean(self):
+        # Optional: keep score sane
+        from django.core.exceptions import ValidationError
+        if self.total_score > self.total_available:
+            raise ValidationError("Total score cannot exceed total available.")
+        # Optional: if subtopic/subcategory are set, ensure they belong to the selected topic
+        if self.subtopic and self.subtopic.topic_id != self.topic_id:
+            raise ValidationError("Selected subtopic doesn’t belong to the chosen topic.")
+        if self.subcategory and self.subcategory.subtopic.topic_id != self.topic_id:
+            raise ValidationError("Selected subcategory doesn’t belong to the chosen topic.")

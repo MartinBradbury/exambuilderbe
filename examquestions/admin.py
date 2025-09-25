@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import QuestionSession, BiologyTopic
+from .models import QuestionSession, BiologyTopic, BiologySubTopic, BiologySubCategory
 
 
 @admin.register(QuestionSession)
@@ -15,3 +15,15 @@ class BiologyTopicAdmin(admin.ModelAdmin):
     list_display = ("topic",)
     search_filter = ("topic",)
     list_filter = ("topic",)
+
+@admin.register(BiologySubTopic)
+class BiologySubTopicAdmin(admin.ModelAdmin):  # added colon
+    list_display = ("title", "title")
+    search_fields = ("title",)
+    list_filter = ("title",)
+
+@admin.register(BiologySubCategory)
+class BiologySubCategoryAdmin(admin.ModelAdmin):  # fixed class name + colon
+    list_display = ("title", "subtopic")
+    search_fields = ("title",)
+    list_filter = ("subtopic",)

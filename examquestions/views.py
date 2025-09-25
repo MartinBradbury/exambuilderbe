@@ -2,9 +2,14 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .services.ai import generate_questions, evaluate_response_with_openai, get_feedback_from_openai
-from .models import QuestionSession, BiologyTopic
+from .models import QuestionSession, BiologyTopic, BiologySubCategory, BiologySubTopic
 import json
-from .serializers import QuestionSessionSerializer
+from .serializers import (
+    QuestionSessionSerializer,
+    BiologySubCategoryListSerializer,
+    BiologySubTopicListSerializer,
+    BiologyTopicListSerializer,
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,8 +24,13 @@ FALLBACK_QUESTION_PATH = Path(__file__).resolve().parent.parent / "examquestions
 @permission_classes([IsAuthenticated])
 def generate_exam_questions(request):
     topic_id = request.data.get("topic_id")
+    subtopic_id = request.data.get("subtopic_id")         # NEW (optional)
+    subcategory_id = request.data.get("subcategory_id")   # NEW (optional)
     exam_board = request.data.get("exam_board")
-    number = int(request.data.get("number_of_questions"))
+    try:
+        number = int(request.data.get("number_of_questions"))
+    except (TypeError, ValueError):
+        number = 0
 
     if not all([topic_id, exam_board, number]):
         return Response({"error": "Missing required fields"}, status=400)
@@ -28,22 +38,49 @@ def generate_exam_questions(request):
     try:
         topic = BiologyTopic.objects.get(id=topic_id)
 
+        # Validate optional relationships (only if provided)
+        subtopic = None
+        if subtopic_id:
+            subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic_id)
+
+        subcategory = None
+        if subcategory_id:
+            if not subtopic_id:
+                return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
+            subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic_id)
+
+        # Load fallback bank
         with open(FALLBACK_QUESTION_PATH, "r", encoding="utf-8") as f:
             all_fallback_questions = json.load(f)
 
-        # If your JSON is structured like { "Carbohydrates": [ { ... }, { ... } ] }
-        topic_name = topic.topic  # e.g. "Carbohydrates"
-        topic_fallback = all_fallback_questions.get(topic_name, [])
-
+        # Prefer most specific key present in your JSON: subcategory -> subtopic -> topic
+        fallback_pool = []
+        if subcategory and subcategory.title in all_fallback_questions:
+            fallback_pool = all_fallback_questions[subcategory.title]
+        elif subtopic and subtopic.title in all_fallback_questions:
+            fallback_pool = all_fallback_questions[subtopic.title]
+        elif topic.topic in all_fallback_questions:
+            fallback_pool = all_fallback_questions[topic.topic]
 
         fallback_count = number // 2
         ai_count = number - fallback_count
 
-        # Limit fallback to what's available
-        fallback_selected = random.sample(topic_fallback, min(fallback_count, len(topic_fallback)))
+        fallback_selected = []
+        if isinstance(fallback_pool, list) and fallback_pool:
+            fallback_selected = random.sample(fallback_pool, min(fallback_count, len(fallback_pool)))
+        else:
+            # no fallback available -> all AI
+            ai_count = number
+            fallback_selected = []
 
-        # Generate the remaining questions via OpenAI
-        ai_response = generate_questions(topic.topic, exam_board, ai_count)
+        scope = topic.topic
+        if subtopic:
+            scope += f' (SubTopic: {subtopic.title})'
+        if subcategory:
+            scope += f' (SubCategory: {subcategory.title})'
+
+        ai_response = generate_questions(scope, exam_board, ai_count)
+
         ai_questions = ai_response.get("questions", [])
 
         combined_questions = ai_questions + fallback_selected
@@ -54,6 +91,8 @@ def generate_exam_questions(request):
         session = QuestionSession.objects.create(
             user=request.user,
             topic=topic,
+            subtopic=subtopic,
+            subcategory=subcategory,
             exam_board=exam_board,
             number_of_questions=number,
             total_available=total_available
@@ -66,9 +105,14 @@ def generate_exam_questions(request):
 
     except BiologyTopic.DoesNotExist:
         return Response({"error": "Invalid topic selected"}, status=400)
+    except BiologySubTopic.DoesNotExist:
+        return Response({"error": "Invalid subtopic for the selected topic"}, status=400)
+    except BiologySubCategory.DoesNotExist:
+        return Response({"error": "Invalid subcategory for the selected subtopic"}, status=400)
     except json.JSONDecodeError:
         return Response({"error": "Invalid JSON format"}, status=500)
     except Exception as e:
+        logger.exception("generate_exam_questions failed")
         return Response({"error": str(e)}, status=500)
 
 
@@ -85,13 +129,11 @@ def mark_user_answer(request):
     logger.info("User Answer: %s", user_answer)
     logger.info("Mark Scheme: %s", mark_scheme)
     logger.info("Exam Board: %s", exam_board)
-    
 
     if not all([question, mark_scheme, user_answer]):
         return Response({"error": "Missing one or more fields."}, status=400)
 
     try:
-        # ✅ Pass exam_board into evaluate_response_with_openai
         result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board)
         return Response(result, status=200)
     except json.JSONDecodeError as e:
@@ -106,8 +148,8 @@ def mark_user_answer(request):
 @permission_classes([IsAuthenticated])
 def submit_question_session(request):
     session_id = request.data.get("session_id")
-    answers = request.data.get("answers")  # List of dicts: [{question, user_answer, mark_scheme, score}, ...]
-    feedback_text = request.data.get("feedback")  # Optional — if you're still sending it from frontend
+    answers = request.data.get("answers")
+    feedback_text = request.data.get("feedback")
 
     if not session_id or not answers:
         return Response({"error": "Missing session_id or answers"}, status=400)
@@ -116,15 +158,13 @@ def submit_question_session(request):
         session = QuestionSession.objects.get(id=session_id, user=request.user)
         total_score = sum([a.get("score", 0) for a in answers])
 
-        # Prepare AI feedback prompt
         prompt = "Give strengths and weaknesses based on these answers:\n"
         for a in answers:
             prompt += f"\nQuestion: {a['question']}\nAnswer: {a['user_answer']}\nScore: {a['score']}/{session.total_available}\n"
 
-        # Generate and save feedback
         feedback = get_feedback_from_openai(prompt)
         session.total_score = total_score
-        session.feedback = json.dumps(feedback)  # ✅ Save it here
+        session.feedback = json.dumps(feedback)
         session.save()
 
         return Response({
@@ -138,8 +178,8 @@ def submit_question_session(request):
         return Response({"error": "Session not found"}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
- 
-    
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_sessions(request):
@@ -151,6 +191,28 @@ def get_user_sessions(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_biology_topics(request):
-    topics = BiologyTopic.objects.all()
-    data = [{"id": t.id, "topic": t.topic} for t in topics]
-    return Response(data)
+    topics = BiologyTopic.objects.all().order_by("topic")
+    # if you prefer your old manual shape, keep it; otherwise use the serializer:
+    return Response(BiologyTopicListSerializer(topics, many=True).data)
+
+
+# NEW: minimal list endpoint for subtopics
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_biology_subtopics(request):
+    qs = BiologySubTopic.objects.select_related("topic").all().order_by("title")
+    topic_id = request.query_params.get("topic_id")
+    if topic_id:
+        qs = qs.filter(topic_id=topic_id)
+    return Response(BiologySubTopicListSerializer(qs, many=True).data)
+
+
+# NEW: minimal list endpoint for subcategories
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_biology_subcategories(request):
+    qs = BiologySubCategory.objects.select_related("subtopic", "subtopic__topic").all().order_by("title")
+    subtopic_id = request.query_params.get("subtopic_id")
+    if subtopic_id:
+        qs = qs.filter(subtopic_id=subtopic_id)
+    return Response(BiologySubCategoryListSerializer(qs, many=True).data)
