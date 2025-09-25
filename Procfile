@@ -1,1 +1,1 @@
-web: gunicorn exambuilder.wsgi
+web: python -m gunicorn exambuilder.wsgi --log-file -
