@@ -449,319 +449,6 @@
     }
   ],
 
-  "Cells": [
-    {
-      "question": "Name two organelles found in eukaryotic cells that are not in prokaryotic cells. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Nucleus", "Mitochondria", "Endoplasmic reticulum", "Golgi apparatus", "Chloroplasts"]
-    },
-    {
-      "question": "State the function of the nucleus. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Contains genetic material (DNA)", "Controls cell activities by regulating gene expression"]
-    },
-    {
-      "question": "What is the role of ribosomes? [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Site of protein synthesis"]
-    },
-    {
-      "question": "Give one difference between the cell wall of plants and prokaryotic cells. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Plants: made of cellulose; Prokaryotic: made of peptidoglycan"]
-    },
-    {
-      "question": "Define ‘resolution’ in microscopy. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Minimum distance two points can be separated and still seen as separate"]
-    },
-    {
-      "question": "Explain why electron microscopes give higher resolution than light microscopes. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Electrons have shorter wavelength than light",
-        "Therefore can resolve objects closer together"
-      ]
-    },
-    {
-      "question": "Describe one advantage and one disadvantage of using electron microscopes compared to light microscopes. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Advantage: higher resolution",
-        "Disadvantage: expensive; complex preparation; cannot image live cells"
-      ]
-    },
-    {
-      "question": "Explain the function of the plasma membrane in cells. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Controls movement of substances in and out of cells",
-        "Maintains internal environment"
-      ]
-    },
-    {
-      "question": "What are phospholipids and what is their role in the cell membrane? [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Molecules with hydrophilic head and hydrophobic tails",
-        "Form bilayer; control permeability"
-      ]
-    },
-    {
-      "question": "Describe the fluid mosaic model of membrane structure. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Phospholipid bilayer forms fluid matrix",
-        "Proteins float like mosaic; channel, carrier, receptor",
-        "Cholesterol molecules add stability"
-      ]
-    },
-    {
-      "question": "Compare facilitated diffusion and active transport. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Facilitated diffusion uses protein channels; passive (no ATP)",
-        "Active transport uses carrier proteins; requires ATP",
-        "Active can move substances against concentration gradient"
-      ]
-    },
-    {
-      "question": "Describe how water moves across cell membranes. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "By osmosis",
-        "Movement from high to low water potential through partially permeable membrane"
-      ]
-    },
-    {
-      "question": "How does increasing surface area to volume ratio affect diffusion in cells? [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Larger surface area relative to volume increases rate of diffusion",
-        "Reduces distance for substances to travel"
-      ]
-    },
-    {
-      "question": "Explain how gas exchange surfaces in multicellular organisms are adapted for efficient diffusion. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Large surface area",
-        "Thin layers",
-        "Steep concentration gradient maintained"
-      ]
-    },
-    {
-      "question": "State one example of a specialized cell in animals and its function. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Neutrophil – engulfs pathogens", "Red blood cell – carries oxygen"]
-    },
-    {
-      "question": "Give one difference between animal and plant cells. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Animal cells lack cell wall, chloroplasts; have centrioles"]
-    },
-    {
-      "question": "Define ‘differentiation’ in cells. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Process by which cells become specialized in structure and function"]
-    },
-    {
-      "question": "Explain why muscle cells contain many mitochondria. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Muscle cells need ATP for contraction",
-        "Mitochondria are site of aerobic respiration"
-      ]
-    },
-    {
-      "question": "Describe the structure and function of a root hair cell. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Long extension (root hair) increases surface area",
-        "Thin-walled for water/mineral absorption"
-      ]
-    },
-    {
-      "question": "What is meant by the term ‘multicellular’? [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Organism composed of many cells with division of labor"]
-    },
-    {
-      "question": "Explain how stem cells differ from differentiated cells. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Stem cells are unspecialized and can divide",
-        "Can differentiate into multiple cell types"
-      ]
-    },
-    {
-      "question": "Describe how sodium ions are transported out of cells via active transport. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Carrier protein binds sodium ions",
-        "ATP provides energy; changes shape",
-        "Sodium released outside cell against gradient"
-      ]
-    },
-    {
-      "question": "Explain the role of carrier proteins in glucose uptake into cells. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Carrier specific for glucose binds it",
-        "Changes conformation to allow glucose into cell",
-        "Down concentration gradient (facilitated diffusion) or uses ATP in co-transport with sodium"
-      ]
-    },
-    {
-      "question": "Compare prokaryotic and eukaryotic cells in terms of genetic material. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Prokaryotic: one circular DNA molecule free in cytoplasm",
-        "Eukaryotic: chromosomes in a nucleus"
-      ]
-    },
-    {
-      "question": "Explain how phospholipids contribute to the impermeability of the cell membrane to water-soluble substances. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Hydrophobic tails repel water-soluble molecules",
-        "Only small non-polar molecules pass freely"
-      ]
-    },
-    {
-      "question": "Describe how the structure of the cell surface membrane allows cell communication. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Proteins act as receptors for signals",
-        "Glycoproteins act as cell markers",
-        "Allows cells to respond to signals (e.g., hormones)"
-      ]
-    },
-    {
-      "question": "Outline two ways in which the structure of red blood cells is suited to their function. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Biconcave shape increases surface area",
-        "No nucleus to leave more space for hemoglobin",
-        "Flexible – fits capillaries"
-      ]
-    },
-    {
-      "question": "Explain why most cells are microscopic in size. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Large surface area to volume ratio is needed",
-        "Ensures sufficient diffusion for substances"
-      ]
-    },
-    {
-      "question": "Describe the role of cholesterol in the cell membrane. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Fits between phospholipids",
-        "Stabilises membrane; reduces permeability to small water-soluble molecules"
-      ]
-    },
-    {
-      "question": "Explain how the rough endoplasmic reticulum is involved in protein synthesis. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Ribosomes on RER synthesise proteins",
-        "Proteins folded and transported to Golgi apparatus"
-      ]
-    },
-    {
-      "question": "Describe the function of lysosomes. [1 mark]",
-      "mark": 1,
-      "mark_scheme": ["Contain digestive enzymes; break down waste and pathogens"]
-    },
-    {
-      "question": "Explain why a high surface area:volume ratio is more efficient for exchange surfaces in the lungs. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "More surface area allows more gas exchange",
-        "Thin alveolar walls and high capillary density maintain gradient"
-      ]
-    },
-    {
-      "question": "Describe the function of the cytoskeleton. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Provides structure and shape",
-        "Enables movement of organelles or whole cell"
-      ]
-    },
-    {
-      "question": "Explain how diffusion across cell membranes can be affected by temperature. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Higher temperature increases kinetic energy",
-        "More frequent collisions with membrane",
-        "Increases rate of diffusion"
-      ]
-    },
-    {
-      "question": "Outline the advantages of a light microscope. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Can view live cells",
-        "Inexpensive and portable"
-      ]
-    },
-    {
-      "question": "Compare the roles of rough and smooth endoplasmic reticulum. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Rough ER: synthesises proteins (has ribosomes)",
-        "Smooth ER: synthesises lipids and detoxifies"
-      ]
-    },
-    {
-      "question": "Explain how surface proteins assist in cell recognition by the immune system. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Glycoproteins on surface act as antigens or markers",
-        "Recognised by antibodies or immune cells",
-        "Trigger immune response"
-      ]
-    },
-    {
-      "question": "Describe how ion channels differ from carrier proteins. [2 marks]",
-      "mark": 2,
-      "mark_scheme": [
-        "Ion channels form pores allowing passive movement of ions",
-        "Carrier proteins bind and transport specific molecules; may use ATP"
-      ]
-    },
-    {
-      "question": "Explain the importance of differentiation in the development of complex organisms. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Specialised cells perform specific functions more efficiently",
-        "Allows division of labour",
-        "Enables multicellular organisms to develop tissues/organs"
-      ]
-    },
-    {
-      "question": "Describe how gas exchange surfaces are maintained in active tissues. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Maintains steep concentration gradient via blood flow",
-        "Ventilation replenishes gases",
-        "Large surface area maintained (e.g. alveoli)"
-      ]
-    },
-    {
-      "question": "Explain how plasmolysis occurs in plant cells. [3 marks]",
-      "mark": 3,
-      "mark_scheme": [
-        "Loss of water by osmosis",
-        "Cell membrane pulls away from cell wall",
-        "Cell becomes flaccid"
-      ]
-    }
-  ],
-
   "Lipids": [
     {
       "question": "State the three elements found in all lipids. [1 mark]",
@@ -1044,584 +731,584 @@
     }
   ],
 
-    "Proteins": [ 
-      {
-        "question": "Name two elements in proteins that are not found in carbohydrates. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Nitrogen (N)", "Sulphur (S)"]
-      },
-      {
-        "question": "What is the basic building block of proteins? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Amino acid"]
-      },
-      {
-        "question": "Which bond links amino acids together in a polypeptide chain? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Peptide bond"]
-      },
-      {
-        "question": "Define the primary structure of a protein. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Sequence of amino acids in a polypeptide"]
-      },
-      {
-        "question": "What is meant by the secondary structure of a protein? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Folding into α‑helix or β‑pleated sheets due to hydrogen bonding"]
-      },
-      {
-        "question": "Name the level of protein structure formed by multiple polypeptide chains. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Quaternary"]
-      },
-      {
-        "question": "Outline the four levels of protein structure. [4 marks]",
-        "mark": 4,
-        "mark_scheme": [
-          "Primary – amino acid sequence",
-          "Secondary – H‑bonds form α‑helix or β‑sheets",
-          "Tertiary – 3D folding via ionic, disulfide, hydrogen interactions",
-          "Quaternary – multiple polypeptide subunits"
-        ]
-      },
-      {
-        "question": "Explain how peptide bonds form. [2 marks]",
-        "mark": 2,
-        "mark_scheme": ["Condensation reaction between amino and carboxyl groups", "Water molecule released"]
-      },
-      {
-        "question": "What is the purpose of the biuret test? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["To test for presence of peptide bonds (protein)"]
-      },
-      {
-        "question": "Describe how to conduct the biuret test. [2 marks]",
-        "mark": 2,
-        "mark_scheme": ["Add sodium hydroxide, then copper sulfate", "Purple colour indicates protein"]
-      },
-      {
-        "question": "Give two differences between fibrous and globular proteins. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Fibrous are structural and insoluble; globular are functional and soluble",
-          "Fibrous are long and tough; globular are compact"
-        ]
-      },
-      {
-        "question": "Explain how the tertiary structure of an enzyme determines its specificity. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Active site formed by 3D folding",
-          "Specific shape for substrate binding (lock and key or induced fit)",
-          "Incorrect folding prevents function (denaturation)"
-        ]
-      },
-      {
-        "question": "Describe the role of hydrogen bonds in protein secondary structure. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Form between carbonyl (C=O) and amine (N–H)",
-          "Stabilise α‑helix and β‑pleated sheet formations"
-        ]
-      },
-      {
-        "question": "Explain why collagen is strong and insoluble. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Fibrous protein with triple helix structure",
-          "Cross-links between molecules",
-          "Insoluble due to tight packing and H-bonds"
-        ]
-      },
-      {
-        "question": "Describe the role of haemoglobin in the body. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Globular protein in red blood cells",
-          "Transports oxygen from lungs to tissues"
-        ]
-      },
-      {
-        "question": "Explain how globular proteins are suited to their roles. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Compact and soluble in aqueous environments",
-          "Flexible structure allows interactions",
-          "Functional activity (e.g., enzymes, hormones, transport)"
-        ]
-      },
-      {
-        "question": "Outline the function of fibrous proteins in the body. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Provide structural support (e.g., collagen in tendons)",
-          "Tough and insoluble"
-        ]
-      },
-      {
-        "question": "Explain how a protein’s shape can be altered. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Changes in pH/temp disrupt H‑bonds and ionic interactions",
-          "Leads to denaturation and loss of function"
-        ]
-      },
-      {
-        "question": "Describe how enzymes act as biological catalysts. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Lower activation energy for reactions",
-          "Speed up metabolic reactions without being used up"
-        ]
-      },
-      {
-        "question": "Explain the induced-fit model of enzyme action. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Active site changes shape to fit substrate",
-          "Enhances binding and catalysis"
-        ]
-      },
-      {
-        "question": "Compare the effect of temperature and pH on enzyme activity. [4 marks]",
-        "mark": 4,
-        "mark_scheme": [
-          "Both can alter enzyme structure",
-          "High temp or extreme pH denature enzymes",
-          "Low temperature slows rate of collisions",
-          "Enzymes have optimum pH and temperature"
-        ]
-      },
-      {
-        "question": "Explain how competitive inhibitors affect enzyme activity. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Bind to active site instead of substrate",
-          "Increase substrate concentration reduces inhibition"
-        ]
-      },
-      {
-        "question": "Explain how non-competitive inhibitors work. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Bind to allosteric site",
-          "Alter enzyme shape, reducing activity regardless of substrate concentration"
-        ]
-      },
-      {
-        "question": "Describe the impact of denaturation on protein function. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Changes tertiary/secondary structure",
-          "Active site altered — enzyme no longer works"
-        ]
-      },
-      {
-        "question": "Explain the importance of enzymes in digestion. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Break down large food molecules into absorbable units",
-          "Each enzyme specific to substrate"
-        ]
-      },
-      {
-        "question": "Describe how amino acid sequence affects protein function. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Even a single change can alter folding",
-          "Loss or gain of function (e.g., sickle cell haemoglobin mutation)"
-        ]
-      },
-      {
-        "question": "Explain how enzyme concentration influences reaction rate. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "More enzyme increases rate (more active sites)",
-          "Plateaus when substrate becomes limiting"
-        ]
-      },
-      {
-        "question": "Describe the role of coenzymes in enzymatic reactions. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Organic molecules that assist enzymes",
-          "Transfer chemical groups or electrons"
-        ]
-      },
-      {
-        "question": "Explain how vitamins function as coenzymes. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Many are precursors for coenzymes (e.g., vitamin B derivatives)",
-          "Essential for catalytic activity"
-        ]
-      },
-      {
-        "question": "Compare competitive and noncompetitive inhibitors. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Competitive: binds active site; noncompetitive: binds allosteric site",
-          "Competitive inhibition reversed by excess substrate; noncompetitive is not",
-          "Both reduce enzyme activity"
-        ]
-      },
-      {
-        "question": "Describe how protein structure is stabilised. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Ionic bonds between R groups",
-          "Disulfide bridges and hydrogen bonds"
-        ]
-      },
-      {
-        "question": "Explain the role of globular proteins in transport and immunity. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Transport – haemoglobin carries oxygen",
-          "Immunity – antibodies bind antigens",
-          "Both are soluble and functional proteins"
-        ]
-      },
-      {
-        "question": "Describe how enzymes are regulated by feedback inhibition. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "End-product binds to enzyme (allosteric site)",
-          "Prevents overproduction of product"
-        ]
-      },
-      {
-        "question": "Explain why enzymes are sensitive to pH. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "pH alters ionisation of R groups",
-          "Disrupts bonding and active site shape"
-        ]
-      },
-      {
-        "question": "Outline how proteins are involved in cell signalling. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Receptor proteins bind ligands",
-          "Initiate cascade for cellular response"
-        ]
-      },
-      {
-        "question": "Explain how antibodies bind antigens. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Variable regions match specific antigen shapes",
-          "Binding neutralises pathogen or marks for destruction"
-        ]
-      },
-      {
-        "question": "Describe the structural role of keratin. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Fibrous protein in hair, nails, skin",
-          "Hard and insoluble; rich in disulfide bridges"
-        ]
-      },
-      {
-        "question": "Explain how haemoglobin’s structure allows O₂ transport. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Quaternary structure with heme groups",
-          "Each heme reversibly binds O₂",
-          "Co-operative binding increases efficiency"
-        ]
-      }
-    ],
+  "Proteins": [ 
+    {
+      "question": "Name two elements in proteins that are not found in carbohydrates. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Nitrogen (N)", "Sulphur (S)"]
+    },
+    {
+      "question": "What is the basic building block of proteins? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Amino acid"]
+    },
+    {
+      "question": "Which bond links amino acids together in a polypeptide chain? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Peptide bond"]
+    },
+    {
+      "question": "Define the primary structure of a protein. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Sequence of amino acids in a polypeptide"]
+    },
+    {
+      "question": "What is meant by the secondary structure of a protein? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Folding into α‑helix or β‑pleated sheets due to hydrogen bonding"]
+    },
+    {
+      "question": "Name the level of protein structure formed by multiple polypeptide chains. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Quaternary"]
+    },
+    {
+      "question": "Outline the four levels of protein structure. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Primary – amino acid sequence",
+        "Secondary – H‑bonds form α‑helix or β‑sheets",
+        "Tertiary – 3D folding via ionic, disulfide, hydrogen interactions",
+        "Quaternary – multiple polypeptide subunits"
+      ]
+    },
+    {
+      "question": "Explain how peptide bonds form. [2 marks]",
+      "mark": 2,
+      "mark_scheme": ["Condensation reaction between amino and carboxyl groups", "Water molecule released"]
+    },
+    {
+      "question": "What is the purpose of the biuret test? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["To test for presence of peptide bonds (protein)"]
+    },
+    {
+      "question": "Describe how to conduct the biuret test. [2 marks]",
+      "mark": 2,
+      "mark_scheme": ["Add sodium hydroxide, then copper sulfate", "Purple colour indicates protein"]
+    },
+    {
+      "question": "Give two differences between fibrous and globular proteins. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fibrous are structural and insoluble; globular are functional and soluble",
+        "Fibrous are long and tough; globular are compact"
+      ]
+    },
+    {
+      "question": "Explain how the tertiary structure of an enzyme determines its specificity. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Active site formed by 3D folding",
+        "Specific shape for substrate binding (lock and key or induced fit)",
+        "Incorrect folding prevents function (denaturation)"
+      ]
+    },
+    {
+      "question": "Describe the role of hydrogen bonds in protein secondary structure. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Form between carbonyl (C=O) and amine (N–H)",
+        "Stabilise α‑helix and β‑pleated sheet formations"
+      ]
+    },
+    {
+      "question": "Explain why collagen is strong and insoluble. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Fibrous protein with triple helix structure",
+        "Cross-links between molecules",
+        "Insoluble due to tight packing and H-bonds"
+      ]
+    },
+    {
+      "question": "Describe the role of haemoglobin in the body. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Globular protein in red blood cells",
+        "Transports oxygen from lungs to tissues"
+      ]
+    },
+    {
+      "question": "Explain how globular proteins are suited to their roles. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Compact and soluble in aqueous environments",
+        "Flexible structure allows interactions",
+        "Functional activity (e.g., enzymes, hormones, transport)"
+      ]
+    },
+    {
+      "question": "Outline the function of fibrous proteins in the body. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Provide structural support (e.g., collagen in tendons)",
+        "Tough and insoluble"
+      ]
+    },
+    {
+      "question": "Explain how a protein’s shape can be altered. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Changes in pH/temp disrupt H‑bonds and ionic interactions",
+        "Leads to denaturation and loss of function"
+      ]
+    },
+    {
+      "question": "Describe how enzymes act as biological catalysts. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Lower activation energy for reactions",
+        "Speed up metabolic reactions without being used up"
+      ]
+    },
+    {
+      "question": "Explain the induced-fit model of enzyme action. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Active site changes shape to fit substrate",
+        "Enhances binding and catalysis"
+      ]
+    },
+    {
+      "question": "Compare the effect of temperature and pH on enzyme activity. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Both can alter enzyme structure",
+        "High temp or extreme pH denature enzymes",
+        "Low temperature slows rate of collisions",
+        "Enzymes have optimum pH and temperature"
+      ]
+    },
+    {
+      "question": "Explain how competitive inhibitors affect enzyme activity. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Bind to active site instead of substrate",
+        "Increase substrate concentration reduces inhibition"
+      ]
+    },
+    {
+      "question": "Explain how non-competitive inhibitors work. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Bind to allosteric site",
+        "Alter enzyme shape, reducing activity regardless of substrate concentration"
+      ]
+    },
+    {
+      "question": "Describe the impact of denaturation on protein function. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Changes tertiary/secondary structure",
+        "Active site altered — enzyme no longer works"
+      ]
+    },
+    {
+      "question": "Explain the importance of enzymes in digestion. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Break down large food molecules into absorbable units",
+        "Each enzyme specific to substrate"
+      ]
+    },
+    {
+      "question": "Describe how amino acid sequence affects protein function. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Even a single change can alter folding",
+        "Loss or gain of function (e.g., sickle cell haemoglobin mutation)"
+      ]
+    },
+    {
+      "question": "Explain how enzyme concentration influences reaction rate. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "More enzyme increases rate (more active sites)",
+        "Plateaus when substrate becomes limiting"
+      ]
+    },
+    {
+      "question": "Describe the role of coenzymes in enzymatic reactions. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Organic molecules that assist enzymes",
+        "Transfer chemical groups or electrons"
+      ]
+    },
+    {
+      "question": "Explain how vitamins function as coenzymes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Many are precursors for coenzymes (e.g., vitamin B derivatives)",
+        "Essential for catalytic activity"
+      ]
+    },
+    {
+      "question": "Compare competitive and noncompetitive inhibitors. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Competitive: binds active site; noncompetitive: binds allosteric site",
+        "Competitive inhibition reversed by excess substrate; noncompetitive is not",
+        "Both reduce enzyme activity"
+      ]
+    },
+    {
+      "question": "Describe how protein structure is stabilised. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ionic bonds between R groups",
+        "Disulfide bridges and hydrogen bonds"
+      ]
+    },
+    {
+      "question": "Explain the role of globular proteins in transport and immunity. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Transport – haemoglobin carries oxygen",
+        "Immunity – antibodies bind antigens",
+        "Both are soluble and functional proteins"
+      ]
+    },
+    {
+      "question": "Describe how enzymes are regulated by feedback inhibition. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "End-product binds to enzyme (allosteric site)",
+        "Prevents overproduction of product"
+      ]
+    },
+    {
+      "question": "Explain why enzymes are sensitive to pH. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "pH alters ionisation of R groups",
+        "Disrupts bonding and active site shape"
+      ]
+    },
+    {
+      "question": "Outline how proteins are involved in cell signalling. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Receptor proteins bind ligands",
+        "Initiate cascade for cellular response"
+      ]
+    },
+    {
+      "question": "Explain how antibodies bind antigens. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Variable regions match specific antigen shapes",
+        "Binding neutralises pathogen or marks for destruction"
+      ]
+    },
+    {
+      "question": "Describe the structural role of keratin. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fibrous protein in hair, nails, skin",
+        "Hard and insoluble; rich in disulfide bridges"
+      ]
+    },
+    {
+      "question": "Explain how haemoglobin’s structure allows O₂ transport. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Quaternary structure with heme groups",
+        "Each heme reversibly binds O₂",
+        "Co-operative binding increases efficiency"
+      ]
+    }
+  ],
 
-    "Water": [
-      {
-        "question": "State two elements found in a water molecule. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Hydrogen", "Oxygen"]
-      },
-      {
-        "question": "What type of bond holds hydrogen atoms to oxygen in a water molecule? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Covalent bond"]
-      },
-      {
-        "question": "What is the name of the bond between water molecules? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Hydrogen bond"]
-      },
-      {
-        "question": "Explain why water is a polar molecule. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Oxygen is more electronegative than hydrogen",
-          "Creates partial negative (O) and partial positive (H) regions"
-        ]
-      },
-      {
-        "question": "State one function of water in the cytoplasm. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Solvent for chemical reactions"]
-      },
-      {
-        "question": "Name two roles of water in living organisms. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Solvent for metabolic reactions",
-          "Temperature regulation via evaporation"
-        ]
-      },
-      {
-        "question": "Explain the role of water in thermoregulation in humans. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Evaporation of sweat removes heat",
-          "High latent heat of vaporisation allows effective cooling"
-        ]
-      },
-      {
-        "question": "Why is water a good solvent for ionic substances? [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Water is polar",
-          "Attracts and surrounds ions to dissolve them"
-        ]
-      },
-      {
-        "question": "Describe the significance of water’s high specific heat capacity. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Absorbs lots of heat before temperature changes",
-          "Helps maintain stable environments for organisms"
-        ]
-      },
-      {
-        "question": "Explain how cohesion in water helps transport in plants. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Hydrogen bonding causes water molecules to stick together",
-          "Allows continuous water column in xylem for transpiration pull"
-        ]
-      },
-      {
-        "question": "Describe two ways in which water is important to biological processes. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Used in hydrolysis reactions",
-          "Provides medium for transport in blood and xylem"
-        ]
-      },
-      {
-        "question": "What is meant by the term 'latent heat of vaporisation'? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Energy required to turn liquid into gas without temperature change"]
-      },
-      {
-        "question": "Explain why ice floats on water. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Ice is less dense than liquid water",
-          "Hydrogen bonds hold water molecules apart in a lattice"
-        ]
-      },
-      {
-        "question": "Explain the importance of ice floating for aquatic life. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Insulates water below",
-          "Prevents entire body from freezing, allowing life to continue"
-        ]
-      },
-      {
-        "question": "Describe the cohesive properties of water. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Hydrogen bonds cause water molecules to stick together",
-          "Allows water transport in xylem"
-        ]
-      },
-      {
-        "question": "State what is meant by adhesion in relation to water. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Water molecules stick to other surfaces"]
-      },
-      {
-        "question": "What property of water allows insects to walk on its surface? [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Surface tension from cohesion between water molecules"]
-      },
-      {
-        "question": "Give an example of a biological reaction where water is a reactant. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Hydrolysis of ATP", "Digestion of starch/proteins"]
-      },
-      {
-        "question": "Why does water have a high boiling point compared to other molecules its size? [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Hydrogen bonding between molecules",
-          "Requires more energy to break bonds"
-        ]
-      },
-      {
-        "question": "Explain why water is important in digestion. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Involved in hydrolysis reactions",
-          "Acts as solvent for digestive enzymes"
-        ]
-      },
-      {
-        "question": "Describe how water’s properties support metabolic processes in cells. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Solvent for enzyme and substrate interactions",
-          "Medium for transport",
-          "Used in hydrolysis and condensation reactions"
-        ]
-      },
-      {
-        "question": "Describe three thermal properties of water that benefit living organisms. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "High specific heat capacity – stable temperature",
-          "High latent heat – effective cooling",
-          "High boiling point – remains liquid over wide range"
-        ]
-      },
-      {
-        "question": "Explain how the polarity of water allows it to act as a solvent. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Slight charges on O and H atoms",
-          "Attract ions and polar molecules",
-          "Separate and dissolve solutes"
-        ]
-      },
-      {
-        "question": "Describe the role of water in photosynthesis. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Source of electrons and protons in light-dependent reactions",
-          "Oxygen released as by-product"
-        ]
-      },
-      {
-        "question": "How does water support aquatic organisms? [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Provides buoyancy",
-          "Stable environment due to thermal properties"
-        ]
-      },
-      {
-        "question": "Explain how hydrogen bonding leads to water’s high surface tension. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Molecules at surface held tightly together by hydrogen bonds",
-          "Forms strong cohesive layer at surface"
-        ]
-      },
-      {
-        "question": "Describe the role of water in the blood. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Solvent for nutrients, gases, and waste",
-          "Allows circulation and temperature regulation"
-        ]
-      },
-      {
-        "question": "Outline four biological roles of water. [4 marks]",
-        "mark": 4,
-        "mark_scheme": [
-          "Solvent",
-          "Thermal stability",
-          "Transport medium",
-          "Metabolic reactions (e.g., hydrolysis)"
-        ]
-      },
-      {
-        "question": "Explain how water’s polarity allows it to support capillary action. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Polarity causes adhesion to walls of tubes",
-          "Cohesion between water molecules",
-          "Results in upward movement"
-        ]
-      },
-      {
-        "question": "Explain why aquatic environments remain stable despite seasonal temperature changes. [3 marks]",
-        "mark": 3,
-        "mark_scheme": [
-          "Water has high specific heat capacity",
-          "Absorbs heat without large temperature change",
-          "Protects aquatic organisms from rapid fluctuations"
-        ]
-      },
-      {
-        "question": "Describe the role of water in maintaining cell turgor in plants. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Water enters vacuole by osmosis",
-          "Provides pressure against cell wall to support structure"
-        ]
-      },
-      {
-        "question": "Give one reason why water is an effective transport medium in animals. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Water is a solvent"]
-      },
-      {
-        "question": "Describe how water molecules are arranged in ice. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Hydrogen bonds hold molecules in open lattice",
-          "Less dense than liquid water"
-        ]
-      },
-      {
-        "question": "Explain how water’s high heat of vaporisation is beneficial for cooling the body. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Evaporation of sweat removes large amounts of heat",
-          "Prevents overheating"
-        ]
-      },
-      {
-        "question": "Describe how water acts as a buffer in cells. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Resists sudden changes in temperature",
-          "Maintains optimum enzyme activity"
-        ]
-      },
-      {
-        "question": "Explain the significance of water being transparent. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Allows light to pass through for photosynthesis in aquatic plants"]
-      },
-      {
-        "question": "How does water contribute to lubrication in the body? [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Major component of synovial fluid",
-          "Reduces friction between joints"
-        ]
-      },
-      {
-        "question": "Describe the structure of a water molecule. [2 marks]",
-        "mark": 2,
-        "mark_scheme": [
-          "Two hydrogen atoms covalently bonded to one oxygen atom",
-          "Bent shape due to lone electron pairs on oxygen"
-        ]
-      },
-      {
-        "question": "Give one way in which water aids seed germination. [1 mark]",
-        "mark": 1,
-        "mark_scheme": ["Activates enzymes that initiate metabolism"]
-      }
-    ],
+  "Water": [
+    {
+      "question": "State two elements found in a water molecule. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Hydrogen", "Oxygen"]
+    },
+    {
+      "question": "What type of bond holds hydrogen atoms to oxygen in a water molecule? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Covalent bond"]
+    },
+    {
+      "question": "What is the name of the bond between water molecules? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Hydrogen bond"]
+    },
+    {
+      "question": "Explain why water is a polar molecule. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Oxygen is more electronegative than hydrogen",
+        "Creates partial negative (O) and partial positive (H) regions"
+      ]
+    },
+    {
+      "question": "State one function of water in the cytoplasm. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Solvent for chemical reactions"]
+    },
+    {
+      "question": "Name two roles of water in living organisms. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Solvent for metabolic reactions",
+        "Temperature regulation via evaporation"
+      ]
+    },
+    {
+      "question": "Explain the role of water in thermoregulation in humans. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Evaporation of sweat removes heat",
+        "High latent heat of vaporisation allows effective cooling"
+      ]
+    },
+    {
+      "question": "Why is water a good solvent for ionic substances? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Water is polar",
+        "Attracts and surrounds ions to dissolve them"
+      ]
+    },
+    {
+      "question": "Describe the significance of water’s high specific heat capacity. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Absorbs lots of heat before temperature changes",
+        "Helps maintain stable environments for organisms"
+      ]
+    },
+    {
+      "question": "Explain how cohesion in water helps transport in plants. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrogen bonding causes water molecules to stick together",
+        "Allows continuous water column in xylem for transpiration pull"
+      ]
+    },
+    {
+      "question": "Describe two ways in which water is important to biological processes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Used in hydrolysis reactions",
+        "Provides medium for transport in blood and xylem"
+      ]
+    },
+    {
+      "question": "What is meant by the term 'latent heat of vaporisation'? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Energy required to turn liquid into gas without temperature change"]
+    },
+    {
+      "question": "Explain why ice floats on water. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Ice is less dense than liquid water",
+        "Hydrogen bonds hold water molecules apart in a lattice"
+      ]
+    },
+    {
+      "question": "Explain the importance of ice floating for aquatic life. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Insulates water below",
+        "Prevents entire body from freezing, allowing life to continue"
+      ]
+    },
+    {
+      "question": "Describe the cohesive properties of water. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrogen bonds cause water molecules to stick together",
+        "Allows water transport in xylem"
+      ]
+    },
+    {
+      "question": "State what is meant by adhesion in relation to water. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Water molecules stick to other surfaces"]
+    },
+    {
+      "question": "What property of water allows insects to walk on its surface? [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Surface tension from cohesion between water molecules"]
+    },
+    {
+      "question": "Give an example of a biological reaction where water is a reactant. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Hydrolysis of ATP", "Digestion of starch/proteins"]
+    },
+    {
+      "question": "Why does water have a high boiling point compared to other molecules its size? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrogen bonding between molecules",
+        "Requires more energy to break bonds"
+      ]
+    },
+    {
+      "question": "Explain why water is important in digestion. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Involved in hydrolysis reactions",
+        "Acts as solvent for digestive enzymes"
+      ]
+    },
+    {
+      "question": "Describe how water’s properties support metabolic processes in cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Solvent for enzyme and substrate interactions",
+        "Medium for transport",
+        "Used in hydrolysis and condensation reactions"
+      ]
+    },
+    {
+      "question": "Describe three thermal properties of water that benefit living organisms. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "High specific heat capacity – stable temperature",
+        "High latent heat – effective cooling",
+        "High boiling point – remains liquid over wide range"
+      ]
+    },
+    {
+      "question": "Explain how the polarity of water allows it to act as a solvent. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Slight charges on O and H atoms",
+        "Attract ions and polar molecules",
+        "Separate and dissolve solutes"
+      ]
+    },
+    {
+      "question": "Describe the role of water in photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Source of electrons and protons in light-dependent reactions",
+        "Oxygen released as by-product"
+      ]
+    },
+    {
+      "question": "How does water support aquatic organisms? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Provides buoyancy",
+        "Stable environment due to thermal properties"
+      ]
+    },
+    {
+      "question": "Explain how hydrogen bonding leads to water’s high surface tension. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Molecules at surface held tightly together by hydrogen bonds",
+        "Forms strong cohesive layer at surface"
+      ]
+    },
+    {
+      "question": "Describe the role of water in the blood. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Solvent for nutrients, gases, and waste",
+        "Allows circulation and temperature regulation"
+      ]
+    },
+    {
+      "question": "Outline four biological roles of water. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Solvent",
+        "Thermal stability",
+        "Transport medium",
+        "Metabolic reactions (e.g., hydrolysis)"
+      ]
+    },
+    {
+      "question": "Explain how water’s polarity allows it to support capillary action. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Polarity causes adhesion to walls of tubes",
+        "Cohesion between water molecules",
+        "Results in upward movement"
+      ]
+    },
+    {
+      "question": "Explain why aquatic environments remain stable despite seasonal temperature changes. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Water has high specific heat capacity",
+        "Absorbs heat without large temperature change",
+        "Protects aquatic organisms from rapid fluctuations"
+      ]
+    },
+    {
+      "question": "Describe the role of water in maintaining cell turgor in plants. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Water enters vacuole by osmosis",
+        "Provides pressure against cell wall to support structure"
+      ]
+    },
+    {
+      "question": "Give one reason why water is an effective transport medium in animals. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Water is a solvent"]
+    },
+    {
+      "question": "Describe how water molecules are arranged in ice. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hydrogen bonds hold molecules in open lattice",
+        "Less dense than liquid water"
+      ]
+    },
+    {
+      "question": "Explain how water’s high heat of vaporisation is beneficial for cooling the body. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Evaporation of sweat removes large amounts of heat",
+        "Prevents overheating"
+      ]
+    },
+    {
+      "question": "Describe how water acts as a buffer in cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Resists sudden changes in temperature",
+        "Maintains optimum enzyme activity"
+      ]
+    },
+    {
+      "question": "Explain the significance of water being transparent. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Allows light to pass through for photosynthesis in aquatic plants"]
+    },
+    {
+      "question": "How does water contribute to lubrication in the body? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Major component of synovial fluid",
+        "Reduces friction between joints"
+      ]
+    },
+    {
+      "question": "Describe the structure of a water molecule. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Two hydrogen atoms covalently bonded to one oxygen atom",
+        "Bent shape due to lone electron pairs on oxygen"
+      ]
+    },
+    {
+      "question": "Give one way in which water aids seed germination. [1 mark]",
+      "mark": 1,
+      "mark_scheme": ["Activates enzymes that initiate metabolism"]
+    }
+  ],
 
   "Nucleic Acids": [
     {
@@ -2207,7 +1894,1416 @@
         "Only supported if variables were properly controlled"
       ]
     }
-  ]
+  ],
+
+  "Cell Structure": [
+  {
+    "question": "State one advantage of using an electron microscope over a light microscope. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Higher resolution (can see more detail)",
+      "Higher magnification"
+    ]
+  },
+  {
+    "question": "What is the maximum resolution of a light microscope? [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "200 nm (0.2 μm)"
+    ]
+  },
+  {
+    "question": "Name one type of electron microscope. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Transmission electron microscope (TEM)",
+      "Scanning electron microscope (SEM)"
+    ]
+  },
+  {
+    "question": "Explain why staining is important in microscopy. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Provides contrast",
+      "Allows different organelles or structures to be seen clearly"
+    ]
+  },
+  {
+    "question": "Outline one difference between a transmission electron microscope (TEM) and a scanning electron microscope (SEM). [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "TEM produces 2D images, SEM produces 3D images",
+      "TEM uses thin sections of specimens, SEM scans surfaces"
+    ]
+  },
+  {
+    "question": "State one advantage and one disadvantage of confocal microscopy. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Advantage: Produces 3D images, allows viewing of living cells",
+      "Disadvantage: Lower resolution than electron microscopes"
+    ]
+  },
+  {
+    "question": "Give two examples of stains used in microscopy. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Methylene blue",
+      "Iodine in potassium iodide",
+      "Acetic orcein"
+    ]
+  },
+  {
+    "question": "Describe how a temporary slide of onion epidermis cells would be prepared for viewing under a light microscope. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Peel thin layer of epidermis",
+      "Place on slide with drop of water/iodine",
+      "Add cover slip, avoiding air bubbles"
+    ]
+  },
+  {
+    "question": "State the function of the rough endoplasmic reticulum. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Synthesis and transport of proteins"
+    ]
+  },
+  {
+    "question": "What is the function of the Golgi apparatus? [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Modifies and packages proteins/lipids"
+    ]
+  },
+  {
+    "question": "Name two organelles present in eukaryotic cells but absent in prokaryotic cells. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Nucleus",
+      "Mitochondria",
+      "Endoplasmic reticulum",
+      "Golgi apparatus"
+    ]
+  },
+  {
+    "question": "Explain one structural difference between prokaryotic and eukaryotic cells. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Prokaryotes have circular DNA, eukaryotes have linear DNA in a nucleus",
+      "Prokaryotes lack membrane-bound organelles"
+    ]
+  },
+  {
+    "question": "State two functions of the cytoskeleton. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Maintains cell shape",
+      "Facilitates movement of organelles",
+      "Enables whole-cell movement"
+    ]
+  },
+  {
+    "question": "Describe the role of microtubules in the cytoskeleton. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Provide tracks for movement of organelles",
+      "Form spindle fibres in cell division"
+    ]
+  },
+  {
+    "question": "List in order the organelles involved in the production and secretion of proteins. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Ribosomes (on RER)",
+      "Rough endoplasmic reticulum",
+      "Golgi apparatus",
+      "Vesicles (to plasma membrane)"
+    ]
+  },
+  {
+    "question": "Explain the role of ribosomes in protein synthesis. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Site of translation",
+      "Assemble amino acids into polypeptides"
+    ]
+  },
+  {
+    "question": "Define tissue and give one example. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "A group of specialised cells working together",
+      "Examples: xylem, muscle, epithelial tissue"
+    ]
+  },
+  {
+    "question": "Explain how the structure of a palisade mesophyll cell is adapted to its function. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Many chloroplasts for photosynthesis",
+      "Tall, thin shape to pack tightly",
+      "Large vacuole pushes chloroplasts to edge"
+    ]
+  },
+  {
+    "question": "Describe how the structure of red blood cells is related to their function. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Biconcave shape increases surface area",
+      "No nucleus increases space for haemoglobin",
+      "Flexible to move through capillaries"
+    ]
+  },
+  {
+    "question": "Explain the role of lysosomes in cells. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Contain digestive enzymes",
+      "Break down unwanted organelles/pathogens"
+    ]
+  },
+  {
+    "question": "Give two differences between plant and animal cells. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Plant cells have cell walls, animal cells do not",
+      "Plant cells have chloroplasts, animal cells do not",
+      "Plant cells have a large central vacuole, animals do not"
+    ]
+  },
+  {
+    "question": "Describe the role of centrioles in cell division. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Form spindle fibres",
+      "Organise microtubules"
+    ]
+  },
+  {
+    "question": "Compare the resolution and magnification of light and electron microscopes. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Light microscope resolution ~200 nm, electron microscope ~0.1 nm",
+      "Light microscope magnification up to ×1500, electron microscope up to ×500,000+",
+      "Electron microscopes show more detail of organelles"
+    ]
+  },
+  {
+    "question": "Explain why prokaryotic cells can divide rapidly. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Small/simple structure",
+      "Binary fission is quicker than mitosis"
+    ]
+  },
+  {
+    "question": "Describe how the ultrastructure of a chloroplast is adapted to photosynthesis. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Thylakoids stacked into grana increase surface area",
+      "Chlorophyll pigments absorb light",
+      "Stroma contains enzymes for light-independent reactions",
+      "Double membrane controls entry/exit of substances"
+    ]
+  },
+  {
+    "question": "Explain why mitochondria are described as 'semi-autonomous'. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Contain their own DNA",
+      "Contain ribosomes",
+      "Can produce some of their own proteins/enzymes"
+    ]
+  },
+  {
+    "question": "Outline the steps of protein secretion in a cell. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Protein synthesis at ribosomes on RER",
+      "Transported to Golgi apparatus in vesicles",
+      "Modified and packaged in Golgi",
+      "Transported in vesicles to plasma membrane for exocytosis"
+    ]
+  },
+  {
+    "question": "Compare the DNA of prokaryotic and eukaryotic cells. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Prokaryotes: circular DNA, not in nucleus",
+      "Eukaryotes: linear DNA in nucleus",
+      "Prokaryotes may have plasmids, eukaryotes do not"
+    ]
+  },
+  {
+    "question": "Describe the function of the smooth endoplasmic reticulum. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Synthesis and transport of lipids and steroids"
+    ]
+  },
+  {
+    "question": "Explain how epithelial tissue in the lungs is specialised for gas exchange. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Thin cells for short diffusion distance",
+      "Large surface area of alveoli",
+      "Rich capillary supply maintains concentration gradient"
+    ]
+  },
+  {
+    "question": "Describe how flagella enable movement in prokaryotes. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Rotating structure",
+      "Propels the cell forward"
+    ]
+  },
+  {
+    "question": "Explain why a cover slip should be placed at an angle when preparing a slide. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "To avoid trapping air bubbles",
+      "To protect specimen and lens"
+    ]
+  },
+  {
+    "question": "Compare and contrast the functions of mitochondria and chloroplasts. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Both have double membranes, own DNA, ribosomes",
+      "Mitochondria: aerobic respiration, ATP production",
+      "Chloroplasts: photosynthesis, glucose production",
+      "Both involved in energy conversion"
+    ]
+  },
+  {
+    "question": "Describe how the cytoskeleton is involved in vesicle transport within cells. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Microtubules act as tracks",
+      "Vesicles attach to motor proteins",
+      "ATP provides energy for movement"
+    ]
+  },
+  {
+    "question": "Explain why specialised cells form tissues, organs and organ systems. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Specialised cells perform specific functions",
+      "Tissues are groups of specialised cells working together",
+      "Organs are groups of tissues performing a function",
+      "Organ systems coordinate functions across the organism"
+    ]
+  },
+  {
+    "question": "Describe how light microscopy differs from electron microscopy in preparing specimens. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Light microscopy uses simple staining and thin sections",
+      "Electron microscopy requires fixation, dehydration, embedding",
+      "Specimens often viewed in a vacuum in electron microscopy"
+    ]
+  },
+  {
+    "question": "Explain why organelles are often surrounded by membranes. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Separate incompatible reactions",
+      "Provide specific conditions for enzymes",
+      "Control movement of substances in and out"
+    ]
+  },
+  {
+    "question": "Compare and contrast the ultrastructure of prokaryotic and eukaryotic cells. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Both have cell membranes, ribosomes, cytoplasm, DNA",
+      "Prokaryotes: circular DNA, plasmids, no nucleus",
+      "Eukaryotes: linear DNA in nucleus",
+      "Prokaryotes: 70S ribosomes; eukaryotes: 80S ribosomes",
+      "Prokaryotes lack membrane-bound organelles, eukaryotes have them",
+      "Prokaryotes often have cell wall of peptidoglycan; plants have cellulose walls"
+    ]
+  },
+  {
+    "question": "Explain the pathway of a protein from its synthesis to secretion outside the cell. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Ribosomes on RER synthesise protein",
+      "Protein enters RER lumen, folded/modified",
+      "Transported in vesicles to Golgi apparatus",
+      "Further modification (e.g. glycosylation)",
+      "Packaged into secretory vesicles",
+      "Vesicles fuse with plasma membrane, protein released by exocytosis"
+    ]
+  },
+  {
+    "question": "Discuss how the cytoskeleton contributes to cell shape, intracellular transport, and whole-cell movement. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Microfilaments provide mechanical strength and shape",
+      "Microtubules form a scaffold and tracks for vesicle/organelle transport",
+      "Motor proteins move along microtubules using ATP",
+      "Intermediate filaments provide stability and resist tension",
+      "Cilia/flagella (formed from microtubules) enable movement of cells or substances",
+      "Spindle fibres separate chromosomes in cell division"
+    ]
+  }
+],
+
+"Enzymes": [
+  {
+    "question": "What type of biological molecule are enzymes? [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Proteins"
+    ]
+  },
+  {
+    "question": "Define the term active site. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Region of an enzyme where the substrate binds"
+    ]
+  },
+  {
+    "question": "State the two models used to describe enzyme action. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Lock and key model",
+      "Induced fit model"
+    ]
+  },
+  {
+    "question": "Explain the lock and key hypothesis of enzyme action. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Enzyme active site has a complementary shape to the substrate",
+      "Substrate fits exactly into active site to form enzyme–substrate complex"
+    ]
+  },
+  {
+    "question": "Describe how the induced fit hypothesis differs from the lock and key model. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Active site is flexible and changes shape to fit substrate",
+      "Induced fit puts strain on bonds in substrate, lowering activation energy"
+    ]
+  },
+  {
+    "question": "State one role of enzymes in living organisms. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Catalyse metabolic reactions",
+      "Lower activation energy of reactions"
+    ]
+  },
+  {
+    "question": "What is meant by enzyme specificity? [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Each enzyme catalyses one type of reaction due to its active site shape"
+    ]
+  },
+  {
+    "question": "Explain how temperature affects enzyme activity. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Increases kinetic energy → more collisions → more enzyme–substrate complexes",
+      "At optimum temperature → maximum rate",
+      "Above optimum → denaturation due to breaking of hydrogen/ionic bonds"
+    ]
+  },
+  {
+    "question": "Define denaturation in relation to enzymes. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Loss of tertiary structure and active site shape so substrate no longer fits"
+    ]
+  },
+  {
+    "question": "Describe how pH affects enzyme activity. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Each enzyme has an optimum pH",
+      "Deviation from optimum alters ionic/H-bonding in active site",
+      "Extreme pH changes cause denaturation"
+    ]
+  },
+  {
+    "question": "Explain why increasing substrate concentration increases enzyme activity up to a point. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "More substrate molecules → more frequent collisions",
+      "At saturation point, all active sites occupied so rate plateaus"
+    ]
+  },
+  {
+    "question": "Describe how enzyme concentration affects rate of reaction. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "More enzymes → more active sites available",
+      "Increases rate until substrate becomes limiting factor"
+    ]
+  },
+  {
+    "question": "Define a cofactor. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "A non-protein substance required for enzyme activity"
+    ]
+  },
+  {
+    "question": "Give one example of an inorganic cofactor. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Chloride ions for amylase",
+      "Magnesium ions for DNA polymerase"
+    ]
+  },
+  {
+    "question": "What is a coenzyme? [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "An organic, non-protein cofactor that binds temporarily to enzymes"
+    ]
+  },
+  {
+    "question": "State one example of a coenzyme. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "NAD",
+      "Coenzyme A",
+      "FAD"
+    ]
+  },
+  {
+    "question": "Explain what is meant by a prosthetic group. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "A permanent, tightly bound cofactor",
+      "Essential for enzyme function"
+    ]
+  },
+  {
+    "question": "Give one example of a prosthetic group. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Zinc ion in carbonic anhydrase",
+      "Iron in haem group"
+    ]
+  },
+  {
+    "question": "Explain how a competitive inhibitor works. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Similar shape to substrate",
+      "Binds to active site, preventing substrate binding"
+    ]
+  },
+  {
+    "question": "Explain how a non-competitive inhibitor works. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Binds to allosteric site (not active site)",
+      "Changes shape of active site so substrate no longer fits"
+    ]
+  },
+  {
+    "question": "Give one example of a competitive inhibitor. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Statins",
+      "Malonate"
+    ]
+  },
+  {
+    "question": "Give one example of a non-competitive inhibitor. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Cyanide",
+      "Lead ions"
+    ]
+  },
+  {
+    "question": "Distinguish between reversible and irreversible enzyme inhibition. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Reversible inhibitors bind temporarily to enzyme",
+      "Irreversible inhibitors form permanent bonds, permanently inactivating enzyme"
+    ]
+  },
+  {
+    "question": "Explain why enzyme inhibitors are important in metabolism. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "They regulate metabolic pathways",
+      "Prevent overproduction of substances"
+    ]
+  },
+  {
+    "question": "Describe how immobilised enzymes are produced. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Attached to a surface or trapped in a gel/bead",
+      "Prevents enzymes moving freely in solution"
+    ]
+  },
+  {
+    "question": "State one advantage of immobilised enzymes. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Can be reused",
+      "Increased stability",
+      "Products not contaminated with enzyme"
+    ]
+  },
+  {
+    "question": "Give one industrial use of immobilised enzymes. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Lactase to produce lactose-free milk",
+      "Glucose isomerase to make fructose syrup"
+    ]
+  },
+  {
+    "question": "Explain why enzymes are highly specific. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Active site has complementary shape to substrate",
+      "Only specific substrates can form enzyme–substrate complexes"
+    ]
+  },
+  {
+    "question": "Describe how temperature affects hydrogen bonds in enzymes. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Increased heat vibrations break hydrogen bonds",
+      "Leads to denaturation and loss of active site shape"
+    ]
+  },
+  {
+    "question": "Explain the effect of low temperatures on enzyme activity. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Low kinetic energy",
+      "Few successful collisions between enzyme and substrate"
+    ]
+  },
+  {
+    "question": "Outline why enzymes are described as biological catalysts. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Speed up chemical reactions without being used up",
+      "Lower activation energy"
+    ]
+  },
+  {
+    "question": "Compare competitive and non-competitive inhibition. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Competitive: binds to active site, similar to substrate",
+      "Non-competitive: binds to allosteric site, changes active site",
+      "Competitive inhibition can be overcome by more substrate, non-competitive cannot"
+    ]
+  },
+  {
+    "question": "Describe how cofactors assist enzyme activity. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "May act as co-substrates, forming enzyme–substrate complex",
+      "Stabilise enzyme–substrate interactions",
+      "May participate directly in the reaction"
+    ]
+  },
+  {
+    "question": "Explain the importance of coenzymes in metabolic pathways. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Carry chemical groups between enzymes",
+      "Link reactions together",
+      "Ensure continuous operation of pathways like respiration/photosynthesis"
+    ]
+  },
+  {
+    "question": "Describe one way immobilised enzymes are used in medical or food production. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Immobilised lactase breaks down lactose in milk",
+      "Produces lactose-free products for lactose-intolerant people",
+      "Enzyme does not contaminate final product"
+    ]
+  },
+  {
+    "question": "Discuss how changes in enzyme concentration affect reaction rate and the conditions under which this effect plateaus. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "More enzymes → more active sites → higher reaction rate",
+      "Reaction continues to increase until substrate becomes limiting",
+      "At plateau, increasing enzyme concentration has no effect",
+      "Substrate concentration determines maximum rate"
+    ]
+  },
+  {
+    "question": "Explain how temperature and pH act together to affect enzyme activity. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Both affect hydrogen/ionic bonding in enzyme structure",
+      "Optimum values maximise enzyme activity",
+      "Extreme deviations cause denaturation",
+      "Together determine whether enzyme is functional in given conditions"
+    ]
+  },
+  {
+    "question": "Explain why the induced fit model better explains enzyme activity than the lock and key model. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Active site changes shape slightly to fit substrate",
+      "Explains enzyme flexibility",
+      "Explains how bonds in substrate are strained, lowering activation energy",
+      "Lock and key does not account for conformational changes"
+    ]
+  },
+  {
+    "question": "Compare reversible and irreversible inhibition with reference to drug use and toxins. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Reversible: temporary binding, allows enzyme function to return (e.g. statins, ACE inhibitors)",
+      "Irreversible: permanent inactivation (e.g. cyanide, heavy metals)",
+      "Reversible inhibitors regulate pathways safely",
+      "Irreversible inhibitors can be toxic or used in poisons",
+      "Some drugs act as reversible inhibitors to control enzyme activity",
+      "Toxins often work as irreversible inhibitors"
+    ]
+  },
+  {
+    "question": "Discuss the advantages of immobilised enzymes in industrial processes. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Enzymes can be reused → cost effective",
+      "Increased stability at extreme temperatures/pH",
+      "Products are not contaminated with enzyme",
+      "Enzymes can be used in continuous processes",
+      "Different enzymes can be combined in one process",
+      "Overall efficiency and yield improved"
+    ]
+  },
+  {
+    "question": "Describe and explain the effect of substrate concentration on enzyme-catalysed reactions. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Low substrate: fewer collisions, low rate",
+      "Increasing substrate: more collisions, higher rate",
+      "At Vmax: all active sites saturated",
+      "No further increase in rate beyond saturation",
+      "Effect depends on enzyme concentration",
+      "Graph shows hyperbolic curve until plateau"
+    ]
+  },
+  {
+    "question": "Explain the role of cofactors and coenzymes in enzyme-controlled reactions, using named examples. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Cofactors: non-protein helpers, may be inorganic ions (e.g. Cl⁻ for amylase)",
+      "Coenzymes: organic molecules, often vitamin-derived (e.g. NAD in respiration)",
+      "Cofactors may stabilise enzyme–substrate complexes",
+      "Coenzymes act as carriers of chemical groups or electrons",
+      "Both are essential for enzyme activity",
+      "Without them, enzymes may not function properly"
+    ]
+  }
+],
+
+"Biological membranes": [
+  {
+    "question": "Name the primary lipid that forms the basis of the fluid mosaic model. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Phospholipid"
+    ]
+  },
+  {
+    "question": "Define the term 'fluid mosaic model'. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Membrane is a fluid phospholipid bilayer",
+      "With a mosaic of proteins (and other molecules) embedded/dispersed within it"
+    ]
+  },
+  {
+    "question": "State one role of cholesterol in animal cell membranes. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Regulates membrane fluidity",
+      "Stabilises membrane"
+    ]
+  },
+  {
+    "question": "Distinguish between integral (intrinsic) and peripheral (extrinsic) membrane proteins. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Integral span/are embedded in the bilayer (often transmembrane)",
+      "Peripheral are loosely attached to the surface (inner or outer leaflet)"
+    ]
+  },
+  {
+    "question": "Explain why the phospholipid bilayer forms spontaneously in water. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Phosphate heads are hydrophilic and face aqueous environments",
+      "Fatty acid tails are hydrophobic and face inward away from water",
+      "Arrangement is energetically favourable (reduces exposure of hydrophobic tails to water)"
+    ]
+  },
+  {
+    "question": "Describe the role of glycolipids and glycoproteins in membranes. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Cell recognition/cell–cell adhesion",
+      "Receptor sites for signalling molecules"
+    ]
+  },
+  {
+    "question": "State two features of membranes that make them 'fluid'. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Lateral movement of phospholipids",
+      "Presence of cholesterol and unsaturated fatty acids allowing flexibility"
+    ]
+  },
+  {
+    "question": "Explain how fatty acid saturation affects membrane fluidity. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Unsaturated fatty acids introduce kinks",
+      "Reduce tight packing of tails",
+      "Increase fluidity (especially at lower temperatures)"
+    ]
+  },
+  {
+    "question": "Define compartmentalisation in cells. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Separation of cellular processes into membrane-bound regions"
+    ]
+  },
+  {
+    "question": "Give two advantages of compartmentalisation for cell function. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Creates optimal microenvironments for enzymes",
+      "Prevents interference between incompatible reactions",
+      "Concentrates substrates and enzymes"
+    ]
+  },
+  {
+    "question": "Describe how membrane proteins are involved in cell signalling. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Receptor proteins bind specific ligands",
+      "Conformational change activates intracellular response",
+      "May trigger second messenger pathways/enzyme cascades"
+    ]
+  },
+  {
+    "question": "Explain the role of membrane carbohydrates in cell recognition. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Glycocalyx patterns act as identification tags",
+      "Enable immune recognition/self–non-self discrimination"
+    ]
+  },
+  {
+    "question": "State one membrane role in transport other than diffusion. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Active transport",
+      "Facilitated diffusion",
+      "Endocytosis/exocytosis"
+    ]
+  },
+  {
+    "question": "Outline how membranes contribute to energy transduction in mitochondria or chloroplasts. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Provide surfaces for electron transport chains",
+      "Create proton gradients across membranes",
+      "ATP synthase uses gradient to synthesise ATP"
+    ]
+  },
+  {
+    "question": "Define diffusion. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Net movement of particles from higher to lower concentration"
+    ]
+  },
+  {
+    "question": "List two factors that affect the rate of simple diffusion across membranes. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Concentration gradient",
+      "Temperature",
+      "Surface area",
+      "Thickness (diffusion distance)"
+    ]
+  },
+  {
+    "question": "Explain why large polar molecules require facilitated diffusion. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "They cannot pass through hydrophobic core of bilayer",
+      "Require specific channel or carrier proteins"
+    ]
+  },
+  {
+    "question": "Differentiate between channel proteins and carrier proteins in facilitated diffusion. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Channels form hydrophilic pores; carriers change shape to move solute",
+      "Channels often selective for ions/water; carriers for specific molecules",
+      "Both passive and move down concentration gradient"
+    ]
+  },
+  {
+    "question": "Define osmosis using the term water potential. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Net movement of water across a partially permeable membrane",
+      "From higher (less negative) to lower (more negative) water potential"
+    ]
+  },
+  {
+    "question": "Describe the effect of placing plant cells in solutions of lower water potential than the cell sap. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Water leaves the cell by osmosis",
+      "Cytoplasm and membrane pull away from cell wall",
+      "Plasmolysis occurs"
+    ]
+  },
+  {
+    "question": "Define active transport. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Movement of substances against a concentration gradient using energy (ATP)"
+    ]
+  },
+  {
+    "question": "Explain the role of ATP in active transport via carrier proteins. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "ATP hydrolysis provides energy",
+      "Drives conformational changes to pump solute across membrane"
+    ]
+  },
+  {
+    "question": "Name and briefly describe two types of endocytosis. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Phagocytosis: uptake of large particles/cells",
+      "Pinocytosis: uptake of fluids/small solutes",
+      "Receptor-mediated endocytosis: specific ligand uptake via receptors"
+    ]
+  },
+  {
+    "question": "Outline the process of exocytosis. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Vesicles fuse with plasma membrane",
+      "Contents released to extracellular space"
+    ]
+  },
+  {
+    "question": "Explain the sodium–potassium pump as an example of active transport. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Pumps 3 Na⁺ out and 2 K⁺ into the cell per ATP hydrolysed",
+      "Maintains electrochemical gradients",
+      "Involves conformational change of an ATPase carrier"
+    ]
+  },
+  {
+    "question": "Describe how co-transport (secondary active transport) operates. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Uses gradient of one ion (e.g., Na⁺) established by primary active transport",
+      "Co-transporter moves another solute with the ion",
+      "Does not use ATP directly in the co-transport step"
+    ]
+  },
+  {
+    "question": "Predict the effect of increasing temperature moderately on membrane fluidity and permeability. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Increases phospholipid movement (fluidity rises)",
+      "Permeability increases (more leakage of substances)"
+    ]
+  },
+  {
+    "question": "Explain why high temperatures can disrupt membrane structure. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Break hydrogen/weak interactions between phospholipids and proteins",
+      "Denature membrane proteins",
+      "Increase gaps in bilayer → higher permeability"
+    ]
+  },
+  {
+    "question": "Describe the effect of organic solvents (e.g., ethanol) on membranes. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Dissolve/disrupt phospholipid bilayer",
+      "Increase membrane permeability"
+    ]
+  },
+  {
+    "question": "Outline a practical to investigate temperature effects on membrane permeability using beetroot. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Cut equal-sized beetroot discs and rinse",
+      "Incubate in water at different temperatures for fixed time",
+      "Measure pigment release using colorimeter/absorbance",
+      "Control variables (disc size, time, volume)"
+    ]
+  },
+  {
+    "question": "Explain why aquaporins increase the rate of osmosis in certain tissues. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Provide selective channels for water",
+      "Reduce resistance compared to diffusion through bilayer"
+    ]
+  },
+  {
+    "question": "Compare passive and active transport across membranes. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Passive: down gradient; no metabolic energy",
+      "Active: against gradient; requires ATP",
+      "Different protein involvement (channels/carriers vs pumps)"
+    ]
+  },
+  {
+    "question": "Discuss how membrane structure supports selective permeability. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Hydrophobic core restricts polar/charged molecules",
+      "Specific transport proteins allow selective passage",
+      "Gated channels/carriers respond to stimuli",
+      "Cholesterol and lipid composition modulate permeability"
+    ]
+  },
+  {
+    "question": "Explain how receptor-mediated endocytosis ensures specificity of uptake. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Ligands bind specific membrane receptors",
+      "Clathrin-coated pits form vesicles",
+      "Only receptor–ligand complexes internalised efficiently"
+    ]
+  },
+  {
+    "question": "A cell is placed in a solution with water potential of −500 kPa; the cell’s cytoplasm is −300 kPa. Predict net water movement and justify. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Water moves out of the cell",
+      "From higher (−300 kPa) to lower (more negative, −500 kPa) water potential",
+      "By osmosis across the membrane"
+    ]
+  },
+  {
+    "question": "Evaluate the statement: 'Non-polar molecules cross membranes faster than ions of similar size.' [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "True because hydrophobic core favours non-polar diffusion",
+      "Ions are charged and require channels/transporters",
+      "Electrostatic interactions with water hinder ion passage"
+    ]
+  },
+  {
+    "question": "Describe how temperature and solvent concentration together could confound a membrane permeability investigation and how to control them. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Both increase permeability via different mechanisms",
+      "Confounding if both vary between treatments",
+      "Control by keeping one constant while varying the other",
+      "Use appropriate controls and replicate measurements"
+    ]
+  },
+  {
+    "question": "Compare and contrast diffusion, facilitated diffusion, and active transport in terms of energy use, direction, and proteins involved. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Diffusion: no energy; down gradient; no proteins required (for small non-polar)",
+      "Facilitated diffusion: no energy; down gradient; requires channels/carriers",
+      "Active transport: requires ATP; against gradient; uses pumps",
+      "All can be selective",
+      "Facilitated and active are saturable due to limited proteins",
+      "Active can establish/maintain gradients used by co-transport"
+    ]
+  },
+  {
+    "question": "Explain how the fluid mosaic model accounts for membrane flexibility, repair, and protein mobility, and outline one experimental evidence. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Fluid phospholipids allow lateral diffusion → flexibility",
+      "Lipids/proteins can move to seal small tears → self-repair",
+      "Proteins exhibit lateral mobility within the bilayer",
+      "Evidence: FRAP (fluorescence recovery after photobleaching) shows protein diffusion",
+      "Evidence: Freeze-fracture reveals embedded proteins",
+      "Hybrid cell experiments show protein mixing"
+    ]
+  },
+  {
+    "question": "Discuss the roles of membranes in intracellular signalling using examples of receptor types and downstream responses. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Membranes house receptors (GPCRs, enzyme-linked, ligand-gated ion channels)",
+      "Ligand binding triggers conformational change",
+      "Activates second messengers/kinase cascades",
+      "Alters gene expression/metabolic pathways",
+      "Example: insulin receptor (tyrosine kinase) → glucose uptake",
+      "Example: neurotransmitter binding opens ion channels"
+    ]
+  },
+  {
+    "question": "Evaluate how temperature changes alter membrane fluidity and function across poikilotherms, and suggest adaptations. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Lower temperature reduces fluidity → impaired transport/signalling",
+      "Higher temperature increases fluidity → leakiness/protein denaturation",
+      "Adaptations: alter fatty acid unsaturation, cholesterol content",
+      "Homeoviscous adaptation maintains optimal fluidity",
+      "Changes in protein isoforms/lipid composition",
+      "Impacts enzyme kinetics and membrane-bound processes"
+    ]
+  }
+],
+
+"Cell division, cell diversity and cellular organisation": [
+  {
+    "question": "Name the two main stages of the cell cycle. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Interphase",
+      "M phase (mitosis and cytokinesis)"
+    ]
+  },
+  {
+    "question": "State what occurs during the S phase of interphase. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "DNA replication"
+    ]
+  },
+  {
+    "question": "List the four stages of mitosis in order. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Prophase",
+      "Metaphase",
+      "Anaphase",
+      "Telophase"
+    ]
+  },
+  {
+    "question": "Describe one event that occurs during prophase. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Chromosomes condense and become visible",
+      "Nuclear envelope breaks down",
+      "Spindle fibres form"
+    ]
+  },
+  {
+    "question": "Explain the role of the spindle fibres in mitosis. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Attach to centromeres of chromosomes",
+      "Pull sister chromatids apart to opposite poles"
+    ]
+  },
+  {
+    "question": "State one difference between cytokinesis in animal and plant cells. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Animal: cleavage furrow forms",
+      "Plant: cell plate forms"
+    ]
+  },
+  {
+    "question": "Give two purposes of mitosis. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Growth",
+      "Tissue repair",
+      "Asexual reproduction"
+    ]
+  },
+  {
+    "question": "Define meiosis. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Reduction division producing haploid gametes from diploid cells"
+    ]
+  },
+  {
+    "question": "Explain why meiosis is important in sexual reproduction. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Halves chromosome number to restore diploid state at fertilisation",
+      "Introduces genetic variation"
+    ]
+  },
+  {
+    "question": "State the number of daughter cells produced in meiosis and whether they are genetically identical. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Four daughter cells",
+      "Genetically non-identical"
+    ]
+  },
+  {
+    "question": "Describe crossing over and when it occurs. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Homologous chromosomes exchange genetic material",
+      "Occurs in prophase I of meiosis"
+    ]
+  },
+  {
+    "question": "Explain independent assortment. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Random orientation of homologous chromosomes at metaphase I",
+      "Leads to different combinations of maternal and paternal chromosomes"
+    ]
+  },
+  {
+    "question": "State two ways meiosis generates genetic variation. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Crossing over",
+      "Independent assortment",
+      "Random fertilisation (if considered)"
+    ]
+  },
+  {
+    "question": "Compare mitosis and meiosis in terms of chromosome number and genetic variation. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Mitosis: diploid → diploid, no variation",
+      "Meiosis: diploid → haploid, variation introduced",
+      "Mitosis produces 2 identical cells, meiosis 4 different cells"
+    ]
+  },
+  {
+    "question": "Describe the structure of an erythrocyte and explain how it relates to its function. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Biconcave shape increases surface area",
+      "No nucleus → more space for haemoglobin",
+      "Flexible to fit through capillaries"
+    ]
+  },
+  {
+    "question": "Give one structural adaptation of neutrophils and its functional significance. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Many lysosomes → digest pathogens",
+      "Flexible shape → squeeze through capillary walls"
+    ]
+  },
+  {
+    "question": "Explain how squamous epithelial cells are adapted to their function. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Thin, flat shape → short diffusion distance",
+      "Line surfaces such as alveoli for gas exchange"
+    ]
+  },
+  {
+    "question": "Describe two structural features of xylem vessels. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Lignified cell walls for strength",
+      "No end walls, forming continuous tubes"
+    ]
+  },
+  {
+    "question": "Explain how phloem sieve tube elements are adapted for transport. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Few organelles for maximum space",
+      "Sieve plates with pores allow flow of sap",
+      "Companion cells provide ATP/metabolic support"
+    ]
+  },
+  {
+    "question": "State the role of guard cells in plants. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Control opening and closing of stomata to regulate gas exchange"
+    ]
+  },
+  {
+    "question": "Define the term 'stem cell'. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Undifferentiated cell capable of division and differentiation"
+    ]
+  },
+  {
+    "question": "Distinguish between totipotent and pluripotent stem cells. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Totipotent can form all cell types including extraembryonic tissues",
+      "Pluripotent can form most cell types but not extraembryonic tissues"
+    ]
+  },
+  {
+    "question": "Give one medical use of stem cells. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Treatment of leukaemia using bone marrow transplant",
+      "Regenerating damaged tissues"
+    ]
+  },
+  {
+    "question": "Explain one ethical concern with embryonic stem cell use. [1 mark]",
+    "mark": 1,
+    "mark_scheme": [
+      "Involves destruction of embryos"
+    ]
+  },
+  {
+    "question": "Outline the potential use of induced pluripotent stem cells (iPSCs). [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Somatic cells reprogrammed to pluripotency",
+      "Can generate patient-specific cells for therapy without embryo use"
+    ]
+  },
+  {
+    "question": "Explain the significance of checkpoints in the cell cycle. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Ensure DNA is replicated without damage",
+      "Prevent uncontrolled cell division/cancer"
+    ]
+  },
+  {
+    "question": "Describe what happens during anaphase of mitosis. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Sister chromatids separate at centromeres",
+      "Chromatids pulled to opposite poles by spindle fibres"
+    ]
+  },
+  {
+    "question": "State two processes that occur during telophase. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Nuclear envelopes reform around chromosomes",
+      "Chromosomes uncoil to form chromatin"
+    ]
+  },
+  {
+    "question": "Explain how uncontrolled cell division can lead to cancer. [2 marks]",
+    "mark": 2,
+    "mark_scheme": [
+      "Mutations bypass cell cycle checkpoints",
+      "Cells divide uncontrollably forming tumours"
+    ]
+  },
+  {
+    "question": "Compare the roles of mitosis and meiosis in the life cycle of organisms. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Mitosis: growth, repair, asexual reproduction",
+      "Meiosis: production of gametes for sexual reproduction",
+      "Both ensure genetic continuity but meiosis introduces variation"
+    ]
+  },
+  {
+    "question": "Discuss the importance of stem cells in research. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Model systems to study development",
+      "Drug testing on differentiated cells",
+      "Study of genetic diseases",
+      "Understanding cell specialisation and differentiation"
+    ]
+  },
+  {
+    "question": "Explain how stem cells are used in the treatment of Type 1 diabetes. [3 marks]",
+    "mark": 3,
+    "mark_scheme": [
+      "Differentiate into insulin-producing beta cells",
+      "Transplanted into pancreas",
+      "Restore insulin secretion and blood glucose regulation"
+    ]
+  },
+  {
+    "question": "Describe how meiosis contributes to genetic variation in gametes. [4 marks]",
+    "mark": 4,
+    "mark_scheme": [
+      "Crossing over exchanges genetic material between homologous chromosomes",
+      "Independent assortment shuffles maternal/paternal chromosomes",
+      "Random segregation during anaphase I and II",
+      "Results in unique gametes"
+    ]
+  },
+  {
+    "question": "Evaluate the benefits and risks of using stem cells in regenerative medicine. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Benefits: replace damaged tissues, treat degenerative diseases, reduce transplant shortages",
+      "Potential to cure currently untreatable conditions",
+      "Risks: immune rejection, risk of tumours, ethical concerns",
+      "Embryonic stem cells raise moral issues",
+      "Adult stem cells less versatile",
+      "Induced pluripotent stem cells reduce ethical concerns but may have instability"
+    ]
+  },
+  {
+    "question": "Describe the sequence of events in the cell cycle and explain the significance of each stage. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "G1: cell growth, organelle replication",
+      "S: DNA replication",
+      "G2: preparation for mitosis",
+      "M phase: mitosis divides nucleus",
+      "Cytokinesis: cytoplasm division",
+      "Significance: ensures genetic continuity and cell viability"
+    ]
+  },
+  {
+    "question": "Discuss the adaptations of xylem, phloem, and guard cells in relation to their functions. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Xylem: lignified walls, hollow tubes → water transport/support",
+      "Phloem: sieve tubes with pores, companion cells → translocation of sugars",
+      "Guard cells: uneven thickening of walls, turgor changes → open/close stomata",
+      "All are specialised plant cells adapted for transport and regulation"
+    ]
+  },
+  {
+    "question": "Explain the role of meiosis in maintaining chromosome number across generations and promoting genetic diversity. [6 marks]",
+    "mark": 6,
+    "mark_scheme": [
+      "Reduces diploid to haploid to maintain stable chromosome number after fertilisation",
+      "Crossing over creates recombinant chromosomes",
+      "Independent assortment produces many combinations",
+      "Fertilisation further increases variation",
+      "Essential for evolution and adaptation",
+      "Maintains genetic stability within species"
+    ]
+  }
+]
+
 }
 
 
