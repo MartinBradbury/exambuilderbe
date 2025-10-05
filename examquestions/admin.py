@@ -18,7 +18,7 @@ class BiologyTopicAdmin(admin.ModelAdmin):
 
 @admin.register(BiologySubTopic)
 class BiologySubTopicAdmin(admin.ModelAdmin):  # added colon
-    list_display = ("title", "title")
+    list_display = ("title", "topic")
     search_fields = ("title",)
     list_filter = ("title",)
 
