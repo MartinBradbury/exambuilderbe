@@ -3418,9 +3418,1405 @@
       "Maintains genetic stability within species (1 mark)"
     ]
   }
+],
+
+"Photosynthesis": [
+    {
+      "question": "Write the overall balanced equation for photosynthesis and name the energy source. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "6CO2 + 6H2O → C6H12O6 + 6O2 (1 mark)",
+        "Light energy is the energy source and chlorophyll is required (1 mark)"
+      ]
+    },
+    {
+      "question": "State the specific site of the light-dependent reactions in a chloroplast. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Thylakoid membranes (grana) (1 mark)"
+      ]
+    },
+    {
+      "question": "State the site of the Calvin cycle in a chloroplast. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Stroma (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the primary role of chlorophyll a in photosystems. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Acts at the reaction centre to donate excited electrons (1 mark)",
+        "Absorbs mainly red/blue light to initiate photochemistry (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the relationship between absorption spectra and action spectra in photosynthesis. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Absorption spectrum shows wavelengths absorbed by pigments (1 mark)",
+        "Action spectrum shows photosynthetic rate vs wavelength (1 mark)",
+        "Peaks largely coincide because absorbed light drives photosynthesis (1 mark)"
+      ]
+    },
+    {
+      "question": "Define photolysis of water. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Light-driven splitting of water into protons, electrons and oxygen (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the main steps of non-cyclic photophosphorylation. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Light excites electrons in PSII (1 mark)",
+        "Electrons pass along an electron transport chain releasing energy (1 mark)",
+        "Energy pumps protons into thylakoid lumen creating a gradient (1 mark)",
+        "Photolysis of water replaces PSII electrons and releases O2 (1 mark)",
+        "Protons flow through ATP synthase to make ATP (chemiosmosis) (1 mark)",
+        "Electrons reach PSI, are re-excited and reduce NADP to NADPH (1 mark)"
+      ]
+    },
+    {
+      "question": "Summarise cyclic photophosphorylation at PSI. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Light excites electrons in PSI which enter an electron transport chain (1 mark)",
+        "Energy from electron flow generates ATP via chemiosmosis (1 mark)",
+        "Electrons return to PSI; no NADPH or O2 is produced (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain chemiosmosis in the light-dependent reactions. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Electron transport drives proton pumping into the thylakoid lumen (1 mark)",
+        "Proton gradient produces a proton motive force across the membrane (1 mark)",
+        "Protons flow through ATP synthase, catalysing ATP formation (1 mark)"
+      ]
+    },
+    {
+      "question": "Name the two immediate products of the light-dependent reactions that are used in the Calvin cycle. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "ATP (1 mark)",
+        "Reduced NADP (NADPH) (1 mark)"
+      ]
+    },
+    {
+      "question": "State the roles of ATP and NADPH in the Calvin cycle. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "ATP provides energy/phosphorylation for reduction reactions (1 mark)",
+        "NADPH provides reducing power (hydrogen/electrons) (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the stages of the Calvin cycle from CO2 fixation to RuBP regeneration. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "CO2 combines with RuBP catalysed by RuBisCO (1 mark)",
+        "Unstable 6-carbon intermediate forms two GP molecules (1 mark)",
+        "GP is reduced to TP using NADPH (1 mark)",
+        "ATP provides energy/phosphate for the reduction step (1 mark)",
+        "Some TP leaves the cycle to form sugars (1 mark)",
+        "Most TP is used (with ATP) to regenerate RuBP (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the function of the enzyme RuBisCO. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Catalyses the fixation of CO2 to RuBP (carboxylation) (1 mark)",
+        "Initiates the Calvin cycle by forming GP (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe two possible fates of triose phosphate (TP). [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Used to synthesise hexose sugars/starch/cellulose (1 mark)",
+        "Recycled to regenerate RuBP (1 mark)"
+      ]
+    },
+    {
+      "question": "How many turns of the Calvin cycle are required to produce one molecule of glucose and why? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Six turns are required (1 mark)",
+        "Because 6 CO2 are needed to provide the carbon for one C6 sugar (1 mark)"
+      ]
+    },
+    {
+      "question": "Define a limiting factor in photosynthesis. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A factor that, when in short supply, restricts the rate of photosynthesis (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how low temperature limits the rate of photosynthesis. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Enzyme activity in the Calvin cycle decreases (1 mark)",
+        "Reduced kinetic energy lowers collision frequency (1 mark)",
+        "Slower GP → TP conversion and RuBP regeneration (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the effect of increasing light intensity on photosynthetic rate when CO2 and temperature are non-limiting. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Rate increases as more ATP and NADPH are generated (1 mark)",
+        "Eventually plateaus when another factor becomes limiting (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how low carbon dioxide concentration affects Calvin cycle intermediates. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Less CO2 fixation reduces GP formation (1 mark)",
+        "RuBP accumulates due to reduced carboxylation (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe an investigation to measure the effect of light intensity on photosynthesis using an aquatic plant. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Use Elodea/Cabomba and count oxygen bubbles or measure O2 with a sensor (1 mark)",
+        "Vary distance/light intensity with a lamp and light meter (1 mark)",
+        "Control temperature and CO2 (e.g., sodium hydrogencarbonate) (1 mark)",
+        "Repeat and calculate mean rates at each intensity (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the formula used to calculate Rf values in pigment chromatography. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Rf = distance moved by pigment ÷ distance moved by solvent front (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why different photosynthetic pigments separate during chromatography. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Pigments differ in solubility in the solvent (1 mark)",
+        "Pigments differ in affinity to the stationary phase (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the action spectrum does not match exactly the absorption spectrum of chlorophyll alone. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Accessory pigments absorb additional wavelengths (1 mark)",
+        "Energy is funnelled to reaction centres via antenna complexes (1 mark)",
+        "Whole-leaf processes and internal CO2 availability influence overall rate (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe three chloroplast adaptations that maximise photosynthetic efficiency. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Extensive thylakoid membranes increase surface area for light reactions (1 mark)",
+        "Stroma contains enzymes and is close to thylakoids for rapid transfer (1 mark)",
+        "Own DNA/ribosomes enable rapid synthesis of key proteins (1 mark)"
+      ]
+    },
+    {
+      "question": "State the role of accessory pigments within a photosystem. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Broaden the range of wavelengths absorbed (1 mark)",
+        "Transfer excitation energy to chlorophyll a at the reaction centre (1 mark)"
+      ]
+    },
+    {
+      "question": "Why is green light least effective at driving photosynthesis in most plants? [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Green light is mostly reflected/transmitted, not absorbed (1 mark)"
+      ]
+    },
+    {
+      "question": "Define photorespiration and state its effect on photosynthetic efficiency. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "RuBisCO uses O2 instead of CO2 (oxygenation of RuBP) (1 mark)",
+        "Produces phosphoglycolate that must be recycled (1 mark)",
+        "Wastes energy and reduces net carbon fixation (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain one advantage of the C4 pathway in hot, bright conditions. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "CO2 is concentrated around RuBisCO in bundle sheath cells (1 mark)",
+        "Reduces photorespiration at high temperatures (1 mark)",
+        "Maintains higher photosynthetic rates under intense light (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how stomatal regulation presents a trade-off for photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Opening stomata increases CO2 uptake (1 mark)",
+        "But increases water loss by transpiration (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how water stress can indirectly reduce photosynthetic rate. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Water stress causes stomata to close (1 mark)",
+        "Lower CO2 entry reduces Calvin cycle activity (1 mark)"
+      ]
+    },
+    {
+      "question": "Interpret a graph where photosynthetic rate increases with light then plateaus despite further light increase. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Initial rise shows light is limiting (1 mark)",
+        "Plateau indicates another factor (CO2 or temperature) is limiting (1 mark)",
+        "Further light cannot increase rate without removing the new limitation (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why ATP synthase is embedded in the thylakoid membrane. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It uses the trans-thylakoid proton gradient (1 mark)",
+        "Provides a channel and catalytic site for ATP formation (1 mark)"
+      ]
+    },
+    {
+      "question": "During illumination, why does the pH of the stroma rise while the thylakoid lumen becomes acidic? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Protons are pumped into the thylakoid lumen and produced by photolysis (1 mark)",
+        "Proton removal from stroma increases stromal pH (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the Calvin cycle is termed light-independent yet its rate depends on light. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Reactions do not require light directly (1 mark)",
+        "But depend on ATP and NADPH generated by the light-dependent reactions (1 mark)"
+      ]
+    },
+    {
+      "question": "Why does temperature usually affect the light-independent reactions more than the light-dependent reactions? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Calvin cycle steps are enzyme-catalysed (temperature sensitive) (1 mark)",
+        "Light reactions are driven primarily by photon energy and membranes (less temperature sensitive) (1 mark)"
+      ]
+    },
+    {
+      "question": "Write a balanced equation for the photolysis of one water molecule. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "H2O → 2H+ + 2e− + ½O2 (1 mark)"
+      ]
+    },
+    {
+      "question": "Name two biosynthetic uses of triose phosphate (TP) other than glucose. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Synthesis of glycerol/fatty acids → lipids (1 mark)",
+        "Synthesis of amino acids/proteins (using nitrogen) (1 mark)"
+      ]
+    },
+    {
+      "question": "Name the coenzyme that is reduced in the light-dependent reactions. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "NADP (reduced to NADPH) (1 mark)"
+      ]
+    },
+    {
+      "question": "State the role of the thylakoid electron transport chain. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Transfers electrons between carriers at decreasing energy levels (1 mark)",
+        "Releases energy to pump protons for ATP synthesis (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how glycerate-3-phosphate (GP) is converted to triose phosphate (TP). [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "GP is reduced using NADPH as a reducing agent (1 mark)",
+        "ATP provides energy/phosphorylation for the reduction (1 mark)"
+      ]
+    }
+],
+
+"Respiration": [
+    {
+      "question": "Define cellular respiration. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The controlled release of energy from organic molecules to produce ATP (1 mark)"
+      ]
+    },
+    {
+      "question": "State the immediate energy currency of the cell. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "ATP (adenosine triphosphate) (1 mark)"
+      ]
+    },
+    {
+      "question": "Where in the cell does glycolysis occur? [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Cytosol/cytoplasm (1 mark)"
+      ]
+    },
+    {
+      "question": "Name the two coenzymes commonly reduced during respiration. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "NAD (reduced to NADH) (1 mark)",
+        "FAD (reduced to FADH2) (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the net ATP yield from glycolysis per glucose molecule. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Net gain of 2 ATP (4 made, 2 used) (1 mark)",
+        "2 NADH produced (potential for further ATP via oxidative phosphorylation) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by substrate-level phosphorylation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "ATP formation by direct transfer of a phosphate group from a phosphorylated intermediate to ADP (1 mark)",
+        "Occurs in glycolysis and Krebs cycle (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the fate of pyruvate in aerobic conditions in eukaryotes. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Transported into the mitochondrial matrix (1 mark)",
+        "Decarboxylated and dehydrogenated to form acetyl group (1 mark)",
+        "Acetyl group combines with CoA to form acetyl-CoA (1 mark)"
+      ]
+    },
+    {
+      "question": "State the products of the link reaction per pyruvate. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "1 NADH (1 mark)",
+        "1 CO2 (1 mark)",
+        "1 acetyl-CoA (1 mark)"
+      ]
+    },
+    {
+      "question": "List three features of mitochondria that aid aerobic respiration. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Highly folded inner membrane (cristae) increases surface area for ETC and ATP synthase (1 mark)",
+        "Matrix contains enzymes for link reaction and Krebs cycle (1 mark)",
+        "Intermembrane space allows proton accumulation for chemiosmosis (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the first two steps when acetyl-CoA enters the Krebs cycle. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Acetyl (2C) combines with oxaloacetate (4C) to form citrate (6C) (1 mark)",
+        "Citrate is isomerised to isocitrate (1 mark)"
+      ]
+    },
+    {
+      "question": "State, per turn of the Krebs cycle (per acetyl-CoA), the number of CO2, NADH, FADH2 and ATP (or GTP) produced. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "2 CO2 (1 mark)",
+        "3 NADH (1 mark)",
+        "1 FADH2 (1 mark)",
+        "1 ATP (or GTP) by substrate-level phosphorylation (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the role of oxygen in oxidative phosphorylation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Final electron acceptor at the end of the electron transport chain (1 mark)",
+        "Combines with electrons and protons to form water (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe chemiosmosis in mitochondria. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Electron transport releases energy used to pump protons into the intermembrane space (1 mark)",
+        "Proton gradient creates a proton motive force across the inner membrane (1 mark)",
+        "Protons flow through ATP synthase driving ATP synthesis from ADP and Pi (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare the ATP yield from NADH and FADH2 via the electron transport chain. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "NADH donates electrons to Complex I, generally producing more ATP (1 mark)",
+        "FADH2 donates to Complex II (skips Complex I), producing slightly less ATP (1 mark)"
+      ]
+    },
+    {
+      "question": "Define respiratory quotient (RQ) and give its formula. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "RQ is the ratio of CO2 produced to O2 consumed during respiration (1 mark)",
+        "RQ = CO2 produced / O2 consumed (1 mark)"
+      ]
+    },
+    {
+      "question": "State typical RQ values for carbohydrates, lipids and proteins. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Carbohydrates ≈ 1.0 (1 mark)",
+        "Lipids ≈ 0.7 (1 mark)",
+        "Proteins ≈ 0.8–0.9 (accept 0.8) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the theoretical maximum ATP yield per glucose is rarely achieved in cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Proton leak across the inner mitochondrial membrane (1 mark)",
+        "ATP used to transport ADP, Pi and pyruvate (1 mark)",
+        "Shuttle systems for cytosolic NADH may yield fewer ATP (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe lactate fermentation in mammals. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Occurs in cytosol under anaerobic conditions (1 mark)",
+        "Pyruvate is reduced to lactate by lactate dehydrogenase (1 mark)",
+        "NADH is oxidised to NAD+ allowing glycolysis to continue (1 mark)",
+        "Lactate can be transported to liver for conversion back to pyruvate/glucose (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe alcoholic fermentation in yeast. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Pyruvate is decarboxylated to ethanal (1 mark)",
+        "Ethanol is formed by reduction of ethanal using NADH (1 mark)",
+        "NADH is oxidised to regenerate NAD+ (1 mark)",
+        "Occurs in cytosol under anaerobic conditions (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why glycolysis can continue during anaerobic respiration. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fermentation pathways regenerate NAD+ from NADH (1 mark)",
+        "NAD+ is required for glyceraldehyde-3-phosphate dehydrogenase in glycolysis (1 mark)"
+      ]
+    },
+    {
+      "question": "State two reasons why aerobic respiration yields more ATP than anaerobic pathways. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Oxidative phosphorylation generates large amounts of ATP using oxygen (1 mark)",
+        "Complete oxidation of glucose to CO2 extracts more energy than partial oxidation to lactate/ethanol (1 mark)"
+      ]
+    },
+    {
+      "question": "Define oxygen debt. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The extra oxygen required after exercise to oxidise accumulated lactate and restore ATP/creatine phosphate (1 mark)"
+      ]
+    },
+    {
+      "question": "Name the four main stages of aerobic respiration in correct order. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Glycolysis, link reaction, Krebs cycle, oxidative phosphorylation (1 mark each up to two)"
+      ]
+    },
+    {
+      "question": "Explain the role of dehydrogenation and decarboxylation in the Krebs cycle. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Dehydrogenation transfers hydrogen/electrons to NAD/FAD forming reduced coenzymes (1 mark)",
+        "Decarboxylation releases CO2, shortening carbon chains (1 mark)"
+      ]
+    },
+    {
+      "question": "Calculate the net ATP directly produced by substrate-level phosphorylation per glucose across glycolysis and Krebs (include both turns). [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Glycolysis: 2 ATP net (1 mark)",
+        "Krebs: 2 ATP total (1 per turn) so 4 ATP in total by substrate-level phosphorylation (1 mark)"
+      ]
+    },
+    {
+      "question": "State one way lipids can be used as respiratory substrates. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fatty acids are broken to acetyl-CoA via beta-oxidation (1 mark)",
+        "Acetyl-CoA enters the Krebs cycle for further oxidation (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how amino acids can feed into respiration. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Amino acids are deaminated to remove the amino group (1 mark)",
+        "Carbon skeletons are converted to pyruvate, acetyl-CoA or Krebs intermediates (1 mark)",
+        "These enter respiration to be oxidised for ATP production (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how a simple respirometer can measure the rate of respiration in seeds. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Germinating seeds in a sealed apparatus with soda lime/potassium hydroxide to absorb CO2 (1 mark)",
+        "O2 consumption reduces gas volume/pressure (1 mark)",
+        "Coloured fluid in capillary moves toward the seeds (1 mark)",
+        "Measure distance moved per unit time and convert to O2 uptake rate (1 mark)"
+      ]
+    },
+    {
+      "question": "Define Q10 and explain how it relates to respiration rate. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Q10 is the factor by which a rate changes for a 10°C temperature increase (1 mark)",
+        "Respiration rate typically roughly doubles with a 10°C rise up to an optimum (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why cyanide is a metabolic poison affecting respiration. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Inhibits cytochrome c oxidase (Complex IV) in the ETC (1 mark)",
+        "Prevents electron transfer to oxygen, halting oxidative phosphorylation (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the structural relationship between ATP synthase and the proton gradient. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "ATP synthase spans the inner mitochondrial membrane (1 mark)",
+        "Proton flow through the F0 channel drives rotation of the complex (1 mark)",
+        "Mechanical rotation promotes ATP formation in the F1 catalytic head (1 mark)"
+      ]
+    },
+    {
+      "question": "A yeast culture produces more ethanol at higher glucose concentrations but total ATP per glucose falls. Explain. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "High glucose and limited oxygen push metabolism toward fermentation (1 mark)",
+        "Fermentation yields only 2 ATP per glucose vs aerobic yield (1 mark)",
+        "Rate increases but efficiency (ATP per glucose) decreases (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why brown adipose tissue generates heat rather than ATP efficiently. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Contains uncoupling protein (UCP1) in inner mitochondrial membrane (1 mark)",
+        "Protons leak back without passing through ATP synthase (1 mark)",
+        "Energy of gradient is released as heat (non-shivering thermogenesis) (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the investment and payoff phases of glycolysis. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Investment: ATP used to phosphorylate glucose to hexose bisphosphate (2 ATP used) (1 mark)",
+        "Cleavage: hexose bisphosphate split to two triose phosphates (1 mark)",
+        "Payoff: triose phosphates oxidised to pyruvate, generating NADH (1 mark)",
+        "Net 2 ATP produced by substrate-level phosphorylation (1 mark)"
+      ]
+    },
+    {
+      "question": "State two differences between mitochondrial and chloroplast chemiosmosis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Mitochondria use electrons from NADH/FADH2; chloroplasts use light-excited electrons (1 mark)",
+        "Protons pumped to intermembrane space vs thylakoid lumen respectively (1 mark)"
+      ]
+    },
+    {
+      "question": "Predict and explain the effect of an inner mitochondrial membrane uncoupler on oxygen consumption and ATP yield. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Oxygen consumption increases as ETC runs faster to maintain gradient (1 mark)",
+        "ATP yield decreases because proton gradient is dissipated without ATP synthesis (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the presence of oxygen allows more complete oxidation of NADH. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Oxygen accepts electrons at the end of the ETC (1 mark)",
+        "This regenerates NAD+ continuously, allowing dehydrogenase reactions to proceed (1 mark)"
+      ]
+    },
+    {
+      "question": "Calculate total reduced coenzymes produced from one glucose by link reaction and Krebs cycle combined (not including glycolysis). [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Per glucose there are 2 pyruvate, so link reaction occurs twice (1 mark)",
+        "Link: 2 NADH total (1 per pyruvate) (1 mark)",
+        "Krebs (2 turns): 6 NADH and 2 FADH2 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why prolonged anaerobic respiration in muscle is unsustainable. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Lactate accumulation lowers pH inhibiting enzymes (1 mark)",
+        "Low ATP yield cannot meet high energy demand (1 mark)",
+        "Glycogen stores become depleted (1 mark)"
+      ]
+    }
+],
+
+"Plant and animal responses": [
+    {
+      "question": "Define a tropism. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A directional growth response of a plant to a stimulus (1 mark)"
+      ]
+    },
+    {
+      "question": "Name two plant hormones involved in growth regulation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Auxin (IAA) (1 mark)",
+        "Gibberellin (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how auxin (IAA) brings about positive phototropism in shoots. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Light causes uneven auxin distribution, higher on the shaded side (1 mark)",
+        "Auxin stimulates cell elongation in shoot cells (1 mark)",
+        "Greater elongation on shaded side bends shoot towards light (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the role of gibberellins in seed germination. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Embryo releases gibberellins upon imbibition (1 mark)",
+        "Stimulates aleurone layer to produce hydrolytic enzymes (e.g. amylase) (1 mark)",
+        "Enzymes mobilise starch to sugars for embryo growth (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain apical dominance and evidence from decapitation experiments. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Apical bud inhibits lateral bud growth via auxin (1 mark)",
+        "Removing the apex relieves inhibition; lateral buds grow (1 mark)",
+        "Applying auxin paste to cut stump restores inhibition (1 mark)",
+        "Shows auxin produced at apex controls lateral growth (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline how abscisic acid (ABA) brings about stomatal closure during drought. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "ABA binds guard cell receptors (1 mark)",
+        "Causes ion efflux (e.g. K+) from guard cells (1 mark)",
+        "Water leaves by osmosis, turgor falls (1 mark)",
+        "Guard cells become flaccid and stomata close (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two commercial uses of plant hormones. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Auxin as rooting powder to stimulate cuttings (1 mark)",
+        "Ethene for fruit ripening (or gibberellins for seedless fruit) (1 mark)"
+      ]
+    },
+    {
+      "question": "Distinguish between taxis and kinesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Taxis: directional movement towards/away from a stimulus (1 mark)",
+        "Kinesis: non-directional change in activity rate in response to stimulus intensity (1 mark)"
+      ]
+    },
+    {
+      "question": "Define innate and learned behaviour, with one example each. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Innate: genetically programmed (e.g. withdrawal reflex) (1 mark)",
+        "Learned: modified by experience (e.g. habituation to repeated stimuli) (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline habituation and its adaptive advantage. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Decreased response to repeated, harmless stimuli (1 mark)",
+        "Results from synaptic changes reducing transmitter release/response (1 mark)",
+        "Saves energy and attention for important stimuli (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare classical and operant conditioning. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Classical: association between neutral and unconditioned stimulus (1 mark)",
+        "Operant: behaviour shaped by reinforcement/punishment (1 mark)",
+        "Operant depends on consequences; classical on stimulus pairing (1 mark)"
+      ]
+    },
+    {
+      "question": "Name four major brain regions and one function of each. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Cerebrum: higher thought/voluntary actions (1 mark)",
+        "Cerebellum: coordination/balance (1 mark)",
+        "Medulla oblongata: autonomic control (heart/ventilation) (1 mark)",
+        "Hypothalamus/pituitary: homeostasis/endocrine control (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the knee-jerk reflex arc. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Stretch receptor in quadriceps detects tendon tap (1 mark)",
+        "Sensory neuron to spinal cord (1 mark)",
+        "Direct synapse to motor neuron (monosynaptic) (1 mark)",
+        "Motor neuron triggers quadriceps contraction/leg extension (1 mark)"
+      ]
+    },
+    {
+      "question": "State two benefits of reflex actions. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Rapid response protects from harm (1 mark)",
+        "Automatic; does not require conscious processing (1 mark)"
+      ]
+    },
+    {
+      "question": "Differentiate somatic and autonomic nervous systems. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Somatic: voluntary control of skeletal muscle (1 mark)",
+        "Autonomic: involuntary control of smooth/cardiac muscle and glands (1 mark)"
+      ]
+    },
+    {
+      "question": "Contrast sympathetic and parasympathetic effects on heart and bronchi. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Sympathetic increases heart rate and dilates bronchi (1 mark)",
+        "Parasympathetic decreases heart rate and constricts bronchi (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe transmission at a cholinergic synapse. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "AP arrives; Ca2+ channels open; Ca2+ enters presynaptic terminal (1 mark)",
+        "Vesicles fuse with membrane; ACh released into cleft (1 mark)",
+        "ACh diffuses and binds postsynaptic receptors (1 mark)",
+        "Na+ channels open; EPSP generated (1 mark)",
+        "ACh is broken down by acetylcholinesterase to acetate + choline (1 mark)",
+        "Choline reuptake; vesicles refilled with ACh (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two reasons synaptic transmission is unidirectional. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Neurotransmitter vesicles only in presynaptic terminal (1 mark)",
+        "Receptors only on postsynaptic membrane (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the neuromuscular junction and one difference from a neurone–neurone synapse. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Motor neuron terminal releases ACh onto muscle end-plate (1 mark)",
+        "ACh binds nicotinic receptors causing end-plate potential (1 mark)",
+        "Leads to muscle AP via T-tubules and contraction (1 mark)",
+        "Always excitatory; synapse uses AChE in basal lamina (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the sliding filament mechanism of muscle contraction. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Ca2+ binds troponin; tropomyosin shifts to expose actin sites (1 mark)",
+        "Myosin heads bind actin forming cross-bridges (1 mark)",
+        "Power stroke as ADP+Pi release; filaments slide (1 mark)",
+        "ATP binds myosin causing detachment (1 mark)",
+        "ATP hydrolysis cocks head; cycle repeats if Ca2+ present (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain roles of Ca2+ and ATP in muscle contraction/relaxation. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Ca2+ enables actin–myosin binding via troponin–tropomyosin shift (1 mark)",
+        "ATP detaches myosin from actin (1 mark)",
+        "ATP hydrolysis re-cocks myosin head (1 mark)",
+        "ATP powers Ca2+ reuptake into SR for relaxation (1 mark)"
+      ]
+    },
+    {
+      "question": "Define the fight-or-flight response and give two physiological effects of adrenaline. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Acute autonomic/endocrine response to threat (1 mark)",
+        "Increased heart rate/ventilation (1 mark)",
+        "Glycogenolysis/vasodilation in skeletal muscle (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the second-messenger action of adrenaline on liver cells. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Adrenaline binds β-receptor; activates G protein (1 mark)",
+        "Adenylate cyclase forms cAMP from ATP (1 mark)",
+        "cAMP activates protein kinase A (1 mark)",
+        "PKA triggers glycogenolysis → increased blood glucose (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how the medulla controls heart rate via autonomic pathways. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Baro/chemoreceptors send signals to cardiovascular centre (1 mark)",
+        "Sympathetic fibres release noradrenaline to SAN to increase rate (1 mark)",
+        "Parasympathetic (vagus) releases ACh to SAN to decrease rate (1 mark)",
+        "Integration adjusts heart rate to maintain blood gases/pressure (1 mark)"
+      ]
+    },
+    {
+      "question": "State the roles of baroreceptors and chemoreceptors in cardiovascular control. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Baroreceptors detect blood pressure changes (1 mark)",
+        "Chemoreceptors detect CO2/O2/pH changes (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how phytochrome mediates photoperiodism in flowering. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Phytochrome interconverts between Pr and Pfr forms (1 mark)",
+        "Daylength changes alter Pfr:Pr ratio (1 mark)",
+        "Signal affects flowering gene expression (1 mark)",
+        "Different critical day lengths for long/short-day plants (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe plant defences against herbivory. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Chemical deterrents (tannins/alkaloids) (1 mark)",
+        "Release of volatile organic compounds/pheromones (1 mark)",
+        "Physical defences (thorns/trichomes) (1 mark)"
+      ]
+    },
+    {
+      "question": "What is a nastic response? Give one example. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Non-directional movement in response to a stimulus (1 mark)",
+        "Thigmonasty in Mimosa pudica leaf folding (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how meristems contribute to tropic responses. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Sites of hormone production (e.g. auxin at shoot apex) (1 mark)",
+        "Provide dividing/elongating cells to execute curvature (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the withdrawal (flexor) reflex following a painful stimulus. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Nociceptors activate sensory neurons (1 mark)",
+        "Interneurons in spinal cord coordinate response (1 mark)",
+        "Motor neurons stimulate flexor muscles to withdraw (1 mark)",
+        "Reciprocal inhibition of antagonistic extensors (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the cerebellum is essential for coordinated movement. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Integrates sensory input with motor commands (1 mark)",
+        "Adjusts posture, balance and timing (1 mark)",
+        "Refines motor patterns for smooth actions (1 mark)"
+      ]
+    },
+    {
+      "question": "Define a taxis and give a named invertebrate example. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Directional movement toward/away from a stimulus (1 mark)",
+        "Positive phototaxis in moths towards light (or negative phototaxis in woodlice) (1 mark)"
+      ]
+    },
+    {
+      "question": "State two ethical/safety considerations when using woodlice in a choice chamber. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Minimise stress; provide appropriate humidity/temperature (1 mark)",
+        "Return organisms to natural habitat after experiment (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the effect of acetylcholinesterase inhibitors at synapses and likely symptoms. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Inhibit ACh breakdown; ACh accumulates in cleft (1 mark)",
+        "Prolonged receptor activation causes sustained depolarisation (1 mark)",
+        "Symptoms include muscle spasms/paralysis and autonomic disturbances (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the refractory period and its functional importance in neurones. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Period after an AP when Na+ channels inactivate (1 mark)",
+        "Limits maximum firing frequency (1 mark)",
+        "Ensures unidirectional propagation along axon (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain thigmotropism in climbing plants. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Contact stimulus alters auxin distribution (1 mark)",
+        "Differential growth around support (1 mark)",
+        "Results in twining/coiling for support (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline how auxin-mimic herbicides act and why dicots are more affected. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Synthetic auxins cause uncontrolled growth leading to death (1 mark)",
+        "Dicots absorb/metabolise these more readily (1 mark)",
+        "Monocots show lower sensitivity/metabolism differences (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the role of the medulla oblongata in ventilation control. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Ventilation centres set basic rhythm (1 mark)",
+        "Chemoreceptor inputs (pCO2/pH) adjust rate and depth (1 mark)",
+        "Sends impulses to intercostal muscles and diaphragm (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare neuronal and hormonal communication. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Neuronal: rapid, short-lived, targeted via synapses (1 mark)",
+        "Hormonal: slower, longer-lasting, widespread via blood (1 mark)",
+        "Different signal types: electrical/chemical vs chemical only (1 mark)"
+      ]
+    },
+    {
+      "question": "Design an investigation to test phototropism in seedlings, including controls. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Grow identical seedlings in controlled conditions (1 mark)",
+        "Treat groups: unilateral light, uniform light, and dark control (1 mark)",
+        "Use opaque caps vs transparent caps to test apex role (1 mark)",
+        "Measure curvature/angle towards light over time (1 mark)",
+        "Control variables: species, age, temperature, water (1 mark)",
+        "Replicates and statistical analysis of mean curvature (1 mark)"
+      ]
+    }
+],
+
+"Hormonal communication": [
+    {
+      "question": "Define an endocrine gland. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A ductless gland that secretes hormones directly into the bloodstream (1 mark)"
+      ]
+    },
+    {
+      "question": "Distinguish between endocrine and exocrine glands. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Endocrine glands release hormones into the blood (1 mark)",
+        "Exocrine glands secrete via ducts onto surfaces/lumens (e.g., enzymes) (1 mark)"
+      ]
+    },
+    {
+      "question": "What is a hormone? [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A chemical messenger released by endocrine cells that affects target cells/organs (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why only certain cells respond to a given hormone. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Target cells have specific receptors for that hormone (1 mark)",
+        "Binding triggers intracellular signalling leading to a response (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare peptide and steroid hormones in solubility and site of receptor. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Peptide hormones are hydrophilic and bind to membrane receptors (1 mark)",
+        "Steroid hormones are hydrophobic and bind intracellular receptors (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the cAMP second messenger pathway for a peptide hormone. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Hormone binds GPCR on target cell membrane (1 mark)",
+        "G protein activates adenylate cyclase (1 mark)",
+        "cAMP is produced from ATP and activates protein kinase A (1 mark)",
+        "Phosphorylation of enzymes changes cell activity (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline how steroid hormones bring about changes in target cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Diffuse through membrane and bind cytosolic/nuclear receptor (1 mark)",
+        "Hormone–receptor complex acts as a transcription factor (1 mark)",
+        "Alters gene expression and protein synthesis (1 mark)"
+      ]
+    },
+    {
+      "question": "Name the zones of the adrenal cortex and one hormone from each. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Zona glomerulosa – aldosterone (mineralocorticoid) (1 mark)",
+        "Zona fasciculata – cortisol (glucocorticoid) (1 mark)",
+        "Zona reticularis – androgens (1 mark)"
+      ]
+    },
+    {
+      "question": "State two hormones secreted by the adrenal medulla and one shared effect. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Adrenaline (epinephrine) (1 mark)",
+        "Noradrenaline (norepinephrine) (1 mark)",
+        "Both increase heart rate/prepare body for fight-or-flight (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how adrenaline brings about rapid effects in target tissues. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Binds to GPCR on target cells (1 mark)",
+        "Activates cAMP/second messenger cascade (1 mark)",
+        "Rapid enzyme phosphorylation changes metabolism (e.g., glycogenolysis) (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the endocrine portion of the pancreas. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Islets of Langerhans scattered in pancreatic tissue (1 mark)",
+        "Alpha cells secrete glucagon; beta cells secrete insulin (1 mark)"
+      ]
+    },
+    {
+      "question": "Define glycogenesis, glycogenolysis and gluconeogenesis. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Glycogenesis: synthesis of glycogen from glucose (1 mark)",
+        "Glycogenolysis: breakdown of glycogen to glucose (1 mark)",
+        "Gluconeogenesis: synthesis of glucose from non-carbohydrate sources (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how insulin lowers blood glucose concentration. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Increases glucose uptake by cells via GLUT insertion (1 mark)",
+        "Stimulates glycogenesis in liver/muscle (1 mark)",
+        "Increases respiratory use of glucose (1 mark)",
+        "Inhibits gluconeogenesis and glycogenolysis (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how glucagon raises blood glucose concentration. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Stimulates glycogenolysis in the liver (1 mark)",
+        "Promotes gluconeogenesis from amino acids/glycerol (1 mark)",
+        "Reduces glucose uptake by liver cells (accept inhibits glycogenesis) (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe blood glucose homeostasis after a carbohydrate-rich meal. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Blood glucose rises and beta cells secrete insulin (1 mark)",
+        "Cells increase glucose uptake; glycogenesis increases (1 mark)",
+        "Glucagon secretion is inhibited (1 mark)",
+        "Blood glucose returns to normoglycaemia via negative feedback (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe blood glucose homeostasis during prolonged exercise. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Blood glucose tends to fall; alpha cells secrete glucagon (1 mark)",
+        "Glycogenolysis and gluconeogenesis increase (1 mark)",
+        "Adrenaline supports glucose release in muscle/liver (1 mark)",
+        "Insulin secretion decreases to conserve glucose (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare Type 1 and Type 2 diabetes mellitus. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Type 1: autoimmune destruction of beta cells → absolute insulin deficiency (1 mark)",
+        "Type 2: insulin resistance with relative deficiency (1 mark)",
+        "Type 1 often early onset; Type 2 often adult/linked to obesity (1 mark)",
+        "Management: insulin therapy vs lifestyle/oral hypoglycaemics (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two advantages of recombinant human insulin over animal insulin. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Identical to human insulin → fewer immune reactions (1 mark)",
+        "Ethical/consistent supply from GM bacteria/yeast (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the principle of an enzyme-linked glucose biosensor. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Glucose oxidase catalyses oxidation of glucose (1 mark)",
+        "Generates H2O2 or electrons detected electrochemically (1 mark)",
+        "Current/voltage proportional to glucose concentration (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the hormonal components of the fight-or-flight response. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Sympathetic stimulation triggers adrenal medulla to release adrenaline (1 mark)",
+        "Adrenaline increases heart rate, ventilation and glycogenolysis (1 mark)",
+        "Hypothalamus–pituitary–adrenal axis increases cortisol (1 mark)",
+        "Cortisol supports gluconeogenesis and stress response (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe negative feedback in the hypothalamus–pituitary–thyroid axis. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Hypothalamus releases TRH; pituitary releases TSH (1 mark)",
+        "Thyroid secretes thyroxine (T4)/triiodothyronine (T3) (1 mark)",
+        "Rising T3/T4 inhibit TRH/TSH release (negative feedback) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how ADH controls water reabsorption in the kidney. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "ADH released from posterior pituitary when water potential falls (1 mark)",
+        "Binds V2 receptors on collecting duct cells (1 mark)",
+        "cAMP signalling inserts aquaporin-2 channels into the membrane (1 mark)",
+        "More water reabsorbed; urine becomes concentrated (1 mark)"
+      ]
+    },
+    {
+      "question": "Define an osmoreceptor and its role in ADH regulation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Hypothalamic neurons that detect blood water potential/osmolality (1 mark)",
+        "Stimulate or inhibit ADH release accordingly (1 mark)"
+      ]
+    },
+    {
+      "question": "Differentiate endocrine, paracrine and autocrine signalling. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Endocrine: hormones via blood to distant targets (1 mark)",
+        "Paracrine: local diffusion to nearby cells (1 mark)",
+        "Autocrine: cell signals to itself (same cell type) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain receptor up-regulation and down-regulation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Up-regulation: increased receptor number/sensitivity with low hormone (1 mark)",
+        "Down-regulation: decreased receptors with chronic high hormone (1 mark)"
+      ]
+    },
+    {
+      "question": "State two differences between nervous and hormonal communication. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Nervous is fast and short-lived; hormonal is slower and longer-lasting (1 mark)",
+        "Nervous is electrical/chemical via synapses; hormonal is chemical via blood (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the role of aldosterone in blood pressure control. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Acts on distal tubules/collecting ducts in kidney (1 mark)",
+        "Increases Na+ reabsorption and K+ secretion (1 mark)",
+        "Water follows Na+, increasing blood volume and pressure (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how glucagon uses a second-messenger cascade to activate glycogen phosphorylase. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Glucagon binds hepatic GPCR → activates adenylate cyclase (1 mark)",
+        "cAMP activates protein kinase A (1 mark)",
+        "PKA activates phosphorylase kinase (1 mark)",
+        "Phosphorylase kinase activates glycogen phosphorylase → glycogenolysis (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe two metabolic effects of cortisol. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Stimulates gluconeogenesis/protein catabolism (1 mark)",
+        "Mobilises fatty acids for energy and suppresses inflammation (1 mark)"
+      ]
+    },
+    {
+      "question": "Give one reason hormone effects can persist after secretion stops. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Signal amplification/altered gene expression produces long-lasting changes (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why peptide hormones are stored in vesicles but steroid hormones are not. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Peptides are synthesised and stored for regulated exocytosis (1 mark)",
+        "Steroids are lipid-soluble and synthesized on demand, diffusing out immediately (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline how thyroxine increases basal metabolic rate. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Enters cells and binds nuclear receptors (1 mark)",
+        "Upregulates genes for oxidative metabolism/Na+-K+ pumps (1 mark)",
+        "Increases oxygen consumption and heat production (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one diagnostic test for diabetes mellitus. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Oral glucose tolerance test after overnight fast (1 mark)",
+        "Measure fasting glucose, then 2 hours after 75 g glucose (1 mark)",
+        "Persistently elevated 2-hour glucose indicates diabetes (1 mark)"
+      ]
+    },
+    {
+      "question": "State two chronic complications of poorly controlled diabetes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Microvascular damage (retinopathy/nephropathy/neuropathy) (1 mark)",
+        "Macrovascular disease (atherosclerosis/CHD/stroke) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why hypoglycaemia is dangerous. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Brain depends on glucose; low levels impair CNS function (1 mark)",
+        "Can cause confusion, seizures, coma if severe (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how negative feedback maintains plasma calcium using PTH as an example. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Low Ca2+ stimulates parathyroid glands to secrete PTH (1 mark)",
+        "PTH increases bone resorption and renal Ca2+ reabsorption (1 mark)",
+        "Stimulates activation of vitamin D to increase gut Ca2+ absorption (1 mark)",
+        "Rising Ca2+ inhibits further PTH release (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two design features of hormones that allow signal amplification. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Second messenger cascades activate many downstream enzymes (1 mark)",
+        "Each enzyme can catalyse multiple substrate molecules (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how insulin causes GLUT4 translocation in muscle/adipose cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Insulin binds tyrosine kinase receptor (1 mark)",
+        "Triggers phosphorylation cascade (e.g., PI3K/Akt pathway) (1 mark)",
+        "GLUT4 vesicles fuse with membrane to increase glucose uptake (1 mark)"
+      ]
+    },
+    {
+      "question": "Suggest why chronic high insulin can lead to insulin resistance. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Receptor down-regulation or impaired signalling (1 mark)",
+        "Post-receptor defects reduce GLUT4 translocation/glucose uptake (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one advantage and one limitation of continuous glucose monitors (CGMs). [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Advantage: real-time trends and alerts improve control (1 mark)",
+        "Limitation: interstitial fluid lag/calibration or sensor cost (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how noradrenaline can cause vasoconstriction via α1-adrenergic receptors. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Binds to α1 GPCR on vascular smooth muscle (1 mark)",
+        "Activates IP3/DAG pathway raising intracellular Ca2+ (1 mark)",
+        "Increased Ca2+ causes smooth muscle contraction → vasoconstriction (1 mark)"
+      ]
+    }
 ]
 
+
+
+
 }
+
 
 
   
