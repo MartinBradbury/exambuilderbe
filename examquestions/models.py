@@ -1,20 +1,37 @@
+# models.py
 from django.db import models
 from django.core.validators import MinValueValidator
 from accounts.models import CustomUser
 
+
+class ExamBoard(models.TextChoices):
+    OCR = "OCR", "OCR"
+    AQA = "AQA", "AQA"
+
+
 class BiologyTopic(models.Model):
-    # Treat this as the "Module" title
-    topic = models.CharField(max_length=255, unique=True)  # required + unique
+    topic = models.CharField(max_length=255)  # ⬅ remove unique=True
+    exam_board = models.CharField(
+        max_length=8,
+        choices=ExamBoard.choices,
+        default=ExamBoard.OCR,
+        db_index=True,
+    )
 
     class Meta:
-        ordering = ["topic"]
+        ordering = ["exam_board", "topic"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["topic", "exam_board"],
+                name="uniq_topic_per_exam_board",
+            )
+        ]
 
     def __str__(self):
-        return self.topic
+        return f"{self.topic} ({self.exam_board})"
 
 
 class BiologySubTopic(models.Model):
-    # FK renamed to 'topic' (parent), and related_name pluralised
     topic = models.ForeignKey(
         BiologyTopic,
         on_delete=models.CASCADE,
@@ -23,7 +40,7 @@ class BiologySubTopic(models.Model):
     title = models.CharField(max_length=200)
 
     class Meta:
-        ordering = ["topic__topic", "title"]
+        ordering = ["topic__exam_board", "topic__topic", "title"]
         constraints = [
             models.UniqueConstraint(
                 fields=["topic", "title"],
@@ -44,7 +61,7 @@ class BiologySubCategory(models.Model):
     title = models.CharField(max_length=200)
 
     class Meta:
-        ordering = ["subtopic__topic__topic", "subtopic__title", "title"]
+        ordering = ["subtopic__topic__exam_board", "subtopic__topic__topic", "subtopic__title", "title"]
         constraints = [
             models.UniqueConstraint(
                 fields=["subtopic", "title"],
@@ -59,14 +76,8 @@ class BiologySubCategory(models.Model):
 class QuestionSession(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     topic = models.ForeignKey(BiologyTopic, on_delete=models.CASCADE)
-
-    # OPTIONAL: allow narrower targeting
-    subtopic = models.ForeignKey(
-        BiologySubTopic, on_delete=models.SET_NULL, null=True, blank=True
-    )
-    subcategory = models.ForeignKey(
-        BiologySubCategory, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    subtopic = models.ForeignKey(BiologySubTopic, on_delete=models.SET_NULL, null=True, blank=True)
+    subcategory = models.ForeignKey(BiologySubCategory, on_delete=models.SET_NULL, null=True, blank=True)
 
     exam_board = models.CharField(max_length=50)
     number_of_questions = models.PositiveIntegerField(validators=[MinValueValidator(1)])
@@ -88,11 +99,9 @@ class QuestionSession(models.Model):
         )
 
     def clean(self):
-        # Optional: keep score sane
         from django.core.exceptions import ValidationError
         if self.total_score > self.total_available:
             raise ValidationError("Total score cannot exceed total available.")
-        # Optional: if subtopic/subcategory are set, ensure they belong to the selected topic
         if self.subtopic and self.subtopic.topic_id != self.topic_id:
             raise ValidationError("Selected subtopic doesn’t belong to the chosen topic.")
         if self.subcategory and self.subcategory.subtopic.topic_id != self.topic_id:

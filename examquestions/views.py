@@ -48,8 +48,8 @@ def load_fallback_bank_for_board(exam_board: str) -> dict:
 @permission_classes([IsAuthenticated])
 def generate_exam_questions(request):
     topic_id = request.data.get("topic_id")
-    subtopic_id = request.data.get("subtopic_id")         # NEW (optional)
-    subcategory_id = request.data.get("subcategory_id")   # NEW (optional)
+    subtopic_id = request.data.get("subtopic_id")         # optional
+    subcategory_id = request.data.get("subcategory_id")   # optional
     exam_board = request.data.get("exam_board")
     try:
         number = int(request.data.get("number_of_questions"))
@@ -64,18 +64,19 @@ def generate_exam_questions(request):
         return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
 
     try:
-        topic = BiologyTopic.objects.get(id=topic_id)
+        # 1) Fetch the topic for THIS board (critical change)
+        topic = BiologyTopic.objects.get(id=topic_id, exam_board=board_key)
 
-        # Validate optional relationships (only if provided)
+        # 2) Validate optional relationships strictly under this topic
         subtopic = None
         if subtopic_id:
-            subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic_id)
+            subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
 
         subcategory = None
         if subcategory_id:
             if not subtopic_id:
                 return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
-            subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic_id)
+            subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
 
         # Load fallback bank for the selected exam board
         all_fallback_questions = load_fallback_bank_for_board(board_key)
@@ -130,7 +131,7 @@ def generate_exam_questions(request):
         }, status=200)
 
     except BiologyTopic.DoesNotExist:
-        return Response({"error": "Invalid topic selected"}, status=400)
+        return Response({"error": "Invalid topic selected for this exam board"}, status=400)
     except BiologySubTopic.DoesNotExist:
         return Response({"error": "Invalid subtopic for the selected topic"}, status=400)
     except BiologySubCategory.DoesNotExist:
@@ -217,28 +218,38 @@ def get_user_sessions(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_biology_topics(request):
-    topics = BiologyTopic.objects.all().order_by("topic")
-    # if you prefer your old manual shape, keep it; otherwise use the serializer:
-    return Response(BiologyTopicListSerializer(topics, many=True).data)
+    board = (request.query_params.get("exam_board") or "").strip().upper()
+    qs = BiologyTopic.objects.all().order_by("topic")
+    if board:
+        if board not in ALLOWED_BOARDS:
+            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        qs = qs.filter(exam_board=board)
+    return Response(BiologyTopicListSerializer(qs, many=True).data)
 
-
-# NEW: minimal list endpoint for subtopics
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_biology_subtopics(request):
+    board = (request.query_params.get("exam_board") or "").strip().upper()
     qs = BiologySubTopic.objects.select_related("topic").all().order_by("title")
     topic_id = request.query_params.get("topic_id")
     if topic_id:
         qs = qs.filter(topic_id=topic_id)
+    if board:
+        if board not in ALLOWED_BOARDS:
+            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        qs = qs.filter(topic__exam_board=board)
     return Response(BiologySubTopicListSerializer(qs, many=True).data)
 
-
-# NEW: minimal list endpoint for subcategories
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_biology_subcategories(request):
+    board = (request.query_params.get("exam_board") or "").strip().upper()
     qs = BiologySubCategory.objects.select_related("subtopic", "subtopic__topic").all().order_by("title")
     subtopic_id = request.query_params.get("subtopic_id")
     if subtopic_id:
         qs = qs.filter(subtopic_id=subtopic_id)
+    if board:
+        if board not in ALLOWED_BOARDS:
+            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        qs = qs.filter(subtopic__topic__exam_board=board)
     return Response(BiologySubCategoryListSerializer(qs, many=True).data)
