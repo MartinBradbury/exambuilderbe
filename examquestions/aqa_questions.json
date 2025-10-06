@@ -7565,7 +7565,1328 @@
           "Test significance and interpret in relation to hypothesis (1 mark)"
         ]
       }
-  ]
+  ],
 
+  "3.5.1 Photosynthesis": [
+      {
+        "question": "Write the balanced chemical equation for photosynthesis. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂ (in light, with chlorophyll) (1 mark)"
+        ]
+      },
+      {
+        "question": "State the site of the light-dependent reactions (LDR) in the chloroplast. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Thylakoid membranes (grana) (1 mark)"
+        ]
+      },
+      {
+        "question": "State the site of the light-independent reactions (Calvin cycle). [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Stroma of the chloroplast (1 mark)"
+        ]
+      },
+      {
+        "question": "Define photophosphorylation. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "The synthesis of ATP from ADP and Pi using energy from light in the LDR (1 mark)"
+        ]
+      },
+      {
+        "question": "Name the two main products of the LDR used in the Calvin cycle. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "ATP (1 mark)",
+          "Reduced NADP (NADPH) (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the role of water in the light-dependent reactions. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Photolysis provides electrons to replace those lost from PSII (1 mark)",
+          "Releases protons (for chemiosmosis/NADP reduction) and oxygen as a by-product (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline the main steps of non-cyclic photophosphorylation. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Light excites electrons in PSII; electrons pass to an electron transport chain (1 mark)",
+          "Energy release pumps protons into thylakoid lumen establishing a gradient (1 mark)",
+          "Electrons reach PSI and are re-excited by light (1 mark)",
+          "Electrons reduce NADP to NADPH; proton gradient drives ATP synthase to form ATP (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain cyclic photophosphorylation at PSI and its product. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Excited electrons from PSI pass along an electron transport chain and return to PSI (1 mark)",
+          "Electron flow pumps protons across thylakoid membrane (1 mark)",
+          "Proton gradient powers ATP synthase to make ATP only (no NADPH/O₂) (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how the chemiosmotic theory explains ATP production in chloroplasts. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Electron transport pumps H⁺ into thylakoid lumen creating a high proton concentration (1 mark)",
+          "Photolysis adds more H⁺ to the lumen (1 mark)",
+          "H⁺ diffuse back to stroma through ATP synthase (1 mark)",
+          "Flow of H⁺ drives ATP formation from ADP + Pi (1 mark)"
+        ]
+      },
+      {
+        "question": "Name the primary CO₂ acceptor and the enzyme that catalyses its carboxylation in the Calvin cycle. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Ribulose-1,5-bisphosphate (RuBP) (1 mark)",
+          "Rubisco (ribulose bisphosphate carboxylase/oxygenase) (1 mark)"
+        ]
+      },
+      {
+        "question": "List the three overall stages of the Calvin cycle in order. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Carbon fixation (CO₂ + RuBP → 2 × GP) (1 mark)",
+          "Reduction of GP to TP using ATP and reduced NADP (1 mark)",
+          "Regeneration of RuBP from TP using ATP (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how glycerate-3-phosphate (GP) is converted to triose phosphate (TP). [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "GP is reduced to TP using reduced NADP (NADPH) (1 mark)",
+          "ATP provides energy/phosphate during the reduction (1 mark)"
+        ]
+      },
+      {
+        "question": "State two possible fates of triose phosphate (TP). [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Used to synthesise hexose sugars/starch/sucrose (1 mark)",
+          "Regenerates RuBP to continue the cycle (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why the Calvin cycle is described as light-independent yet typically slows in the dark. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Its reactions do not require light directly (1 mark)",
+          "But it depends on ATP and reduced NADP from the LDR, which are not produced in the dark (1 mark)"
+        ]
+      },
+      {
+        "question": "Define a limiting factor of photosynthesis. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "A factor which, when at sub-optimal level, limits the rate of photosynthesis (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the effect of increasing light intensity on the rate of photosynthesis at constant CO₂ and temperature. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Rate increases as more photons excite chlorophyll/electrons (1 mark)",
+          "Plateaus when another factor (e.g., CO₂) becomes limiting (1 mark)",
+          "Very high intensities may cause photoinhibition in some cases (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why temperature mainly affects the light-independent reactions. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Calvin cycle is enzyme-controlled (e.g., rubisco) (1 mark)",
+          "Higher temperature increases enzyme activity to an optimum; beyond this enzymes denature (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the effect of increasing CO₂ concentration on photosynthetic rate at constant light and temperature. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Rate increases as more CO₂ can be fixed to RuBP (1 mark)",
+          "Plateaus when another factor (light/temperature) becomes limiting (1 mark)"
+        ]
+      },
+      {
+        "question": "Define compensation point for photosynthesis. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Light intensity at which photosynthesis equals respiration; net O₂/CO₂ exchange is zero (1 mark)"
+        ]
+      },
+      {
+        "question": "Give three structural adaptations of a palisade mesophyll cell for photosynthesis. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Many chloroplasts near cell surface for light capture (1 mark)",
+          "Elongated/cylindrical cells to pack tightly and maximise absorption (1 mark)",
+          "Thin cell walls/large vacuole to reduce diffusion distance for CO₂ (1 mark)"
+        ]
+      },
+      {
+        "question": "State one role of accessory pigments in photosystems. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Broaden the range of wavelengths absorbed and transfer energy to reaction centre chlorophyll (1 mark)"
+        ]
+      },
+      {
+        "question": "Distinguish between an absorption spectrum and an action spectrum. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Absorption spectrum: wavelengths of light absorbed by pigments (1 mark)",
+          "Action spectrum: effectiveness of different wavelengths in driving photosynthesis (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why green light is least effective for photosynthesis in green plants. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Chlorophyll reflects/transmits green wavelengths (1 mark)",
+          "Less absorption means less energy to drive the LDR (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline how paper (or TLC) chromatography can separate leaf pigments. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Pigment extract spotted onto stationary phase (paper/TLC) (1 mark)",
+          "Solvent (mobile phase) moves up the paper carrying pigments (1 mark)",
+          "Pigments separate by different solubilities/affinities producing distinct bands (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the DCPIP experiment to show reduction in the LDR. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Add blue DCPIP to isolated chloroplasts under light (1 mark)",
+          "As electrons reduce DCPIP, it becomes colourless (1 mark)",
+          "Dark control remains blue showing light is required (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the role of the electron transport chain between PSII and PSI. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Transfers electrons releasing energy in steps (1 mark)",
+          "Energy used to pump protons to generate chemiosmotic gradient for ATP synthesis (1 mark)"
+        ]
+      },
+      {
+        "question": "Name the enzyme complex that synthesises ATP in chloroplasts and state its location. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "ATP synthase (CF₀CF₁ complex is acceptable) (1 mark)",
+          "Embedded in the thylakoid membrane projecting into the stroma (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how oxygen is produced in photosynthesis and its immediate origin. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "From photolysis of water in PSII (1 mark)",
+          "O atoms from water combine to form O₂ (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how RuBP is regenerated in the Calvin cycle. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Most TP molecules are converted via a series of reactions (1 mark)",
+          "ATP provides energy to reform RuBP (1 mark)"
+        ]
+      },
+      {
+        "question": "A graph of photosynthetic rate vs light intensity levels off at high light at 0.04% CO₂. Explain why. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "At high light, CO₂ becomes limiting (1 mark)",
+          "LDR can supply ATP/NADPH but not enough CO₂ is fixed (1 mark)",
+          "Increasing CO₂ concentration would increase rate further (1 mark)"
+        ]
+      },
+      {
+        "question": "Suggest two reasons why very high temperatures reduce photosynthetic rate. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Denaturation of Calvin-cycle enzymes (e.g., rubisco) (1 mark)",
+          "Damage/leakiness of thylakoid membranes reducing proton gradients (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why water stress can lower photosynthetic rate in terrestrial plants. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Stomata close to reduce water loss, lowering CO₂ uptake (1 mark)",
+          "Less CO₂ reduces Calvin cycle activity (1 mark)",
+          "Severe stress may damage photosystems/limit photochemistry (1 mark)"
+        ]
+      },
+      {
+        "question": "Design a simple investigation to estimate photosynthetic rate using leaf discs. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Punch leaf discs and infiltrate with solution to remove trapped gases so discs sink (1 mark)",
+          "Expose to light in bicarbonate solution and record time for discs to float (O₂ production) (1 mark)",
+          "Control variables (temperature, light distance, leaf type) (1 mark)",
+          "Compare treatments (e.g., different light intensities) and calculate rates (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain one reason why measuring O₂ evolution may not perfectly reflect CO₂ fixation rate. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Some O₂ may be used in respiration/photorespiration (1 mark)",
+          "Rates of LDR and Calvin cycle can become temporarily uncoupled (1 mark)"
+        ]
+      },
+      {
+        "question": "State how magnesium deficiency can reduce photosynthesis. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Mg²⁺ is needed for chlorophyll; deficiency reduces light absorption (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how reduced NADP is used in the Calvin cycle. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Donates hydrogen/electrons to reduce GP to TP (1 mark)",
+          "Is oxidised back to NADP for reuse in the LDR (1 mark)"
+        ]
+      },
+      {
+        "question": "A herbicide blocks electron flow from PSII. Predict two immediate effects on photosynthesis. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "No proton gradient → ATP synthesis falls (1 mark)",
+          "No reduction of NADP → Calvin cycle slows/stops (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why increasing light intensity has little effect on photosynthetic rate when temperature is 5 °C. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Calvin-cycle enzymes are operating very slowly at low temperature (1 mark)",
+          "LIR becomes the limiting stage despite sufficient ATP/NADPH (1 mark)"
+        ]
+      },
+      {
+        "question": "Evaluate how commercial greenhouses manipulate limiting factors to maximise yield. [6 marks]",
+        "mark": 6,
+        "mark_scheme": [
+          "Supplement CO₂ to increase fixation by rubisco (1 mark)",
+          "Provide optimal light (duration/intensity/spectrum) to drive LDR (1 mark)",
+          "Control temperature to maximise enzyme activity without denaturation (1 mark)",
+          "Irrigation/humidity control to prevent water stress and stomatal closure (1 mark)",
+          "Nutrient supply (e.g., Mg, N) to maintain chlorophyll/protein synthesis (1 mark)",
+          "Cost–benefit monitoring ensures inputs increase profit/yield efficiently (1 mark)"
+        ]
+      }
+  ],
+
+  "3.5.2 Respiration": [
+      {
+        "question": "Define aerobic respiration. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "The release of energy from glucose (or other substrates) using oxygen to produce ATP, with CO₂ and H₂O as by-products (1 mark)"
+        ]
+      },
+      {
+        "question": "State where glycolysis occurs in eukaryotic cells. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "In the cytosol (cytoplasm) of the cell (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline the main stages of glycolysis. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Phosphorylation of glucose to hexose bisphosphate using ATP (1 mark)",
+          "Splitting of hexose bisphosphate into two triose phosphate (TP) molecules (1 mark)",
+          "Oxidation of TP to pyruvate with reduction of NAD to reduced NAD (1 mark)",
+          "Substrate-level phosphorylation produces ATP (net gain) (1 mark)"
+        ]
+      },
+      {
+        "question": "State the net yield from glycolysis per glucose molecule. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "2 ATP (net) (1 mark)",
+          "2 reduced NAD (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the link reaction. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Pyruvate is decarboxylated to form acetate (releasing CO₂) (1 mark)",
+          "Pyruvate is oxidised and NAD is reduced to reduced NAD (1 mark)",
+          "Acetate combines with coenzyme A to form acetyl-CoA (1 mark)"
+        ]
+      },
+      {
+        "question": "State the site of the Krebs cycle in mitochondria. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Mitochondrial matrix (1 mark)"
+        ]
+      },
+      {
+        "question": "Give the products from one turn of the Krebs cycle per acetyl-CoA. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "2 CO₂ (1 mark)",
+          "3 reduced NAD (1 mark)",
+          "1 reduced FAD (1 mark)",
+          "1 ATP (by substrate-level phosphorylation) (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the role of the coenzymes NAD and FAD in respiration. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Accept hydrogen/electrons during oxidation reactions (become reduced) (1 mark)",
+          "Transfer electrons to the electron transport chain (ETC) (1 mark)",
+          "Enable ATP production via oxidative phosphorylation (1 mark)"
+        ]
+      },
+      {
+        "question": "Define oxidative phosphorylation. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "ATP synthesis using energy released by electron transfer along the ETC coupled to chemiosmosis (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe chemiosmosis in mitochondria. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Electrons pass along ETC releasing energy (1 mark)",
+          "Energy pumps protons into the intermembrane space (1 mark)",
+          "Protons diffuse back through ATP synthase down the electrochemical gradient (1 mark)",
+          "ATP synthase catalyses ATP formation from ADP + Pi (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why oxygen is required for aerobic respiration. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Acts as the final electron acceptor at the end of the ETC (1 mark)",
+          "Combines with electrons and protons to form water, allowing electron flow to continue (1 mark)"
+        ]
+      },
+      {
+        "question": "Compare substrate-level phosphorylation with oxidative phosphorylation. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Substrate-level: direct transfer of phosphate to ADP in glycolysis/Krebs (1 mark)",
+          "Oxidative: ATP made by ATP synthase using proton gradient from ETC (1 mark)",
+          "Locations differ: cytosol/matrix vs inner mitochondrial membrane (1 mark)"
+        ]
+      },
+      {
+        "question": "State the total ATP made by substrate-level phosphorylation per glucose in aerobic respiration. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "2 ATP from glycolysis (1 mark)",
+          "2 ATP from two turns of the Krebs cycle (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the fate of pyruvate in animal cells when oxygen is unavailable. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Reduced to lactate by lactate dehydrogenase (1 mark)",
+          "Uses reduced NAD which is reoxidised to NAD to allow glycolysis to continue (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how anaerobic respiration allows ATP production to continue in the absence of oxygen. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Regenerates NAD from reduced NAD (1 mark)",
+          "Glycolysis can continue to produce ATP by substrate-level phosphorylation (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline alcoholic fermentation in yeast. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Pyruvate is decarboxylated to ethanal (releasing CO₂) (1 mark)",
+          "Ethanal is reduced to ethanol (1 mark)",
+          "Reduced NAD is reoxidised to NAD (1 mark)"
+        ]
+      },
+      {
+        "question": "Define respiratory quotient (RQ) and give the formula. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "RQ = CO₂ produced ÷ O₂ consumed (1 mark)"
+        ]
+      },
+      {
+        "question": "State typical RQ values for carbohydrates, lipids and proteins. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Carbohydrates ≈ 1.0 (1 mark)",
+          "Lipids ≈ 0.7 (1 mark)",
+          "Proteins ≈ 0.9 (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how a respirometer can be used to measure oxygen uptake in germinating seeds. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Use KOH/NaOH to absorb CO₂ produced (1 mark)",
+          "O₂ consumption reduces gas volume/pressure (1 mark)",
+          "Manometer fluid moves; distance moved per time gives rate (1 mark)",
+          "Use a temperature/atmospheric pressure control to correct for external changes (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two reasons glycolysis is considered an ancient pathway. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Occurs without oxygen (anaerobic) (1 mark)",
+          "Takes place in the cytosol and requires no organelles (1 mark)"
+        ]
+      },
+      {
+        "question": "State three adaptations of the inner mitochondrial membrane for oxidative phosphorylation. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Cristae provide large surface area (1 mark)",
+          "Contains ETC carriers and ATP synthase (1 mark)",
+          "Impermeable to protons, maintaining the electrochemical gradient (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the effect of cyanide (inhibiting cytochrome oxidase) on respiration. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Blocks transfer of electrons to oxygen at the ETC end (1 mark)",
+          "Stops proton pumping and chemiosmotic ATP synthesis (1 mark)",
+          "Causes accumulation of reduced NAD/FAD and halts Krebs cycle (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how an uncoupler (e.g., DNP) affects respiration and heat production. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Dissipates proton gradient across inner membrane (1 mark)",
+          "ATP synthase activity falls; less ATP produced (1 mark)",
+          "Electron transport and O₂ consumption increase; energy released as heat (1 mark)"
+        ]
+      },
+      {
+        "question": "List the stages of aerobic respiration in order and their cellular locations. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Glycolysis – cytosol (1 mark)",
+          "Link reaction – mitochondrial matrix (1 mark)",
+          "Krebs cycle – mitochondrial matrix (1 mark)",
+          "Oxidative phosphorylation – inner mitochondrial membrane/cristae (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why the total ATP yield per glucose is an estimate rather than a fixed number. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Some energy is lost due to proton leak/maintenance transport (e.g., ADP/Pi/pyruvate) (1 mark)",
+          "P/O ratios vary; not all reduced coenzymes lead to the same ATP yield (1 mark)"
+        ]
+      },
+      {
+        "question": "State two stages of respiration where decarboxylation occurs. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Link reaction (pyruvate to acetyl-CoA) (1 mark)",
+          "Krebs cycle (e.g., isocitrate → α-ketoglutarate; α-ketoglutarate → succinyl-CoA) (1 mark)"
+        ]
+      },
+      {
+        "question": "Give three features of the mitochondrial matrix that support the link reaction and Krebs cycle. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Contains enzymes for link/Krebs reactions (1 mark)",
+          "Contains NAD/FAD, mitochondrial DNA and ribosomes (1 mark)",
+          "Provides a suitable environment for enzyme function (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why fatty acids yield more ATP per gram than carbohydrates when respired aerobically. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Fatty acids are more reduced (more C–H bonds) (1 mark)",
+          "β-oxidation produces many acetyl-CoA units (1 mark)",
+          "Generates more reduced NAD/FAD feeding the ETC (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline how amino acids can be used as respiratory substrates. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Deamination removes amino group (excreted as urea) (1 mark)",
+          "Carbon skeleton converted to pyruvate/acetyl-CoA/Krebs intermediates (1 mark)",
+          "Then enters respiration pathways to produce ATP (1 mark)"
+        ]
+      },
+      {
+        "question": "Define dehydrogenation in the context of respiration. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Removal of hydrogen (electrons/protons) from a substrate, reducing NAD or FAD (1 mark)"
+        ]
+      },
+      {
+        "question": "How many turns of the Krebs cycle occur per molecule of glucose and why? [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Two turns, because one glucose produces two acetyl-CoA (via two pyruvate) (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two experimental observations that support the chemiosmotic theory. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Proton gradients across membranes correlate with ATP synthesis (1 mark)",
+          "Uncouplers abolish ATP production without stopping electron flow (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how to calculate oxygen uptake rate from respirometer data. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Determine capillary cross-sectional area and measure movement distance to get volume change (A × d) (1 mark)",
+          "Divide volume change by time to get rate (cm³ min⁻¹) (1 mark)",
+          "Correct using a control/temperature compensation if needed (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why lactate accumulation can cause muscle fatigue and how lactate is dealt with after exercise. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Lactate lowers pH, inhibiting enzymes and contraction (1 mark)",
+          "Transported in blood to the liver (1 mark)",
+          "Oxidised back to pyruvate or converted to glucose using oxygen (oxygen debt) (1 mark)"
+        ]
+      },
+      {
+        "question": "Compare lactate fermentation with alcoholic fermentation in terms of end products and reversibility. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Lactate vs ethanol + CO₂ (1 mark)",
+          "Both regenerate NAD from reduced NAD (1 mark)",
+          "Lactate can be reconverted to pyruvate; ethanol pathway is effectively irreversible in animals (1 mark)"
+        ]
+      },
+      {
+        "question": "State the number of carbon atoms in each: glucose, pyruvate, acetyl-CoA, citrate, oxaloacetate. [5 marks]",
+        "mark": 5,
+        "mark_scheme": [
+          "Glucose = 6C (1 mark)",
+          "Pyruvate = 3C (1 mark)",
+          "Acetyl-CoA (acetyl group) = 2C (1 mark)",
+          "Citrate = 6C (1 mark)",
+          "Oxaloacetate = 4C (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the role of mitochondrial DNA and ribosomes in respiration. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "mtDNA encodes some ETC/ATP synthase subunits and RNAs (1 mark)",
+          "Mitochondrial ribosomes synthesise some inner-membrane proteins in situ (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how ATP and ADP/Pi are exchanged between the mitochondrial matrix and cytosol. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "ATP/ADP exchange via an antiporter in the inner membrane (1 mark)",
+          "Pi imported with H⁺ via a symporter (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why FAD contributes fewer ATP than NAD when oxidised in the ETC. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "FAD feeds electrons into the ETC at complex II (1 mark)",
+          "Bypasses the first proton pump, so fewer protons are pumped and less ATP is made (1 mark)"
+        ]
+      },
+      {
+        "question": "Predict the effect of inhibiting ATP synthase on the rates of electron transport and oxygen consumption. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Proton gradient builds up without being used (1 mark)",
+          "Back-pressure slows electron flow through the ETC (1 mark)",
+          "Oxygen consumption decreases because electrons cannot reach oxygen efficiently (1 mark)"
+        ]
+      }
+  ],
+
+  "3.5.3 Energy and ecosystems": [
+      {
+        "question": "Define a trophic level. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "A feeding level/position in a food chain or web (1 mark)"
+        ]
+      },
+      {
+        "question": "Define biomass. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "The mass of living material in an organism or area, often as dry mass (1 mark)"
+        ]
+      },
+      {
+        "question": "State the relationship between gross primary productivity (GPP), net primary productivity (NPP) and respiratory losses (R) in producers. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "NPP = GPP − R (1 mark)"
+        ]
+      },
+      {
+        "question": "Give the usual units for primary productivity measured over an area. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "kJ m⁻² yr⁻¹ (or kJ m⁻² year⁻¹) (1 mark)"
+        ]
+      },
+      {
+        "question": "State two reasons why only a small percentage of the sun’s energy is fixed by producers. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Much light is the wrong wavelength, reflected or passes through leaves (1 mark)",
+          "Limiting factors such as CO₂ concentration or temperature reduce photosynthesis (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how to estimate the dry biomass of a plant sample. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Heat a known fresh mass at low temperature to constant mass to remove water (1 mark)",
+          "Weigh after repeated drying and cooling in a desiccator to obtain dry mass (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain two reasons why pyramids of energy are always upright. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Energy is lost between trophic levels through respiration and heat (1 mark)",
+          "Not all biomass is consumed or assimilated by the next trophic level (1 mark)"
+        ]
+      },
+      {
+        "question": "Define secondary productivity in animals. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "The rate at which consumers convert ingested food energy into new biomass (1 mark)"
+        ]
+      },
+      {
+        "question": "State two limitations of using fresh mass instead of dry mass to estimate biomass. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Water content varies between individuals and conditions (1 mark)",
+          "Gives inconsistent, non-comparable measures across samples (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two reasons for energy loss between producer and primary consumer trophic levels. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Herbivores cannot digest all plant tissue (cellulose/lignin) so energy lost in faeces (1 mark)",
+          "Respiratory heat losses for movement and maintaining temperature (1 mark)"
+        ]
+      },
+      {
+        "question": "A grassland has GPP = 9000 kJ m⁻² yr⁻¹ and plant respiration R = 3800 kJ m⁻² yr⁻¹. Calculate NPP. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "NPP = 9000 − 3800 = 5200 kJ m⁻² yr⁻¹ (1 mark)"
+        ]
+      },
+      {
+        "question": "Producer biomass is 4000 kJ m⁻² yr⁻¹; primary consumer biomass is 800 kJ m⁻² yr⁻¹. Calculate the efficiency of energy transfer to the primary consumer. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Efficiency = (energy in trophic level / energy in previous level) × 100 (1 mark)",
+          "(800 ÷ 4000) × 100 = 20% (1 mark)"
+        ]
+      },
+      {
+        "question": "Define net production (N) in consumers and state the formula. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Net chemical energy in consumer biomass (1 mark)",
+          "N = I − (F + R), where I is ingested, F is faeces/egestion, R is respiration (1 mark)"
+        ]
+      },
+      {
+        "question": "A caterpillar ingests 1200 kJ, loses 500 kJ in faeces and 600 kJ in respiration. Calculate its net production and transfer efficiency to its biomass. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Use N = I − (F + R) (1 mark)",
+          "N = 1200 − (500 + 600) = 100 kJ (1 mark)",
+          "Efficiency = (100 ÷ 1200) × 100 = 8.3% (approx) (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain two farming practices that reduce respiratory losses in livestock to increase energy conversion efficiency. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Restrict movement or keep animals in warm conditions to reduce heat loss and respiration (1 mark)",
+          "Selective breeding/antibiotics to reduce disease and maintenance energy costs (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two ways in which intensive crop farming increases NPP. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Use of fertilisers/irrigation to remove nutrient/water limitations (1 mark)",
+          "Greenhouses or pest control to maximise photosynthesis and reduce losses to herbivores (1 mark)"
+        ]
+      },
+      {
+        "question": "State two ethical or environmental issues associated with intensive animal production. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Poor animal welfare due to confinement/restricted behaviour (1 mark)",
+          "Waste pollution/antibiotic resistance or higher greenhouse gas emissions (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the role of decomposers in energy flow and nutrient recycling. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Saprobionts secrete enzymes to break down dead organic matter (1 mark)",
+          "Release inorganic ions to the soil and energy as heat during respiration (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why food chains rarely have more than four or five trophic levels. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Large energy losses at each transfer (low efficiency) (1 mark)",
+          "Insufficient energy remains to support higher trophic levels (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two advantages of using pyramids of biomass rather than numbers. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Reflects actual amount of living tissue/energy better than counts (1 mark)",
+          "Avoids anomalies where few large organisms support many small ones (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline how bomb calorimetry can estimate the energy content of biomass. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Burn a known dry mass of sample in an oxygen-rich chamber immersed in water (1 mark)",
+          "Measure temperature rise of a known mass of water (1 mark)",
+          "Calculate energy released using q = mcΔT and express per gram (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe two reasons why field estimates of productivity can be imprecise. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Sampling error/spatial heterogeneity of vegetation (1 mark)",
+          "Temporal changes in growth and respiration over seasons (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why endotherms typically have lower production efficiency than ectotherms. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Endotherms use more energy for thermoregulation (1 mark)",
+          "Higher respiratory heat losses reduce energy available for growth (1 mark)"
+        ]
+      },
+      {
+        "question": "A crop field has NPP of 6000 kJ m⁻² yr⁻¹. Pests consume 20% of NPP, and harvesting removes 70% of what remains. How much energy is transferred to humans via the crop per m² per year? [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Energy after pests = 6000 × 0.80 = 4800 kJ m⁻² yr⁻¹ (1 mark)",
+          "Harvest removes 70% of 4800 = 3360 kJ m⁻² yr⁻¹ (1 mark)",
+          "Answer: 3360 kJ m⁻² yr⁻¹ (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain two ways biological control can improve energy transfer to humans compared with broad-spectrum pesticides. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Targets specific pests reducing non-target losses and maintaining pollinators (1 mark)",
+          "Reduces chemical resistance and repeated applications, conserving ecosystem services (1 mark)"
+        ]
+      },
+      {
+        "question": "Give three typical pathways by which consumers lose assimilated energy. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Respiration and heat production (1 mark)",
+          "Excretion/urine and egestion/faeces (1 mark)",
+          "Repair and maintenance activities or thermoregulation (1 mark)"
+        ]
+      },
+      {
+        "question": "State three adaptations of crops and farm practices that increase light interception and GPP. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "High leaf area index/canopy density via close planting (1 mark)",
+          "Use of early-maturing or high-chlorophyll cultivars (1 mark)",
+          "Row orientation/greenhouses to optimise light exposure (1 mark)"
+        ]
+      },
+      {
+        "question": "In an aquatic mesocosm, primary productivity is reported in kJ m⁻³ yr⁻¹ rather than kJ m⁻² yr⁻¹. Explain why. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Water column has depth so volume better represents producing space (1 mark)",
+          "Productivity depends on light penetration and biomass throughout the volume (1 mark)"
+        ]
+      },
+      {
+        "question": "A primary consumer assimilates 600 kJ from 1200 kJ ingested and has R = 450 kJ. Calculate its net production and production efficiency relative to assimilation. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "N = I − (F + R) and I − F = assimilation = 600 kJ (1 mark)",
+          "Net production = 600 − 450 = 150 kJ (1 mark)",
+          "Production efficiency (to biomass) = 150 ÷ 600 × 100 = 25% (1 mark)"
+        ]
+      },
+      {
+        "question": "Suggest two reasons why NPP is usually higher in warm, moist climates than in cold, dry ones. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Higher enzyme activity and longer growing seasons at warm temperatures (1 mark)",
+          "Adequate water supports stomatal opening and CO₂ uptake/photosynthesis (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why constant-temperature drying is necessary when determining dry mass. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Ensures only water is removed without combusting organic matter (1 mark)",
+          "Allows mass to reach a stable constant value for accuracy (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how simplifying a food web can increase the efficiency of energy transfer to humans. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Reduce number of trophic levels between producer and humans (1 mark)",
+          "Control pests and weeds to reduce losses from producers (1 mark)",
+          "More energy reaches human food as plant biomass or primary consumer biomass (1 mark)"
+        ]
+      },
+      {
+        "question": "Define assimilation in the context of consumer energetics. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "The portion of ingested energy that is absorbed and available after egestion losses (1 mark)"
+        ]
+      },
+      {
+        "question": "Give four reasons for variation in energy transfer efficiency between habitats or taxa. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Digestibility of food (cellulose vs protein) and gut morphology (1 mark)",
+          "Thermoregulatory strategy (ectotherm vs endotherm) (1 mark)",
+          "Activity level and movement costs (1 mark)",
+          "Environmental temperature and water availability affecting metabolism (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how intercropping can increase overall productivity compared with monoculture. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Different species exploit resources (light, nutrients) at different times/depths (1 mark)",
+          "Reduces pest outbreaks by disrupting host continuity (1 mark)",
+          "Higher total NPP due to complementary resource use (1 mark)"
+        ]
+      },
+      {
+        "question": "A pyramid of biomass shows 250 g m⁻² at producers, 50 g m⁻² at primary consumers, and 5 g m⁻² at secondary consumers. Calculate efficiency from producers to primary consumers and from primary to secondary consumers. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Prod → PC: (50 ÷ 250) × 100 = 20% (1 mark)",
+          "PC → SC: (5 ÷ 50) × 100 = 10% (1 mark)",
+          "State formula used each time (1 mark)",
+          "Correct units understanding or ratios described (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline an investigation to compare above-ground NPP in fertilised vs unfertilised plots. [5 marks]",
+        "mark": 5,
+        "mark_scheme": [
+          "Randomly assign replicate plots to fertilised and control treatments (1 mark)",
+          "Measure initial biomass proxy (e.g., non-destructive allometry) or standardise planting (1 mark)",
+          "At season end, harvest above-ground biomass, dry to constant mass (1 mark)",
+          "Calculate NPP as increase in dry mass per area per time (1 mark)",
+          "Analyse difference statistically (e.g., t-test) (1 mark)"
+        ]
+      },
+      {
+        "question": "Discuss three trade-offs of intensive aquaculture with respect to energy efficiency and sustainability. [6 marks]",
+        "mark": 6,
+        "mark_scheme": [
+          "High conversion efficiency when using ectothermic fish vs terrestrial livestock (1 mark)",
+          "Feed inputs (fishmeal/soy) may reduce net global energy efficiency (1 mark)",
+          "Waste and eutrophication risks from high stocking densities (1 mark)",
+          "Disease transmission requiring treatments or vaccines (1 mark)",
+          "Selective breeding and recirculating systems can improve FCR and reduce impacts (1 mark)",
+          "Energy costs of aeration, pumping and temperature control affect net gains (1 mark)"
+        ]
+      }
+  ],
+
+  "3.5.4 Nutrient cycles": [
+      {
+        "question": "Define a saprobiont. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "A microorganism that feeds on dead organic matter by extracellular digestion (1 mark)"
+        ]
+      },
+      {
+        "question": "Define ammonification. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Conversion of organic nitrogen (e.g., proteins/urea) into ammonium ions (NH4+) by saprobionts (1 mark)"
+        ]
+      },
+      {
+        "question": "Define nitrification. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Aerobic oxidation of ammonium to nitrite (NO2−) and then to nitrate (NO3−) by nitrifying bacteria (1 mark)"
+        ]
+      },
+      {
+        "question": "Name the bacteria typically involved in the two steps of nitrification. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Ammonium → nitrite: Nitrosomonas (or Nitrosococcus) (1 mark)",
+          "Nitrite → nitrate: Nitrobacter (or Nitrospira) (1 mark)"
+        ]
+      },
+      {
+        "question": "Define nitrogen fixation. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "Reduction of atmospheric N2 to ammonia/ammonium by nitrogen-fixing bacteria (or industrially/lightning) (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two examples of nitrogen-fixing bacteria and where they are found. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Rhizobium in legume root nodules (symbiotic) (1 mark)",
+          "Azotobacter free-living in soil (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the mutualistic relationship between Rhizobium and legumes. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Bacteria fix N2 to ammonium for amino acid synthesis in the plant (1 mark)",
+          "Plant supplies carbohydrates (photosynthate) to bacteria (1 mark)",
+          "Leghaemoglobin maintains low O2 to protect nitrogenase (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe conditions that favour denitrification and why this reduces soil fertility. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Waterlogged/anaerobic soils favour denitrifying bacteria (Pseudomonas) (1 mark)",
+          "Nitrate is reduced to N2/N2O gases, removing available nitrogen from soil (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline the sequence of reactions in denitrification. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "NO3− → NO2− (1 mark)",
+          "NO2− → NO (nitric oxide) or N2O (nitrous oxide) (1 mark)",
+          "NO/N2O → N2 (released to atmosphere) (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why ploughing/aerating soil can reduce denitrification. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Introduces oxygen, making soil aerobic (1 mark)",
+          "Inhibits anaerobic denitrifiers and promotes aerobic nitrifiers (1 mark)"
+        ]
+      },
+      {
+        "question": "Summarise the main transfers in the phosphorus cycle. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Weathering releases phosphate ions (PO4^3−) from rocks to soil/water (1 mark)",
+          "Absorption by plants and transfer through food chains (1 mark)",
+          "Return via excretion and decomposition by saprobionts (1 mark)",
+          "Sedimentation to new rocks in aquatic systems (long-term store) (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the role of mycorrhizae in plant mineral nutrition. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Fungal hyphae increase effective root surface area (1 mark)",
+          "Enhance uptake of phosphate and water (especially in poor soils) (1 mark)",
+          "Mutualism: fungus receives sugars from the plant (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how nitrate taken up by roots is assimilated into organic nitrogen in plants. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "NO3− reduced to NO2− then to NH4+ (1 mark)",
+          "NH4+ incorporated into amino acids via glutamine/glutamate pathways (1 mark)",
+          "Enzymes include nitrate reductase and nitrite reductase (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline the stages of eutrophication caused by nitrate fertiliser run-off. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Leaching of nitrates increases aquatic nutrient levels (1 mark)",
+          "Rapid algal bloom increases turbidity (1 mark)",
+          "Light penetration falls; plants die; decomposers increase (1 mark)",
+          "Oxygen depleted → fish/invertebrate deaths; potential dead zones (1 mark)"
+        ]
+      },
+      {
+        "question": "Suggest three farming practices to reduce nitrate leaching. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Apply fertiliser in smaller, timed doses during active growth (1 mark)",
+          "Use buffer strips/cover crops to trap nutrients (1 mark)",
+          "Avoid spreading before heavy rain; incorporate fertiliser into soil (1 mark)"
+        ]
+      },
+      {
+        "question": "Compare natural (organic) and artificial (inorganic) fertilisers. Give two pros/cons overall. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Organic: slow release, improves soil structure/microbiota (1 mark)",
+          "Inorganic: precise nutrient ratios, rapid availability (1 mark)",
+          "Organic: variable composition/volume, possible pathogens/odour (1 mark)",
+          "Inorganic: higher leaching risk/eutrophication, no improvement to soil humus (1 mark)"
+        ]
+      },
+      {
+        "question": "State two environmental problems linked to overuse of nitrogen fertilisers. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Leaching leading to eutrophication (1 mark)",
+          "Emission of nitrous oxide (greenhouse gas) or acidification (1 mark)"
+        ]
+      },
+      {
+        "question": "A farmer applies 150 kg N ha−1. Plants take up 90 kg N ha−1; 40 kg N ha−1 is leached. Calculate the percentage to uptake, leaching, and other losses. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Uptake: 90/150 × 100 = 60% (1 mark)",
+          "Leaching: 40/150 × 100 ≈ 26.7% (1 mark)",
+          "Other losses (e.g., gaseous/immobilisation): 100 − 60 − 26.7 ≈ 13.3% (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain the role of extracellular enzymes in decomposition. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Saprobionts secrete enzymes to hydrolyse polymers (e.g., proteins, cellulose) (1 mark)",
+          "Soluble products are absorbed and mineral ions released to soil (1 mark)"
+        ]
+      },
+      {
+        "question": "Distinguish between mineralisation and immobilisation in soils. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Mineralisation: conversion of organic nutrients to inorganic ions (1 mark)",
+          "Immobilisation: microbial uptake of inorganic ions into biomass (1 mark)",
+          "Balance controls nutrient availability to plants (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why waterlogged soils often accumulate NH4+ but lose NO3−. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Anaerobic conditions inhibit aerobic nitrification (1 mark)",
+          "Denitrification reduces NO3− to N gases (1 mark)",
+          "Ammonium persists due to limited oxidation to nitrite/nitrate (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe the microbial succession during composting that accelerates nutrient recycling. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Mesophiles start breakdown; temperature rises (1 mark)",
+          "Thermophiles dominate; rapid degradation of proteins/cell walls (1 mark)",
+          "Cooling phase with maturation and humus formation (1 mark)"
+        ]
+      },
+      {
+        "question": "Outline how superphosphate fertiliser is produced from phosphate rock. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Treat phosphate rock with sulfuric or phosphoric acid (1 mark)",
+          "Produces soluble calcium dihydrogen phosphate for plant uptake (1 mark)"
+        ]
+      },
+      {
+        "question": "Give two reasons phosphate is often limiting in freshwater ecosystems. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Phosphate strongly adsorbs to soil particles/sediments (low solubility) (1 mark)",
+          "Slow recycling from sediments/rocks compared with nitrogen (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how seabird guano influences the phosphorus cycle on islands/coasts. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Guano deposits add concentrated phosphate to soils (1 mark)",
+          "Enhances primary productivity and plant growth locally (1 mark)"
+        ]
+      },
+      {
+        "question": "Suggest two ways intensive aquaculture can contribute to eutrophication. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Uneaten feed/fish waste enrich water with N and P (1 mark)",
+          "Effluent discharge increases algal blooms downstream (1 mark)"
+        ]
+      },
+      {
+        "question": "Why is spring application of nitrogen fertiliser preferable to winter application in temperate regions? [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Coincides with active plant growth and uptake (1 mark)",
+          "Reduces winter leaching during high rainfall/low uptake (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain why mycorrhizae are especially beneficial in phosphorus-poor or dry soils. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Extend hyphal network into soil micropores to access scarce PO4^3− (1 mark)",
+          "Improve water uptake, reducing drought stress (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe how some denitrifying bacteria use nitrate in anaerobic respiration. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Use NO3− as terminal electron acceptor instead of O2 (1 mark)",
+          "Reduce NO3− to NO/N2O/N2, generating ATP (1 mark)"
+        ]
+      },
+      {
+        "question": "Trace the nitrogen pathway from a dead animal to plant amino acids. [4 marks]",
+        "mark": 4,
+        "mark_scheme": [
+          "Decomposition and ammonification → NH4+ (1 mark)",
+          "Nitrification to NO2− then NO3− (aerobic bacteria) (1 mark)",
+          "Root uptake of nitrate by plants (1 mark)",
+          "Assimilation into amino acids/proteins (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how including legumes in crop rotations can reduce fertiliser requirements. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Rhizobium fix N2 adding organic N to soil (1 mark)",
+          "Residues/roots increase soil nitrogen for subsequent crops (1 mark)",
+          "Improves soil structure and microbial activity (1 mark)"
+        ]
+      },
+      {
+        "question": "State two potential effects of over-liming soils on nutrient availability. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Phosphate can precipitate with Ca2+ reducing availability (1 mark)",
+          "Micronutrient availability (e.g., Fe, Mn) may decrease at high pH (1 mark)"
+        ]
+      },
+      {
+        "question": "Why is geological recycling of phosphorus considered slow compared with nitrogen? [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "P has major reservoirs in rocks/sediments requiring weathering (1 mark)",
+          "No atmospheric gaseous phase analogous to N2 (1 mark)"
+        ]
+      },
+      {
+        "question": "Give one role where fungi are particularly important in decomposition relative to bacteria. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Efficient degradation of lignin/woody tissues (1 mark)",
+          "Penetrate substrates with hyphae increasing enzyme access (1 mark)",
+          "Operate at lower moisture/pH ranges in litter layers (1 mark)"
+        ]
+      },
+      {
+        "question": "A river’s nitrate concentration rises from 20 mg L−1 to 60 mg L−1 after rainfall. Calculate the percentage increase. [1 mark]",
+        "mark": 1,
+        "mark_scheme": [
+          "((60 − 20) ÷ 20) × 100 = 200% increase (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how vegetated buffer strips beside waterways reduce eutrophication risk. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Trap sediments and adsorb nitrate/phosphate before runoff enters streams (1 mark)",
+          "Promote denitrification/uptake within the buffer vegetation and soils (1 mark)"
+        ]
+      },
+      {
+        "question": "Describe why ploughing a long-fallowed field can cause a temporary ‘nitrogen flush’. [3 marks]",
+        "mark": 3,
+        "mark_scheme": [
+          "Aeration stimulates microbial activity (1 mark)",
+          "Rapid mineralisation of organic N to NH4+ and nitrification to NO3− (1 mark)",
+          "Short-term rise in plant-available N followed by potential leaching (1 mark)"
+        ]
+      },
+      {
+        "question": "Explain how soil phosphatase enzymes aid plant phosphorus acquisition. [2 marks]",
+        "mark": 2,
+        "mark_scheme": [
+          "Hydrolyse organic P compounds to release inorganic PO4^3− (1 mark)",
+          "Produced by roots and microbes, increasing available P near rhizosphere (1 mark)"
+        ]
+      },
+      {
+        "question": "Evaluate the trade-offs of applying organic manures as a nutrient source. [6 marks]",
+        "mark": 6,
+        "mark_scheme": [
+          "Adds N, P, K with slow release matching crop demand (1 mark)",
+          "Improves soil structure, water holding, and microbial diversity (1 mark)",
+          "Variable nutrient content; requires larger volumes/logistics (1 mark)",
+          "Potential pathogen/weed seed load and odour (1 mark)",
+          "Risk of leaching/runoff if over-applied or before rain (1 mark)",
+          "Can reduce reliance on synthetic fertilisers and recycle waste (1 mark)"
+        ]
+      }
+  ]
   
 }
