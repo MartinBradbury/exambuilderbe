@@ -17,7 +17,39 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 import random
 
-FALLBACK_QUESTION_PATH = Path(__file__).resolve().parent.parent / "examquestions/questions.json"
+
+# ------------------------------------------------------------
+# Exam board → local fallback question banks (same JSON schema)
+# ------------------------------------------------------------
+FALLBACK_QUESTION_PATHS = {
+    "OCR": Path(__file__).resolve().parent.parent / "examquestions/ocr_questions.json",
+    "AQA": Path(__file__).resolve().parent.parent / "examquestions/aqa_questions.json",
+}
+ALLOWED_BOARDS = {"OCR", "AQA"}
+
+
+def load_fallback_bank_for_board(exam_board: str) -> dict:
+    """
+    Load the correct local question bank JSON for the given exam board.
+    Returns {} (so you get all-AI) if the file is missing.
+    Raises JSONDecodeError if the JSON is malformed (caught upstream).
+    """
+    board_key = (exam_board or "").strip().upper()
+    path = FALLBACK_QUESTION_PATHS.get(board_key)
+    logger.info(f"Loading fallback bank for {board_key}: {path}")
+    print(f"⚙️  Loading fallback bank for {board_key}: {path}")
+    print(f"\n⚙️  Using fallback file for {board_key}: {path}\n")
+    if not path:
+        # Shouldn't happen if we validated, but guard anyway.
+        return {}
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.warning("Fallback JSON not found for %s at %s; proceeding with AI-only.", board_key, path)
+        return {}
+    # Let JSONDecodeError bubble up so the caller's except block handles it.
 
 
 @api_view(['POST'])
@@ -35,6 +67,10 @@ def generate_exam_questions(request):
     if not all([topic_id, exam_board, number]):
         return Response({"error": "Missing required fields"}, status=400)
 
+    board_key = (exam_board or "").strip().upper()
+    if board_key not in ALLOWED_BOARDS:
+        return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+
     try:
         topic = BiologyTopic.objects.get(id=topic_id)
 
@@ -49,9 +85,8 @@ def generate_exam_questions(request):
                 return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
             subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic_id)
 
-        # Load fallback bank
-        with open(FALLBACK_QUESTION_PATH, "r", encoding="utf-8") as f:
-            all_fallback_questions = json.load(f)
+        # Load fallback bank for the selected exam board
+        all_fallback_questions = load_fallback_bank_for_board(board_key)
 
         # Prefer most specific key present in your JSON: subcategory -> subtopic -> topic
         fallback_pool = []
@@ -79,8 +114,7 @@ def generate_exam_questions(request):
         if subcategory:
             scope += f' (SubCategory: {subcategory.title})'
 
-        ai_response = generate_questions(scope, exam_board, ai_count)
-
+        ai_response = generate_questions(scope, board_key, ai_count)
         ai_questions = ai_response.get("questions", [])
 
         combined_questions = ai_questions + fallback_selected
@@ -93,7 +127,7 @@ def generate_exam_questions(request):
             topic=topic,
             subtopic=subtopic,
             subcategory=subcategory,
-            exam_board=exam_board,
+            exam_board=board_key,
             number_of_questions=number,
             total_available=total_available
         )
@@ -110,7 +144,7 @@ def generate_exam_questions(request):
     except BiologySubCategory.DoesNotExist:
         return Response({"error": "Invalid subcategory for the selected subtopic"}, status=400)
     except json.JSONDecodeError:
-        return Response({"error": "Invalid JSON format"}, status=500)
+        return Response({"error": "Invalid JSON format in fallback question bank"}, status=500)
     except Exception as e:
         logger.exception("generate_exam_questions failed")
         return Response({"error": str(e)}, status=500)
