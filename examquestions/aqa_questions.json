@@ -5864,6 +5864,353 @@
       }
   ],
 
+  "3.4.3 Genetic diversity can arise as a result of mutation or during meiosis": [
+    {
+      "question": "Define genetic diversity. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The variety (number) of different alleles of genes in a population (1 mark)"
+      ]
+    },
+    {
+      "question": "State two ways genetic diversity can arise in populations. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Mutation producing new alleles (1 mark)",
+        "Meiosis generating new allele combinations (crossing over/independent assortment) (1 mark)"
+      ]
+    },
+    {
+      "question": "Define a gene mutation. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A change in the base sequence of DNA in a gene (1 mark)"
+      ]
+    },
+    {
+      "question": "Name and briefly define three types of point mutation. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Substitution: one base replaced by another (1 mark)",
+        "Insertion: extra base(s) added (1 mark)",
+        "Deletion: base(s) removed (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why insertions and deletions often have more severe effects than substitutions. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "They can cause a frameshift in the reading frame (1 mark)",
+        "Alters downstream codons and amino acid sequence (1 mark)"
+      ]
+    },
+    {
+      "question": "Define the terms silent, missense and nonsense mutation. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Silent: no change to amino acid due to code degeneracy (1 mark)",
+        "Missense: changes one amino acid in the polypeptide (1 mark)",
+        "Nonsense: introduces a premature stop codon (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how the degeneracy of the genetic code can buffer the effects of some mutations. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Multiple codons can code for the same amino acid (1 mark)",
+        "Substitution may not change the amino acid (silent) (1 mark)"
+      ]
+    },
+    {
+      "question": "Define chromosome mutation and give one example. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A change in the structure/number of whole chromosomes (1 mark)",
+        "Example: non-disjunction leading to trisomy (e.g., Down’s syndrome) (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe non-disjunction and its genetic consequence. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Failure of homologous chromosomes (or sister chromatids) to separate (1 mark)",
+        "Occurs during anaphase I or II of meiosis (1 mark)",
+        "Results in gametes with abnormal chromosome numbers (aneuploidy) (1 mark)"
+      ]
+    },
+    {
+      "question": "At what stage of meiosis does crossing over occur and what forms at these points? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Prophase I (during synapsis of homologous chromosomes) (1 mark)",
+        "Chiasmata form where chromatids break and rejoin (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how crossing over produces genetic recombinants. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Homologous chromosomes pair to form bivalents (1 mark)",
+        "Non-sister chromatids break at the same point (1 mark)",
+        "Segments are exchanged and rejoined at chiasmata (1 mark)",
+        "Chromatids now carry new allele combinations (recombinants) (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe independent assortment at metaphase I and its effect on genetic diversity. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Bivalents align randomly on the equator (1 mark)",
+        "Maternal and paternal homologues segregate independently (1 mark)",
+        "Produces gametes with random combinations of whole chromosomes (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how independent assortment in meiosis II further increases variation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Sister chromatids (which may be recombinant) segregate randomly (1 mark)",
+        "Generates additional combinations of alleles in gametes (1 mark)"
+      ]
+    },
+    {
+      "question": "Define chiasma (plural chiasmata). [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The visible point where non-sister chromatids have crossed and exchanged sections (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why genes that are linked on the same chromosome do not assort independently unless crossing over occurs between them. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Linked genes are on the same chromosome (1 mark)",
+        "They are usually inherited together as a unit (1 mark)",
+        "Only recombination between them can separate their alleles (1 mark)"
+      ]
+    },
+    {
+      "question": "Calculate the number of different gamete chromosome combinations an organism can produce if n = 4 (ignore crossing over). [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Number of combinations = 2^n = 2^4 (1 mark)",
+        "2^4 = 16 different combinations (1 mark)"
+      ]
+    },
+    {
+      "question": "Two parents of a species with n = 3 mate. How many possible chromosomal combinations could their zygotes have (ignore crossing over)? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Each parent produces 2^3 = 8 gamete types (1 mark)",
+        "Zygote combinations = 2^3 × 2^3 = 2^6 = 64 (1 mark)"
+      ]
+    },
+    {
+      "question": "Distinguish between germline and somatic mutations in terms of inheritance. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Germline: occurs in cells that give rise to gametes; heritable (1 mark)",
+        "Somatic: occurs in body cells; not passed to offspring (1 mark)"
+      ]
+    },
+    {
+      "question": "Name two environmental mutagens and briefly state how they act. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "UV/ionising radiation: causes thymine dimers or DNA breaks (1 mark)",
+        "Chemicals (e.g., alkylating agents): modify bases/mispairing (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why defects in DNA repair pathways can increase cancer risk. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "DNA repair normally corrects replication errors/damage (1 mark)",
+        "Defects allow mutations to accumulate (1 mark)",
+        "Mutations in proto-oncogenes/tumour suppressors disrupt cell cycle control (1 mark)"
+      ]
+    },
+    {
+      "question": "Define a frameshift mutation and give one consequence at the protein level. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Insertion/deletion not in multiples of three that shifts the reading frame (1 mark)",
+        "Alters downstream amino acid sequence/often premature stop (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how a neutral mutation can become advantageous after an environmental change. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Initially has no effect on fitness (1 mark)",
+        "New environment creates a selection pressure (1 mark)",
+        "Allele confers a survival/reproductive advantage and increases in frequency (1 mark)"
+      ]
+    },
+    {
+      "question": "State two ways meiosis generates genetically distinct gametes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Crossing over between non-sister chromatids (1 mark)",
+        "Independent assortment of homologous chromosomes (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline how meiosis halves chromosome number and maintains it across generations. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Two divisions produce haploid gametes (1 mark)",
+        "Fertilisation restores diploid number in zygote (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare mitosis and meiosis with respect to genetic variation in daughter cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Mitosis: produces genetically identical cells (1 mark)",
+        "Meiosis: produces genetically varied gametes (1 mark)",
+        "Variation via crossing over and independent assortment (1 mark)"
+      ]
+    },
+    {
+      "question": "Outline the key events of meiosis I that underpin genetic variation. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Prophase I: synapsis and crossing over (1 mark)",
+        "Metaphase I: random alignment of bivalents (1 mark)",
+        "Anaphase I: segregation of homologous chromosomes (1 mark)",
+        "Telophase I: two haploid cells with recombined chromosomes (1 mark)"
+      ]
+    },
+    {
+      "question": "Using sickle-cell anaemia as an example, describe how a substitution mutation alters the polypeptide produced. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Base substitution in the β-globin gene (1 mark)",
+        "Codon change leads to Glu → Val at position 6 (1 mark)",
+        "Alters haemoglobin structure causing sickling under low O₂ (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how the frequency of crossing over between two genes relates to their distance on a chromosome. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Genes further apart experience more crossing over events (1 mark)",
+        "Higher recombination frequency indicates greater distance (1 mark)",
+        "Used to construct genetic linkage maps (1 mark)"
+      ]
+    },
+    {
+      "question": "Define recombination frequency and state one use in genetics. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Proportion of recombinant offspring/gametes among total (1 mark)",
+        "Used to estimate map distance between linked genes (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two reasons random fertilisation increases genetic diversity in offspring. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Any sperm can fuse with any egg (1 mark)",
+        "Combines two independent sets of varied gametes (1 mark)"
+      ]
+    },
+    {
+      "question": "Distinguish between aneuploidy and polyploidy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Aneuploidy: abnormal number of one/few chromosomes (e.g., 2n±1) (1 mark)",
+        "Polyploidy: whole extra sets of chromosomes (e.g., 3n, 4n) (1 mark)"
+      ]
+    },
+    {
+      "question": "Predict which causes a frameshift: insertion of 1 base or insertion of 3 bases; justify your answer. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Insertion of 1 base causes frameshift (1 mark)",
+        "Insertion of 3 bases adds one amino acid but preserves reading frame (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe synapsis and formation of bivalents during meiosis I. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Homologous chromosomes pair closely along their length (1 mark)",
+        "Form bivalents/tetrads enabling crossing over (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how meiosis can produce genetic recombination without any mutation occurring. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Crossing over shuffles existing alleles between homologues (1 mark)",
+        "Independent assortment reassigns whole homologues into gametes (1 mark)"
+      ]
+    },
+    {
+      "question": "A diploid organism has 2n = 8. Calculate the number of different gamete types from independent assortment alone; state any assumption. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "n = 4, so gamete types = 2^4 = 16 (1 mark)",
+        "Assuming no crossing over and all homologous pairs segregate independently (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why mutation is the ultimate source of new alleles but meiosis is the main source of new allele combinations. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Mutation creates entirely novel DNA sequences (new alleles) (1 mark)",
+        "Meiosis shuffles existing alleles via recombination (1 mark)",
+        "Together they generate heritable variation for selection to act upon (1 mark)"
+      ]
+    },
+    {
+      "question": "Discuss the likely phenotypic effects of a nonsense vs a conservative missense mutation in a critical enzyme. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Nonsense may truncate protein → loss of function (1 mark)",
+        "Conservative missense swaps similar amino acids (1 mark)",
+        "Conservative change may have minimal effect on active site/stability (1 mark)",
+        "Overall, nonsense usually more severe than conservative missense (1 mark)"
+      ]
+    },
+    {
+      "question": "Evaluate how crossing over and independent assortment together generate very large numbers of potential gamete genotypes in humans (n = 23). [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Independent assortment alone → 2^23 ≈ 8.4 million gamete combinations (1 mark)",
+        "Crossing over creates recombinant chromatids (1 mark)",
+        "Multiple chiasmata per bivalent further increase combinations (1 mark)",
+        "Recombination frequency varies along chromosomes (1 mark)",
+        "Combination of the two mechanisms yields astronomically many genotypes (1 mark)",
+        "Random fertilisation multiplies diversity (≈ (2^23)^2 ignoring crossover) (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how errors in meiosis can lead to gametes with duplicated or missing chromosomes and suggest one consequence at the organismal level. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Non-disjunction at anaphase I: homologous chromosomes fail to separate (1 mark)",
+        "Non-disjunction at anaphase II: sister chromatids fail to separate (1 mark)",
+        "Produces n+1 or n−1 gametes (1 mark)",
+        "Fertilisation yields trisomy or monosomy zygotes (1 mark)",
+        "Trisomy can cause developmental syndromes (e.g., Down’s) (1 mark)",
+        "Monosomy often lethal/causes severe abnormalities (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain, with an example, how a single-base substitution can alter protein function by changing a key R group interaction. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Substitution changes encoded amino acid (1 mark)",
+        "New residue differs in charge/polarity/size (1 mark)",
+        "Disrupts ionic/hydrogen/hydrophobic interactions in tertiary structure (1 mark)",
+        "Alters active site or stability reducing/enhancing activity (example acceptable) (1 mark)"
+      ]
+    }
+  ],
+
   "3.4.4 Genetic diversity and adaptation": [
       {
         "question": "Define genetic diversity. [1 mark]",
@@ -7219,5 +7566,6 @@
         ]
       }
   ]
+
   
 }
