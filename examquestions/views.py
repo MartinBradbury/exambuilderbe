@@ -29,25 +29,17 @@ ALLOWED_BOARDS = {"OCR", "AQA"}
 
 
 def load_fallback_bank_for_board(exam_board: str) -> dict:
-    """
-    Load the correct local question bank JSON for the given exam board.
-    Returns {} (so you get all-AI) if the file is missing.
-    Raises JSONDecodeError if the JSON is malformed (caught upstream).
-    """
     board_key = (exam_board or "").strip().upper()
-    path = FALLBACK_QUESTION_PATHS.get(board_key)
-    logger.info(f"Loading fallback bank for {board_key}: {path}")
-    print(f"⚙️  Loading fallback bank for {board_key}: {path}")
-    print(f"\n⚙️  Using fallback file for {board_key}: {path}\n")
-    if not path:
-        # Shouldn't happen if we validated, but guard anyway.
-        return {}
+    path = FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
+
+    logger.info("Exam board: %s | Using fallback file: %s | Exists: %s",
+                board_key, path, path.exists())
 
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
-        logger.warning("Fallback JSON not found for %s at %s; proceeding with AI-only.", board_key, path)
+        logger.warning("Fallback file NOT FOUND for %s at %s", board_key, path)
         return {}
     # Let JSONDecodeError bubble up so the caller's except block handles it.
 
