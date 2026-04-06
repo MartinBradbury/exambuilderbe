@@ -1,10 +1,11 @@
 import re
+from unittest.mock import patch
 from django.core import mail
 from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import CustomUser
+from .models import CustomUser, UserEntitlement
 
 
 @override_settings(
@@ -63,3 +64,100 @@ class PasswordResetFlowTests(APITestCase):
 			format='json',
 		)
 		self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+
+
+@override_settings(
+	STRIPE_SECRET_KEY='sk_test_123',
+	STRIPE_PUBLISHABLE_KEY='pk_test_123',
+	STRIPE_PRICE_ID='price_123',
+	STRIPE_WEBHOOK_SECRET='whsec_123',
+	STRIPE_SUCCESS_URL='http://localhost:3000/billing?checkout=success',
+	STRIPE_CANCEL_URL='http://localhost:3000/billing?checkout=cancelled',
+	STRIPE_CHECKOUT_MODE='payment',
+)
+class StripeBillingTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='billing@example.com',
+			username='billing-user',
+			password='BillingPass123',
+		)
+		self.checkout_url = reverse('stripe-checkout-session')
+		self.webhook_url = reverse('stripe-webhook')
+
+	@patch('accounts.views.create_stripe_checkout_session')
+	def test_create_checkout_session_returns_hosted_checkout_data(self, mock_create_session):
+		mock_create_session.return_value = {
+			'id': 'cs_test_123',
+			'url': 'https://checkout.stripe.com/c/pay/cs_test_123',
+		}
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(self.checkout_url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['session_id'], 'cs_test_123')
+		self.assertEqual(response.data['checkout_url'], 'https://checkout.stripe.com/c/pay/cs_test_123')
+		self.assertEqual(response.data['publishable_key'], 'pk_test_123')
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_checkout_completed_webhook_promotes_user_to_paid(self, mock_construct_event):
+		mock_construct_event.return_value = {
+			'type': 'checkout.session.completed',
+			'data': {
+				'object': {
+					'id': 'cs_live_123',
+					'customer': 'cus_123',
+					'subscription': 'sub_123',
+					'client_reference_id': str(self.user.id),
+					'metadata': {'plan_type': UserEntitlement.PlanType.PAID},
+				}
+			},
+		}
+
+		response = self.client.post(
+			self.webhook_url,
+			data='{}',
+			content_type='application/json',
+			HTTP_STRIPE_SIGNATURE='sig_test',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement = self.user.entitlement
+		entitlement.refresh_from_db()
+		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.PAID)
+		self.assertEqual(entitlement.stripe_customer_id, 'cus_123')
+		self.assertEqual(entitlement.stripe_checkout_session_id, 'cs_live_123')
+		self.assertEqual(entitlement.stripe_subscription_id, 'sub_123')
+		self.assertTrue(entitlement.has_unlimited_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_subscription_deleted_webhook_downgrades_user_to_free(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		entitlement.plan_type = UserEntitlement.PlanType.PAID
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.save(update_fields=['plan_type', 'stripe_customer_id', 'stripe_subscription_id'])
+
+		mock_construct_event.return_value = {
+			'type': 'customer.subscription.deleted',
+			'data': {
+				'object': {
+					'id': 'sub_123',
+					'customer': 'cus_123',
+					'status': 'canceled',
+				}
+			},
+		}
+
+		response = self.client.post(
+			self.webhook_url,
+			data='{}',
+			content_type='application/json',
+			HTTP_STRIPE_SIGNATURE='sig_test',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement.refresh_from_db()
+		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.FREE)
+		self.assertFalse(entitlement.has_unlimited_access)

@@ -1,15 +1,24 @@
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+import stripe
 from .models import CustomUser
+from .services.stripe import (
+    create_stripe_checkout_session,
+    construct_stripe_event,
+    sync_entitlement_from_checkout_session,
+    sync_entitlement_from_subscription,
+)
 from .serializers import (
     CustomUserSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
+    StripeCheckoutSessionSerializer,
     UserLoginSerializer,
     UserRegistrationSerializer,
 )
@@ -126,3 +135,61 @@ class PasswordResetConfirmAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'detail': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
+
+
+class StripeCheckoutSessionAPIView(GenericAPIView):
+    serializer_class = StripeCheckoutSessionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            session = create_stripe_checkout_session(
+                user=request.user,
+                success_url=serializer.validated_data.get('success_url'),
+                cancel_url=serializer.validated_data.get('cancel_url'),
+            )
+        except ValueError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except stripe.error.StripeError:
+            return Response({'detail': 'Unable to create a Stripe checkout session right now.'}, status=status.HTTP_502_BAD_GATEWAY)
+
+        return Response(
+            {
+                'checkout_url': session.get('url'),
+                'session_id': session.get('id'),
+                'publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+                'mode': settings.STRIPE_CHECKOUT_MODE,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class StripeWebhookAPIView(GenericAPIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    parser_classes = [JSONParser]
+
+    def post(self, request, *args, **kwargs):
+        signature = request.META.get('HTTP_STRIPE_SIGNATURE', '')
+
+        try:
+            event = construct_stripe_event(request.body, signature)
+        except ValueError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except stripe.error.SignatureVerificationError:
+            return Response({'detail': 'Invalid Stripe signature.'}, status=status.HTTP_400_BAD_REQUEST)
+        except stripe.error.StripeError:
+            return Response({'detail': 'Unable to validate Stripe webhook.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        event_type = event.get('type')
+        event_object = event.get('data', {}).get('object', {})
+
+        if event_type in {'checkout.session.completed', 'checkout.session.async_payment_succeeded'}:
+            sync_entitlement_from_checkout_session(event_object)
+        elif event_type in {'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'}:
+            sync_entitlement_from_subscription(event_object)
+
+        return Response({'received': True}, status=status.HTTP_200_OK)

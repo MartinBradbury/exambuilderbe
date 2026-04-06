@@ -30,6 +30,7 @@ class CustomUserProfile(models.Model):
 class UserEntitlement(models.Model):
     class PlanType(models.TextChoices):
         FREE = 'free', 'Free'
+        PAID = 'paid', 'Paid'
         LIFETIME = 'lifetime', 'Lifetime'
 
     FREE_DAILY_QUESTION_LIMIT = 1
@@ -39,6 +40,7 @@ class UserEntitlement(models.Model):
     lifetime_unlocked = models.BooleanField(default=False)
     stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
     stripe_checkout_session_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
     paid_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -46,7 +48,7 @@ class UserEntitlement(models.Model):
 
     @property
     def has_unlimited_access(self):
-        return self.plan_type == self.PlanType.LIFETIME or self.lifetime_unlocked
+        return self.plan_type in {self.PlanType.PAID, self.PlanType.LIFETIME} or self.lifetime_unlocked
 
 
 class QuestionUsage(models.Model):

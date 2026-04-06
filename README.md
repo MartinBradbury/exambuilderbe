@@ -100,3 +100,52 @@ heroku logs -n 200 -a exambuilder
 Security reminder:
 
 - If an SMTP password, API key, or other secret is ever pasted into chat, logs, screenshots, or commits, rotate it immediately in the provider dashboard and update the Heroku config var with the new value.
+
+## Stripe billing
+
+Stripe is used to move a user from the free tier to the paid tier.
+The backend creates a hosted Stripe Checkout session and waits for a webhook before updating the user's entitlement.
+
+Current account fields used for billing:
+
+- `plan_type` supports `free`, `paid`, and `lifetime`
+- `stripe_customer_id`
+- `stripe_checkout_session_id`
+- `stripe_subscription_id`
+- `paid_at`
+
+API endpoints:
+
+- `POST /accounts/billing/create-checkout-session/`
+- `POST /accounts/billing/webhook/`
+
+Required Stripe config vars:
+
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_PRICE_ID`
+- `STRIPE_CHECKOUT_MODE`
+- `STRIPE_SUCCESS_URL`
+- `STRIPE_CANCEL_URL`
+
+Suggested defaults:
+
+- `STRIPE_CHECKOUT_MODE=payment` for a one-time paid unlock
+- `STRIPE_SUCCESS_URL=https://alevelexambuilder.netlify.app/account?checkout=success`
+- `STRIPE_CANCEL_URL=https://alevelexambuilder.netlify.app/account?checkout=cancelled`
+
+Webhook behavior:
+
+- `checkout.session.completed` upgrades the user to `paid`
+- `customer.subscription.updated` keeps the user on `paid` while the subscription is active
+- `customer.subscription.deleted` downgrades the user back to `free`
+
+Frontend flow:
+
+1. Authenticated frontend calls `POST /accounts/billing/create-checkout-session/`
+2. Backend returns a Stripe Checkout URL
+3. Frontend redirects the user to that URL
+4. Stripe sends a webhook to `POST /accounts/billing/webhook/`
+5. Backend updates the user's entitlement
+6. Frontend reads the updated `plan_type` from `GET /accounts/user/`

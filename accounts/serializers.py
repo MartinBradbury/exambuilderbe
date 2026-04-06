@@ -124,3 +124,8 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         user.set_password(self.validated_data['password1'])
         user.save(update_fields=['password'])
         return user
+
+
+class StripeCheckoutSessionSerializer(serializers.Serializer):
+    success_url = serializers.URLField(required=False)
+    cancel_url = serializers.URLField(required=False)
