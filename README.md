@@ -106,6 +106,14 @@ Security reminder:
 Stripe is used to move a user from the free tier to the paid tier.
 The backend creates a hosted Stripe Checkout session and waits for a webhook before updating the user's entitlement.
 
+Status:
+
+- Stripe Checkout creation is working
+- Stripe test payments are working
+- Webhook processing is working
+- Successful payment upgrades the user from `free` to `paid`
+- Paid users get unlimited question access
+
 Current account fields used for billing:
 
 - `plan_type` supports `free`, `paid`, and `lifetime`
@@ -149,3 +157,19 @@ Frontend flow:
 4. Stripe sends a webhook to `POST /accounts/billing/webhook/`
 5. Backend updates the user's entitlement
 6. Frontend reads the updated `plan_type` from `GET /accounts/user/`
+
+Verified test flow:
+
+1. Log in as a free user
+2. Call `POST /accounts/billing/create-checkout-session/`
+3. Redirect to Stripe Checkout
+4. Complete payment with Stripe test card `4242 4242 4242 4242`
+5. Stripe redirects back to the configured success URL
+6. Stripe webhook updates the backend entitlement
+7. `GET /accounts/user/` shows `plan_type=paid`
+8. The user now has unlimited questions
+
+Go-live note:
+
+- The current flow has been verified in Stripe test mode
+- Before accepting real payments, switch the Heroku Stripe config vars from test keys and test price IDs to live values
