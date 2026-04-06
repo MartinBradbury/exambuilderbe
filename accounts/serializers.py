@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from django.utils import timezone
 from .models import CustomUser, CustomUserProfile, QuestionUsage, UserEntitlement
 
@@ -86,3 +90,37 @@ class UserLoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError('User is not active / does not exist')
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        if attrs['password1'] != attrs['password2']:
+            raise serializers.ValidationError('Passwords do not match')
+
+        try:
+            user_id = force_str(urlsafe_base64_decode(attrs['uid']))
+            user = CustomUser.objects.get(pk=user_id)
+        except (CustomUser.DoesNotExist, TypeError, ValueError, OverflowError):
+            raise serializers.ValidationError('Invalid password reset link')
+
+        if not default_token_generator.check_token(user, attrs['token']):
+            raise serializers.ValidationError('Invalid or expired password reset token')
+
+        validate_password(attrs['password1'], user=user)
+        attrs['user'] = user
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.validated_data['user']
+        user.set_password(self.validated_data['password1'])
+        user.save(update_fields=['password'])
+        return user
