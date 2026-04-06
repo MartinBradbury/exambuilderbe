@@ -10,6 +10,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 
+def env_to_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -18,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 OPEN_AI_KEY = os.getenv('OPENAI_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = env_to_bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = [
     'exambuilder-efae14d59f03.herokuapp.com',
@@ -103,8 +110,18 @@ WSGI_APPLICATION = 'exambuilder.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 database_url = os.environ.get("DATABASE_URL")
+running_on_heroku = bool(os.getenv('DYNO'))
+use_local_db = env_to_bool('USE_LOCAL_DB', default=not running_on_heroku)
 
-if database_url:
+if use_local_db or not database_url:
+    # Local development default: keep migrations and schema changes on SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
     # ✅ Production / when DATABASE_URL is set (e.g., Heroku with Supabase)
     DATABASES = {
         'default': dj_database_url.config(
@@ -112,14 +129,6 @@ if database_url:
             conn_max_age=600,
             ssl_require=True  # Supabase requires SSL
         )
-    }
-else:
-    # ✅ Local development fallback (SQLite)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
     }
 
 SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")

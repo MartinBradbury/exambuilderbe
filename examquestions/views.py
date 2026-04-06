@@ -3,6 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .services.ai import generate_questions, evaluate_response_with_openai, get_feedback_from_openai
 from .models import QuestionSession, BiologyTopic, BiologySubCategory, BiologySubTopic
+from accounts.models import QuestionUsage, UserEntitlement
+from django.db import transaction
+from django.utils import timezone
 import json
 from .serializers import (
     QuestionSessionSerializer,
@@ -28,6 +31,10 @@ FALLBACK_QUESTION_PATHS = {
 ALLOWED_BOARDS = {"OCR", "AQA"}
 
 
+class DailyQuestionLimitExceeded(Exception):
+    pass
+
+
 def load_fallback_bank_for_board(exam_board: str) -> dict:
     board_key = (exam_board or "").strip().upper()
     path = FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
@@ -42,6 +49,11 @@ def load_fallback_bank_for_board(exam_board: str) -> dict:
         logger.warning("Fallback file NOT FOUND for %s at %s", board_key, path)
         return {}
     # Let JSONDecodeError bubble up so the caller's except block handles it.
+
+
+def get_or_create_entitlement(user):
+    entitlement, _ = UserEntitlement.objects.get_or_create(user=user)
+    return entitlement
 
 
 @api_view(['POST'])
@@ -62,6 +74,31 @@ def generate_exam_questions(request):
     board_key = (exam_board or "").strip().upper()
     if board_key not in ALLOWED_BOARDS:
         return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+
+    entitlement = get_or_create_entitlement(request.user)
+    today = timezone.localdate()
+    questions_remaining_today = None
+
+    if not entitlement.has_unlimited_access:
+        current_usage = (
+            QuestionUsage.objects.filter(user=request.user, date=today)
+            .values_list("question_count", flat=True)
+            .first()
+            or 0
+        )
+        questions_remaining_today = max(
+            UserEntitlement.FREE_DAILY_QUESTION_LIMIT - current_usage,
+            0,
+        )
+        if number > questions_remaining_today:
+            return Response(
+                {
+                    "error": "Free users can only generate 1 question per day. Upgrade for unlimited access.",
+                    "plan_type": entitlement.plan_type,
+                    "questions_remaining_today": questions_remaining_today,
+                },
+                status=403,
+            )
 
     try:
         # 1) Fetch the topic for THIS board (critical change)
@@ -115,21 +152,54 @@ def generate_exam_questions(request):
 
         total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
 
-        session = QuestionSession.objects.create(
-            user=request.user,
-            topic=topic,
-            subtopic=subtopic,
-            subcategory=subcategory,
-            exam_board=board_key,
-            number_of_questions=number,
-            total_available=total_available
-        )
+        with transaction.atomic():
+            if not entitlement.has_unlimited_access:
+                usage, _ = QuestionUsage.objects.select_for_update().get_or_create(
+                    user=request.user,
+                    date=today,
+                    defaults={"question_count": 0},
+                )
+                questions_remaining_today = max(
+                    UserEntitlement.FREE_DAILY_QUESTION_LIMIT - usage.question_count,
+                    0,
+                )
+                if number > questions_remaining_today:
+                    raise DailyQuestionLimitExceeded()
+
+            session = QuestionSession.objects.create(
+                user=request.user,
+                topic=topic,
+                subtopic=subtopic,
+                subcategory=subcategory,
+                exam_board=board_key,
+                number_of_questions=number,
+                total_available=total_available
+            )
+
+            if not entitlement.has_unlimited_access:
+                usage.question_count += number
+                usage.save(update_fields=["question_count"])
+                questions_remaining_today = max(
+                    UserEntitlement.FREE_DAILY_QUESTION_LIMIT - usage.question_count,
+                    0,
+                )
 
         return Response({
             "questions": combined_questions,
-            "session_id": session.id
+            "session_id": session.id,
+            "questions_remaining_today": questions_remaining_today,
+            "plan_type": entitlement.plan_type,
         }, status=200)
 
+    except DailyQuestionLimitExceeded:
+        return Response(
+            {
+                "error": "Free users can only generate 1 question per day. Upgrade for unlimited access.",
+                "plan_type": entitlement.plan_type,
+                "questions_remaining_today": 0,
+            },
+            status=403,
+        )
     except BiologyTopic.DoesNotExist:
         return Response({"error": "Invalid topic selected for this exam board"}, status=400)
     except BiologySubTopic.DoesNotExist:

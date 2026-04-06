@@ -1,11 +1,53 @@
 from rest_framework import serializers
-from .models import CustomUser, CustomUserProfile
 from django.contrib.auth import authenticate
+from django.utils import timezone
+from .models import CustomUser, CustomUserProfile, QuestionUsage, UserEntitlement
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    plan_type = serializers.SerializerMethodField()
+    lifetime_unlocked = serializers.SerializerMethodField()
+    has_unlimited_access = serializers.SerializerMethodField()
+    questions_remaining_today = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email']
+        fields = [
+            'id',
+            'username',
+            'email',
+            'plan_type',
+            'lifetime_unlocked',
+            'has_unlimited_access',
+            'questions_remaining_today',
+        ]
+
+    def _get_entitlement(self, obj):
+        entitlement = getattr(obj, 'entitlement', None)
+        if entitlement is None:
+            entitlement, _ = UserEntitlement.objects.get_or_create(user=obj)
+        return entitlement
+
+    def get_plan_type(self, obj):
+        return self._get_entitlement(obj).plan_type
+
+    def get_lifetime_unlocked(self, obj):
+        return self._get_entitlement(obj).lifetime_unlocked
+
+    def get_has_unlimited_access(self, obj):
+        return self._get_entitlement(obj).has_unlimited_access
+
+    def get_questions_remaining_today(self, obj):
+        entitlement = self._get_entitlement(obj)
+        if entitlement.has_unlimited_access:
+            return None
+
+        question_count = (
+            QuestionUsage.objects.filter(user=obj, date=timezone.localdate())
+            .values_list('question_count', flat=True)
+            .first()
+            or 0
+        )
+        return max(UserEntitlement.FREE_DAILY_QUESTION_LIMIT - question_count, 0)
 
 class CustomUserProfileSerializer(serializers.ModelSerializer):
     class Meta:

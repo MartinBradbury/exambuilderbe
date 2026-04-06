@@ -2,10 +2,13 @@ from openai import OpenAI
 from django.conf import settings
 import json
 
-client = OpenAI(api_key=settings.OPEN_AI_KEY)
+
+def get_openai_client():
+    return OpenAI(api_key=settings.OPEN_AI_KEY)
 
 
 def generate_questions(topic, exam_board, number_of_questions):
+    client = get_openai_client()
     prompt = f"""
     You are a qualified teacher creating exam questions for the {exam_board} exam board.
 
@@ -56,6 +59,7 @@ def generate_questions(topic, exam_board, number_of_questions):
 
 
 def evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board):
+    client = get_openai_client()
     # Append "(1 mark)" to each marking point for clarity
     mark_scheme_with_marks = [f"{p} (1 mark)" for p in mark_scheme]
 
@@ -119,6 +123,7 @@ def evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board
 
 
 def get_feedback_from_openai(prompt):
+    client = get_openai_client()
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
