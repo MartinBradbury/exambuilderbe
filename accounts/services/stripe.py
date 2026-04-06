@@ -8,6 +8,17 @@ ACTIVE_SUBSCRIPTION_STATUSES = {'active', 'trialing', 'past_due'}
 SUPPORTED_CHECKOUT_MODES = {'payment', 'subscription'}
 
 
+def stripe_value(obj, key, default=None):
+    if obj is None:
+        return default
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    try:
+        return obj[key]
+    except Exception:
+        return getattr(obj, key, default)
+
+
 def _get_checkout_mode():
     configured_mode = (settings.STRIPE_CHECKOUT_MODE or 'payment').strip().lower()
     return configured_mode if configured_mode in SUPPORTED_CHECKOUT_MODES else 'payment'
@@ -46,7 +57,7 @@ def create_stripe_checkout_session(user, success_url=None, cancel_url=None):
         checkout_session_params['customer_email'] = user.email
 
     session = stripe.checkout.Session.create(**checkout_session_params)
-    entitlement.stripe_checkout_session_id = session.get('id')
+    entitlement.stripe_checkout_session_id = stripe_value(session, 'id')
     entitlement.save(update_fields=['stripe_checkout_session_id'])
     return session
 
@@ -61,7 +72,8 @@ def construct_stripe_event(payload, signature):
 
 
 def sync_entitlement_from_checkout_session(session):
-    user_id = session.get('client_reference_id') or session.get('metadata', {}).get('user_id')
+    metadata = stripe_value(session, 'metadata', {}) or {}
+    user_id = stripe_value(session, 'client_reference_id') or stripe_value(metadata, 'user_id')
     if not user_id:
         return None
 
@@ -70,11 +82,11 @@ def sync_entitlement_from_checkout_session(session):
         return None
 
     entitlement, _ = UserEntitlement.objects.get_or_create(user=user)
-    entitlement.plan_type = session.get('metadata', {}).get('plan_type', UserEntitlement.PlanType.PAID)
+    entitlement.plan_type = stripe_value(metadata, 'plan_type', UserEntitlement.PlanType.PAID)
     entitlement.lifetime_unlocked = entitlement.plan_type == UserEntitlement.PlanType.LIFETIME
-    entitlement.stripe_customer_id = session.get('customer') or entitlement.stripe_customer_id
-    entitlement.stripe_checkout_session_id = session.get('id') or entitlement.stripe_checkout_session_id
-    entitlement.stripe_subscription_id = session.get('subscription') or entitlement.stripe_subscription_id
+    entitlement.stripe_customer_id = stripe_value(session, 'customer') or entitlement.stripe_customer_id
+    entitlement.stripe_checkout_session_id = stripe_value(session, 'id') or entitlement.stripe_checkout_session_id
+    entitlement.stripe_subscription_id = stripe_value(session, 'subscription') or entitlement.stripe_subscription_id
     entitlement.paid_at = timezone.now()
     entitlement.save(
         update_fields=[
@@ -90,8 +102,8 @@ def sync_entitlement_from_checkout_session(session):
 
 
 def sync_entitlement_from_subscription(subscription):
-    subscription_id = subscription.get('id')
-    customer_id = subscription.get('customer')
+    subscription_id = stripe_value(subscription, 'id')
+    customer_id = stripe_value(subscription, 'customer')
 
     entitlement = None
     if subscription_id:
@@ -101,7 +113,7 @@ def sync_entitlement_from_subscription(subscription):
     if entitlement is None:
         return None
 
-    status = (subscription.get('status') or '').strip().lower()
+    status = (stripe_value(subscription, 'status') or '').strip().lower()
     if status in ACTIVE_SUBSCRIPTION_STATUSES:
         entitlement.plan_type = UserEntitlement.PlanType.PAID
         entitlement.paid_at = entitlement.paid_at or timezone.now()

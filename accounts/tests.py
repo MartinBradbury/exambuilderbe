@@ -1,5 +1,6 @@
 import re
 from unittest.mock import patch
+from types import SimpleNamespace
 from django.core import mail
 from django.test import override_settings
 from django.urls import reverse
@@ -87,10 +88,10 @@ class StripeBillingTests(APITestCase):
 
 	@patch('accounts.views.create_stripe_checkout_session')
 	def test_create_checkout_session_returns_hosted_checkout_data(self, mock_create_session):
-		mock_create_session.return_value = {
-			'id': 'cs_test_123',
-			'url': 'https://checkout.stripe.com/c/pay/cs_test_123',
-		}
+		mock_create_session.return_value = SimpleNamespace(
+			id='cs_test_123',
+			url='https://checkout.stripe.com/c/pay/cs_test_123',
+		)
 
 		self.client.force_authenticate(user=self.user)
 		response = self.client.post(self.checkout_url, {}, format='json')

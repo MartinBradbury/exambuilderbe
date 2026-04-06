@@ -7,10 +7,12 @@ from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import stripe
+import logging
 from .models import CustomUser
 from .services.stripe import (
     create_stripe_checkout_session,
     construct_stripe_event,
+    stripe_value,
     sync_entitlement_from_checkout_session,
     sync_entitlement_from_subscription,
 )
@@ -25,6 +27,9 @@ from .serializers import (
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+
+
+logger = logging.getLogger(__name__)
 
 
 class UserRegistrationAPIView(GenericAPIView):
@@ -153,13 +158,17 @@ class StripeCheckoutSessionAPIView(GenericAPIView):
             )
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        except stripe.error.StripeError:
+        except stripe.error.StripeError as exc:
+            logger.exception('Stripe checkout session creation failed for user %s', request.user.id)
             return Response({'detail': 'Unable to create a Stripe checkout session right now.'}, status=status.HTTP_502_BAD_GATEWAY)
+        except Exception:
+            logger.exception('Unexpected checkout session failure for user %s', request.user.id)
+            return Response({'detail': 'Unexpected error while starting checkout.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(
             {
-                'checkout_url': session.get('url'),
-                'session_id': session.get('id'),
+                'checkout_url': stripe_value(session, 'url'),
+                'session_id': stripe_value(session, 'id'),
                 'publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
                 'mode': settings.STRIPE_CHECKOUT_MODE,
             },
@@ -183,13 +192,21 @@ class StripeWebhookAPIView(GenericAPIView):
             return Response({'detail': 'Invalid Stripe signature.'}, status=status.HTTP_400_BAD_REQUEST)
         except stripe.error.StripeError:
             return Response({'detail': 'Unable to validate Stripe webhook.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            logger.exception('Unexpected Stripe webhook validation failure')
+            return Response({'detail': 'Unexpected error while validating Stripe webhook.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        event_type = event.get('type')
-        event_object = event.get('data', {}).get('object', {})
+        event_type = stripe_value(event, 'type')
+        event_data = stripe_value(event, 'data', {}) or {}
+        event_object = stripe_value(event_data, 'object', {}) or {}
 
-        if event_type in {'checkout.session.completed', 'checkout.session.async_payment_succeeded'}:
-            sync_entitlement_from_checkout_session(event_object)
-        elif event_type in {'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'}:
-            sync_entitlement_from_subscription(event_object)
+        try:
+            if event_type in {'checkout.session.completed', 'checkout.session.async_payment_succeeded'}:
+                sync_entitlement_from_checkout_session(event_object)
+            elif event_type in {'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'}:
+                sync_entitlement_from_subscription(event_object)
+        except Exception:
+            logger.exception('Unexpected Stripe webhook processing failure for event %s', event_type)
+            return Response({'detail': 'Unexpected error while processing Stripe webhook.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({'received': True}, status=status.HTTP_200_OK)
