@@ -58,24 +58,24 @@ Current production flow:
 - Backend hosted on Heroku
 - Database hosted on Supabase via `DATABASE_URL`
 - Frontend hosted on Netlify
-- Password reset email delivered through SendGrid SMTP
+- Password reset email delivered through Brevo SMTP
 
 Required Heroku config vars for password reset email:
 
 - `PASSWORD_RESET_URL=https://alevelexambuilder.netlify.app/reset-password`
 - `DEFAULT_FROM_EMAIL=moobradbury@hotmail.com`
 - `EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend`
-- `EMAIL_HOST=smtp.sendgrid.net`
+- `EMAIL_HOST=smtp-relay.brevo.com`
 - `EMAIL_PORT=587`
-- `EMAIL_HOST_USER=apikey`
-- `EMAIL_HOST_PASSWORD=<SendGrid API key>`
+- `EMAIL_HOST_USER=<Brevo SMTP login>`
+- `EMAIL_HOST_PASSWORD=<Brevo SMTP password>`
 - `EMAIL_USE_TLS=True`
 
-Important SendGrid note:
+Important Brevo note:
 
-- `DEFAULT_FROM_EMAIL` must match a verified SendGrid sender identity
-- The SendGrid account login email does not need to match the sender email
-- In this setup, the verified single sender is `moobradbury@hotmail.com`
+- `DEFAULT_FROM_EMAIL` must match a verified Brevo sender identity
+- The Brevo account login email does not need to match the sender email
+- In this setup, the verified sender is `moobradbury@hotmail.com`
 
 If password reset returns a 500 for real accounts but succeeds for unknown emails, check Heroku logs first:
 
@@ -85,7 +85,7 @@ heroku logs -n 200 -a exambuilder
 
 Common causes:
 
-- sender email is not verified in SendGrid
+- sender email is not verified in Brevo
 - `DEFAULT_FROM_EMAIL` does not match the verified sender
 - SMTP credentials are missing or invalid
 
@@ -96,3 +96,7 @@ heroku config -a exambuilder
 heroku config:set DEFAULT_FROM_EMAIL=moobradbury@hotmail.com -a exambuilder
 heroku logs -n 200 -a exambuilder
 ```
+
+Security reminder:
+
+- If an SMTP password, API key, or other secret is ever pasted into chat, logs, screenshots, or commits, rotate it immediately in the provider dashboard and update the Heroku config var with the new value.
