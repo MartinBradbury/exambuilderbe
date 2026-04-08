@@ -10,6 +10,7 @@ import stripe
 import logging
 from .models import CustomUser
 from .services.stripe import (
+    CheckoutNotAllowedError,
     create_stripe_checkout_session,
     construct_stripe_event,
     stripe_value,
@@ -156,6 +157,8 @@ class StripeCheckoutSessionAPIView(GenericAPIView):
                 success_url=serializer.validated_data.get('success_url'),
                 cancel_url=serializer.validated_data.get('cancel_url'),
             )
+        except CheckoutNotAllowedError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_409_CONFLICT)
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except stripe.error.StripeError as exc:

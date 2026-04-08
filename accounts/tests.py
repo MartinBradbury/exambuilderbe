@@ -101,6 +101,17 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(response.data['checkout_url'], 'https://checkout.stripe.com/c/pay/cs_test_123')
 		self.assertEqual(response.data['publishable_key'], 'pk_test_123')
 
+	def test_create_checkout_session_rejects_user_with_unlimited_access(self):
+		entitlement = self.user.entitlement
+		entitlement.plan_type = UserEntitlement.PlanType.PAID
+		entitlement.save(update_fields=['plan_type'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(self.checkout_url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+		self.assertEqual(response.data['detail'], 'This account already has unlimited access.')
+
 	@patch('accounts.views.construct_stripe_event')
 	def test_checkout_completed_webhook_promotes_user_to_paid(self, mock_construct_event):
 		mock_construct_event.return_value = {

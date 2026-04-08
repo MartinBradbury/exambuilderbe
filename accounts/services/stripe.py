@@ -8,6 +8,10 @@ ACTIVE_SUBSCRIPTION_STATUSES = {'active', 'trialing', 'past_due'}
 SUPPORTED_CHECKOUT_MODES = {'payment', 'subscription'}
 
 
+class CheckoutNotAllowedError(Exception):
+    pass
+
+
 def stripe_value(obj, key, default=None):
     if obj is None:
         return default
@@ -37,6 +41,9 @@ def create_stripe_checkout_session(user, success_url=None, cancel_url=None):
         raise ValueError('Stripe is not configured: STRIPE_PRICE_ID is missing.')
 
     entitlement, _ = UserEntitlement.objects.get_or_create(user=user)
+    if entitlement.has_unlimited_access:
+        raise CheckoutNotAllowedError('This account already has unlimited access.')
+
     mode = _get_checkout_mode()
     checkout_session_params = {
         'mode': mode,
