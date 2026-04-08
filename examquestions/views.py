@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .services.ai import generate_questions, evaluate_response_with_openai, get_feedback_from_openai
+from .services.ai import generate_questions, evaluate_batch_responses_with_openai, evaluate_response_with_openai
 from .models import QuestionSession, BiologyTopic, BiologySubCategory, BiologySubTopic
 from accounts.models import QuestionUsage, UserEntitlement
 from django.db import transaction
@@ -33,6 +33,130 @@ ALLOWED_BOARDS = {"OCR", "AQA"}
 
 class DailyQuestionLimitExceeded(Exception):
     pass
+
+
+def _coerce_numeric_score(value):
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError):
+        return 0
+    if numeric_value.is_integer():
+        return int(numeric_value)
+    return numeric_value
+
+
+def _answer_out_of(answer):
+    explicit_out_of = answer.get("out_of")
+    if explicit_out_of is not None:
+        return _coerce_numeric_score(explicit_out_of)
+
+    explicit_total_marks = answer.get("total_marks")
+    if explicit_total_marks is not None:
+        return _coerce_numeric_score(explicit_total_marks)
+
+    mark_scheme = answer.get("mark_scheme") or []
+    return len(mark_scheme)
+
+
+def _question_label(answer):
+    question_text = str(answer.get("question", "")).strip()
+    if not question_text:
+        return "this question"
+    shortened = question_text.replace("\n", " ")
+    if len(shortened) > 72:
+        shortened = shortened[:69].rstrip() + "..."
+    return shortened
+
+
+def _unique_preserve_order(items):
+    seen = set()
+    unique_items = []
+    for item in items:
+        normalized = item.strip()
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        unique_items.append(normalized)
+    return unique_items
+
+
+def _ensure_three_items(items, fallbacks):
+    combined = _unique_preserve_order(items + fallbacks)
+    return combined[:3]
+
+
+def build_session_feedback_from_answers(answers):
+    strengths = []
+    improvements = []
+
+    for answer in answers:
+        score = _coerce_numeric_score(answer.get("score", 0))
+        out_of = _answer_out_of(answer)
+        label = _question_label(answer)
+        feedback_text = str(answer.get("feedback", "")).strip()
+
+        if score > 0:
+            strengths.append(f"You picked up marks on {label} ({score}/{out_of}).")
+        if score < out_of:
+            if feedback_text:
+                improvements.append(f"Review {label}: {feedback_text}")
+            else:
+                improvements.append(f"Review {label} to recover missed marks ({score}/{out_of}).")
+
+    if not strengths:
+        strengths.append("You attempted the full set of questions, which gives a clear baseline for revision.")
+
+    if not improvements:
+        improvements.append("Keep answers precise and aligned to the mark scheme to maintain full marks.")
+
+    strengths = _ensure_three_items(
+        strengths,
+        [
+            "You are building a consistent picture of which topics are strongest.",
+            "There is enough detail in these answers to guide targeted revision.",
+            "Your completed session gives a useful benchmark for future practice.",
+        ],
+    )
+    improvements = _ensure_three_items(
+        improvements,
+        [
+            "Use the exact biological terms expected by the mark scheme where possible.",
+            "Aim to include every marking point rather than one or two partial ideas.",
+            "Check each answer against the command word and mark allocation before submitting.",
+        ],
+    )
+
+    return {
+        "strengths": strengths,
+        "improvements": improvements,
+    }
+
+
+def normalize_feedback_payload(feedback_value, answers):
+    if isinstance(feedback_value, dict):
+        strengths = feedback_value.get("strengths") or []
+        improvements = feedback_value.get("improvements") or []
+        if isinstance(strengths, list) and isinstance(improvements, list):
+            return {
+                "strengths": strengths,
+                "improvements": improvements,
+            }
+
+    if isinstance(feedback_value, str) and feedback_value.strip():
+        try:
+            parsed_feedback = json.loads(feedback_value)
+        except json.JSONDecodeError:
+            parsed_feedback = None
+        if isinstance(parsed_feedback, dict):
+            strengths = parsed_feedback.get("strengths") or []
+            improvements = parsed_feedback.get("improvements") or []
+            if isinstance(strengths, list) and isinstance(improvements, list):
+                return {
+                    "strengths": strengths,
+                    "improvements": improvements,
+                }
+
+    return build_session_feedback_from_answers(answers)
 
 
 def load_fallback_bank_for_board(exam_board: str) -> dict:
@@ -216,6 +340,26 @@ def generate_exam_questions(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mark_user_answer(request):
+    answers = request.data.get("answers")
+    if answers is not None:
+        if not isinstance(answers, list) or not answers:
+            return Response({"error": "answers must be a non-empty list."}, status=400)
+
+        exam_board = request.data.get("exam_board", "AQA")
+        for answer in answers:
+            if not answer.get("question") or not answer.get("mark_scheme"):
+                return Response({"error": "Each answer must include question and mark_scheme."}, status=400)
+
+        try:
+            result = evaluate_batch_responses_with_openai(answers, exam_board)
+            return Response(result, status=200)
+        except json.JSONDecodeError as e:
+            logger.error("Invalid JSON from OpenAI batch marking: %s", e)
+            return Response({"error": "Invalid JSON returned by OpenAI"}, status=500)
+        except Exception as e:
+            logger.error("Unexpected batch marking error: %s", e)
+            return Response({"error": str(e)}, status=500)
+
     question = request.data.get("question")
     mark_scheme = request.data.get("mark_scheme")
     user_answer = request.data.get("user_answer")
@@ -253,13 +397,8 @@ def submit_question_session(request):
 
     try:
         session = QuestionSession.objects.get(id=session_id, user=request.user)
-        total_score = sum([a.get("score", 0) for a in answers])
-
-        prompt = "Give strengths and weaknesses based on these answers:\n"
-        for a in answers:
-            prompt += f"\nQuestion: {a['question']}\nAnswer: {a['user_answer']}\nScore: {a['score']}/{session.total_available}\n"
-
-        feedback = get_feedback_from_openai(prompt)
+        total_score = sum(_coerce_numeric_score(a.get("score", 0)) for a in answers)
+        feedback = normalize_feedback_payload(feedback_text, answers)
         session.total_score = total_score
         session.feedback = json.dumps(feedback)
         session.save()

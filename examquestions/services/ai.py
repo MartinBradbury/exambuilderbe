@@ -1,10 +1,27 @@
 from openai import OpenAI
 from django.conf import settings
+from functools import lru_cache
 import json
 
 
+@lru_cache(maxsize=1)
 def get_openai_client():
     return OpenAI(api_key=settings.OPEN_AI_KEY)
+
+
+def _parse_json_response_content(response):
+    content = response.choices[0].message.content.strip()
+    return json.loads(content)
+
+
+def _format_mark_scheme_points(mark_scheme):
+    formatted_points = []
+    for point in mark_scheme:
+        point_text = str(point).strip()
+        if '(1 mark)' not in point_text.lower():
+            point_text = f'{point_text} (1 mark)'
+        formatted_points.append(point_text)
+    return formatted_points
 
 
 def generate_questions(topic, exam_board, number_of_questions):
@@ -50,18 +67,17 @@ def generate_questions(topic, exam_board, number_of_questions):
         max_tokens=1500
     )
 
-    content = response.choices[0].message.content.strip()
     try:
-        return json.loads(content)
+        return _parse_json_response_content(response)
     except json.JSONDecodeError as e:
+        content = response.choices[0].message.content.strip()
         print("Invalid JSON from OpenAI:", content)
         raise e
 
 
 def evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board):
     client = get_openai_client()
-    # Append "(1 mark)" to each marking point for clarity
-    mark_scheme_with_marks = [f"{p} (1 mark)" for p in mark_scheme]
+    mark_scheme_with_marks = _format_mark_scheme_points(mark_scheme)
 
     prompt = f"""
     You are a qualified {exam_board} A-level Biology examiner.
@@ -113,13 +129,75 @@ def evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board
             max_tokens=500
         )
 
-        content = response.choices[0].message.content.strip()
-        return json.loads(content)
+        return _parse_json_response_content(response)
 
     except Exception as e:
         print("OpenAI error:", e)
         print("Prompt content:\n", prompt)
         raise e
+
+
+def evaluate_batch_responses_with_openai(answer_payloads, exam_board):
+    client = get_openai_client()
+
+    normalized_answers = []
+    for index, answer in enumerate(answer_payloads, start=1):
+        normalized_answers.append(
+            {
+                "index": index,
+                "question": str(answer.get("question", "")).strip(),
+                "mark_scheme": _format_mark_scheme_points(answer.get("mark_scheme") or []),
+                "user_answer": str(answer.get("user_answer", "")).strip(),
+            }
+        )
+
+    prompt = f"""
+    You are a qualified {exam_board} A-level Biology examiner.
+
+    Mark every student answer using the provided mark scheme.
+    Return the results in the same order as the input.
+
+    Input answers:
+    {json.dumps(normalized_answers, indent=2)}
+
+    Marking guidance:
+    - Award marks wherever there is reasonable evidence of understanding, even if wording is imperfect.
+    - Accept correct synonyms, equivalent terminology, or alternative valid phrasing.
+    - Be fair and slightly lenient, but do not invent marks outside the scheme.
+    - Keep `score` numeric and `out_of` as the total marks available for that answer.
+    - `feedback` should be concise and specific to that answer.
+    - `strengths` and `improvements` must each contain exactly 3 short strings covering the whole submission.
+
+    Respond ONLY with strict valid JSON in this exact format:
+    {{
+      "results": [
+        {{
+          "index": 1,
+          "score": 0,
+          "out_of": 0,
+          "feedback": "..."
+        }}
+      ],
+      "strengths": ["point1", "point2", "point3"],
+      "improvements": ["point1", "point2", "point3"]
+    }}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a strict but fair exam marker. Return only valid JSON."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.2,
+        max_tokens=1400
+    )
+
+    parsed = _parse_json_response_content(response)
+    results = parsed.get("results", [])
+    if len(results) != len(normalized_answers):
+        raise ValueError("Batch marking response count did not match the number of submitted answers.")
+    return parsed
 
 
 def get_feedback_from_openai(prompt):

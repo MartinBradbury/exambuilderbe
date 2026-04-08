@@ -102,3 +102,126 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		self.assertEqual(response.data['plan_type'], UserEntitlement.PlanType.LIFETIME)
 		self.assertIsNone(response.data['questions_remaining_today'])
 		self.assertFalse(QuestionUsage.objects.filter(user=self.user).exists())
+
+
+class MarkingFlowTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='marker@example.com',
+			username='marker-user',
+			password='testpass123',
+		)
+		self.topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+		self.session = QuestionSession.objects.create(
+			user=self.user,
+			topic=self.topic,
+			exam_board='OCR',
+			number_of_questions=2,
+			total_available=4,
+		)
+		self.mark_url = reverse('mark-user-answer')
+		self.submit_url = reverse('submit_question_session')
+		self.client.force_authenticate(user=self.user)
+
+	@patch('examquestions.views.evaluate_batch_responses_with_openai')
+	def test_mark_user_answer_supports_batch_mode(self, mock_batch_mark):
+		mock_batch_mark.return_value = {
+			'results': [
+				{'index': 1, 'score': 1, 'out_of': 2, 'feedback': 'One valid point credited.'},
+				{'index': 2, 'score': 2, 'out_of': 2, 'feedback': 'Full marks.'},
+			],
+			'strengths': ['Strength 1', 'Strength 2', 'Strength 3'],
+			'improvements': ['Improve 1', 'Improve 2', 'Improve 3'],
+		}
+
+		response = self.client.post(
+			self.mark_url,
+			{
+				'exam_board': 'OCR',
+				'answers': [
+					{
+						'question': 'Explain osmosis. [2 marks]',
+						'mark_scheme': ['Water moves down a water potential gradient'],
+						'user_answer': 'Water moves from high to low water potential.',
+					},
+					{
+						'question': 'State one role of DNA. [2 marks]',
+						'mark_scheme': ['Carries genetic information', 'Codes for proteins'],
+						'user_answer': 'It carries genetic information and codes for proteins.',
+					},
+				],
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data['results']), 2)
+		self.assertEqual(response.data['strengths'][0], 'Strength 1')
+		mock_batch_mark.assert_called_once()
+
+	@patch('examquestions.views.evaluate_batch_responses_with_openai')
+	def test_submit_question_session_uses_provided_feedback_without_extra_openai_call(self, mock_batch_mark):
+		response = self.client.post(
+			self.submit_url,
+			{
+				'session_id': self.session.id,
+				'answers': [
+					{
+						'question': 'Explain osmosis. [2 marks]',
+						'user_answer': 'Water moves from high to low water potential.',
+						'score': 1,
+						'out_of': 2,
+						'feedback': 'You identified the direction but not the membrane context.',
+					},
+					{
+						'question': 'State one role of DNA. [2 marks]',
+						'user_answer': 'It carries genetic information.',
+						'score': 1,
+						'out_of': 2,
+						'feedback': 'One valid role credited.',
+					},
+				],
+				'feedback': {
+					'strengths': ['Strength 1', 'Strength 2', 'Strength 3'],
+					'improvements': ['Improve 1', 'Improve 2', 'Improve 3'],
+				},
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['feedback']['strengths'][0], 'Strength 1')
+		self.session.refresh_from_db()
+		self.assertIn('Strength 1', self.session.feedback)
+		mock_batch_mark.assert_not_called()
+
+	@patch('examquestions.views.evaluate_batch_responses_with_openai')
+	def test_submit_question_session_builds_local_feedback_when_none_supplied(self, mock_batch_mark):
+		response = self.client.post(
+			self.submit_url,
+			{
+				'session_id': self.session.id,
+				'answers': [
+					{
+						'question': 'Explain osmosis across a partially permeable membrane. [2 marks]',
+						'user_answer': 'Water moves across a membrane.',
+						'score': 1,
+						'out_of': 2,
+						'feedback': 'Mention the water potential gradient explicitly.',
+					},
+					{
+						'question': 'State one role of DNA. [2 marks]',
+						'user_answer': 'It stores genetic information.',
+						'score': 2,
+						'out_of': 2,
+						'feedback': 'Clear answer.',
+					},
+				],
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data['feedback']['strengths']), 3)
+		self.assertEqual(len(response.data['feedback']['improvements']), 3)
+		mock_batch_mark.assert_not_called()
