@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage, UserEntitlement
 from accounts.models import CustomUser
-from .models import BiologyTopic, QuestionSession
+from .models import BiologyTopic, QuestionSession, ServedQuestion
 
 
 class GenerateExamQuestionsLimitTests(APITestCase):
@@ -102,6 +102,121 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		self.assertEqual(response.data['plan_type'], UserEntitlement.PlanType.LIFETIME)
 		self.assertIsNone(response.data['questions_remaining_today'])
 		self.assertFalse(QuestionUsage.objects.filter(user=self.user).exists())
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_duplicate_ai_questions_are_replaced_from_fallback_only(self, mock_generate_questions, mock_load_fallback_bank):
+		mock_load_fallback_bank.return_value = {
+			'Test Topic': [
+				{
+					'question': 'Fallback replacement one. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Fallback mark scheme (1 mark)'],
+				},
+				{
+					'question': 'Fallback replacement two. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Fallback mark scheme (1 mark)'],
+				},
+			],
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Repeated question. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['One point (1 mark)'],
+				},
+				{
+					'question': 'Repeated question. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['One point (1 mark)'],
+				},
+			],
+		}
+
+		ServedQuestion.objects.create(
+			user=self.user,
+			exam_board='OCR',
+			scope_key=f'topic:{self.topic.id}',
+			normalized_question='repeated question.',
+		)
+
+		entitlement = self.user.entitlement
+		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
+		entitlement.lifetime_unlocked = True
+		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 2,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		returned_questions = {question['question'] for question in response.data['questions']}
+		self.assertEqual(returned_questions, {
+			'Fallback replacement one. [1 mark]',
+			'Fallback replacement two. [1 mark]',
+		})
+		mock_generate_questions.assert_called_once()
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_exhausted_fallback_history_resets_for_user_and_reuses_pool(self, mock_generate_questions, mock_load_fallback_bank):
+		mock_load_fallback_bank.return_value = {
+			'Test Topic': [
+				{
+					'question': 'Fallback only question. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Fallback mark scheme (1 mark)'],
+				},
+			],
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Fallback only question. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['One point (1 mark)'],
+				},
+			],
+		}
+
+		ServedQuestion.objects.create(
+			user=self.user,
+			exam_board='OCR',
+			scope_key=f'topic:{self.topic.id}',
+			normalized_question='fallback only question.',
+		)
+
+		entitlement = self.user.entitlement
+		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
+		entitlement.lifetime_unlocked = True
+		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['questions'][0]['question'], 'Fallback only question. [1 mark]')
+		self.assertEqual(
+			ServedQuestion.objects.filter(user=self.user, exam_board='OCR', scope_key=f'topic:{self.topic.id}').count(),
+			1,
+		)
 
 
 class MarkingFlowTests(APITestCase):

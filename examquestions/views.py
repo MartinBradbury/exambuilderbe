@@ -2,10 +2,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .services.ai import generate_questions, evaluate_batch_responses_with_openai, evaluate_response_with_openai
-from .models import QuestionSession, BiologyTopic, BiologySubCategory, BiologySubTopic
+from .models import QuestionSession, BiologyTopic, BiologySubCategory, BiologySubTopic, ServedQuestion
 from accounts.models import QuestionUsage, UserEntitlement
 from django.db import transaction
 from django.utils import timezone
+from functools import lru_cache
 import json
 from .serializers import (
     QuestionSessionSerializer,
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 from pathlib import Path
 import random
+import re
 
 
 # ------------------------------------------------------------
@@ -159,6 +161,18 @@ def normalize_feedback_payload(feedback_value, answers):
     return build_session_feedback_from_answers(answers)
 
 
+def normalize_question_text(question_text):
+    normalized = str(question_text or "").strip().lower()
+    normalized = re.sub(r"\s+", " ", normalized)
+    normalized = re.sub(r"\s*\[\d+\s+marks?\]\s*$", "", normalized)
+    return normalized.strip()
+
+
+def question_text_from_item(question_item):
+    return str(question_item.get("question", "")).strip()
+
+
+@lru_cache(maxsize=None)
 def load_fallback_bank_for_board(exam_board: str) -> dict:
     board_key = (exam_board or "").strip().upper()
     path = FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
@@ -178,6 +192,91 @@ def load_fallback_bank_for_board(exam_board: str) -> dict:
 def get_or_create_entitlement(user):
     entitlement, _ = UserEntitlement.objects.get_or_create(user=user)
     return entitlement
+
+
+def build_scope_metadata(topic, subtopic=None, subcategory=None):
+    if subcategory:
+        return subcategory.title, f"subcategory:{subcategory.id}"
+    if subtopic:
+        return subtopic.title, f"subtopic:{subtopic.id}"
+    return topic.topic, f"topic:{topic.id}"
+
+
+def get_user_served_question_set(user, exam_board, scope_key):
+    return set(
+        ServedQuestion.objects.filter(user=user, exam_board=exam_board, scope_key=scope_key)
+        .values_list("normalized_question", flat=True)
+    )
+
+
+def reset_user_served_questions(user, exam_board, scope_key):
+    ServedQuestion.objects.filter(user=user, exam_board=exam_board, scope_key=scope_key).delete()
+
+
+def select_fallback_questions(fallback_pool, count, excluded_questions):
+    if count <= 0:
+        return []
+
+    unique_candidates = []
+    seen_in_pool = set()
+    for candidate in fallback_pool:
+        question_text = question_text_from_item(candidate)
+        normalized = normalize_question_text(question_text)
+        if not normalized or normalized in excluded_questions or normalized in seen_in_pool:
+            continue
+        seen_in_pool.add(normalized)
+        unique_candidates.append(candidate)
+
+    return random.sample(unique_candidates, min(count, len(unique_candidates)))
+
+
+def replace_duplicate_questions_from_fallback(
+    user,
+    exam_board,
+    scope_key,
+    fallback_pool,
+    accepted_questions,
+    requested_count,
+    served_questions,
+):
+    current_questions = list(accepted_questions)
+    excluded_questions = {normalize_question_text(question_text_from_item(item)) for item in current_questions}
+    excluded_questions.update(served_questions)
+    missing_count = max(requested_count - len(current_questions), 0)
+    replacements = select_fallback_questions(fallback_pool, missing_count, excluded_questions)
+
+    if len(replacements) < missing_count:
+        reset_user_served_questions(user, exam_board, scope_key)
+        served_questions.clear()
+        excluded_questions = {normalize_question_text(question_text_from_item(item)) for item in current_questions}
+        replacements = select_fallback_questions(fallback_pool, missing_count, excluded_questions)
+
+    if len(replacements) < missing_count:
+        raise ValueError(
+            "Not enough stored fallback questions are available to replace duplicate questions for this selection."
+        )
+
+    current_questions.extend(replacements)
+    return current_questions, served_questions
+
+
+def record_served_questions(user, exam_board, scope_key, questions):
+    records = []
+    for question_item in questions:
+        normalized = normalize_question_text(question_text_from_item(question_item))
+        if not normalized:
+            continue
+        records.append(
+            ServedQuestion(
+                user=user,
+                exam_board=exam_board,
+                scope_key=scope_key,
+                normalized_question=normalized,
+            )
+        )
+
+    if records:
+        ServedQuestion.objects.bulk_create(records, ignore_conflicts=True)
 
 
 @api_view(['POST'])
@@ -241,13 +340,13 @@ def generate_exam_questions(request):
 
         # Load fallback bank for the selected exam board
         all_fallback_questions = load_fallback_bank_for_board(board_key)
+        scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
+        served_questions = get_user_served_question_set(request.user, board_key, scope_key)
 
         # Prefer most specific key present in your JSON: subcategory -> subtopic -> topic
         fallback_pool = []
-        if subcategory and subcategory.title in all_fallback_questions:
-            fallback_pool = all_fallback_questions[subcategory.title]
-        elif subtopic and subtopic.title in all_fallback_questions:
-            fallback_pool = all_fallback_questions[subtopic.title]
+        if scope_title in all_fallback_questions:
+            fallback_pool = all_fallback_questions[scope_title]
         elif topic.topic in all_fallback_questions:
             fallback_pool = all_fallback_questions[topic.topic]
 
@@ -256,7 +355,7 @@ def generate_exam_questions(request):
 
         fallback_selected = []
         if isinstance(fallback_pool, list) and fallback_pool:
-            fallback_selected = random.sample(fallback_pool, min(fallback_count, len(fallback_pool)))
+            fallback_selected = select_fallback_questions(fallback_pool, fallback_count, served_questions)
         else:
             # no fallback available -> all AI
             ai_count = number
@@ -271,7 +370,30 @@ def generate_exam_questions(request):
         ai_response = generate_questions(scope, board_key, ai_count)
         ai_questions = ai_response.get("questions", [])
 
-        combined_questions = ai_questions + fallback_selected
+        combined_questions = list(fallback_selected)
+        current_batch_questions = {
+            normalize_question_text(question_text_from_item(question_item))
+            for question_item in combined_questions
+        }
+
+        for ai_question in ai_questions:
+            normalized = normalize_question_text(question_text_from_item(ai_question))
+            if not normalized or normalized in served_questions or normalized in current_batch_questions:
+                continue
+            current_batch_questions.add(normalized)
+            combined_questions.append(ai_question)
+
+        if len(combined_questions) < number:
+            combined_questions, served_questions = replace_duplicate_questions_from_fallback(
+                user=request.user,
+                exam_board=board_key,
+                scope_key=scope_key,
+                fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
+                accepted_questions=combined_questions,
+                requested_count=number,
+                served_questions=served_questions,
+            )
+
         random.shuffle(combined_questions)
 
         total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
@@ -299,6 +421,7 @@ def generate_exam_questions(request):
                 number_of_questions=number,
                 total_available=total_available
             )
+            record_served_questions(request.user, board_key, scope_key, combined_questions)
 
             if not entitlement.has_unlimited_access:
                 usage.question_count += number

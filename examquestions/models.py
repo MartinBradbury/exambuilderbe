@@ -106,3 +106,23 @@ class QuestionSession(models.Model):
             raise ValidationError("Selected subtopic doesn’t belong to the chosen topic.")
         if self.subcategory and self.subcategory.subtopic.topic_id != self.topic_id:
             raise ValidationError("Selected subcategory doesn’t belong to the chosen topic.")
+
+
+class ServedQuestion(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="served_questions")
+    exam_board = models.CharField(max_length=8, choices=ExamBoard.choices, db_index=True)
+    scope_key = models.CharField(max_length=255, db_index=True)
+    normalized_question = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "exam_board", "scope_key", "normalized_question"],
+                name="uniq_served_question_per_user_scope",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user_id} | {self.exam_board} | {self.scope_key}"
