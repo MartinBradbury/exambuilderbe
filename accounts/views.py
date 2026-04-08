@@ -11,6 +11,7 @@ import logging
 from .models import CustomUser
 from .services.stripe import (
     CheckoutNotAllowedError,
+    EmailVerificationRequiredError,
     create_stripe_checkout_session,
     construct_stripe_event,
     stripe_value,
@@ -19,6 +20,7 @@ from .services.stripe import (
 )
 from .serializers import (
     CustomUserSerializer,
+    EmailVerificationConfirmSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
     StripeCheckoutSessionSerializer,
@@ -33,6 +35,24 @@ from rest_framework import status
 logger = logging.getLogger(__name__)
 
 
+def send_email_verification_email(user):
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    verification_link = f"{settings.EMAIL_VERIFICATION_URL}?uid={uid}&token={token}"
+    message = (
+        'Welcome to ExamBuilder.\n\n'
+        f'Verify your email address using this link:\n{verification_link}\n\n'
+        'If you did not create this account, you can ignore this email.'
+    )
+    send_mail(
+        subject='Verify your ExamBuilder email',
+        message=message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        fail_silently=False,
+    )
+
+
 class UserRegistrationAPIView(GenericAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
@@ -41,8 +61,10 @@ class UserRegistrationAPIView(GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception = True)
         user = serializer.save()
+        send_email_verification_email(user)
         token = RefreshToken.for_user(user)
         data = {
+            'user': CustomUserSerializer(user).data,
             'refresh': str(token),
             'access': str(token.access_token)
         }
@@ -143,6 +165,36 @@ class PasswordResetConfirmAPIView(GenericAPIView):
         return Response({'detail': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
 
 
+class EmailVerificationConfirmAPIView(GenericAPIView):
+    serializer_class = EmailVerificationConfirmSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(
+            {
+                'detail': 'Email verified successfully.',
+                'email_verified': user.email_verified,
+                'email_verified_at': user.email_verified_at,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class EmailVerificationResendAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if user.email_verified:
+            return Response({'detail': 'Email is already verified.'}, status=status.HTTP_200_OK)
+
+        send_email_verification_email(user)
+        return Response({'detail': 'Verification email sent.'}, status=status.HTTP_200_OK)
+
+
 class StripeCheckoutSessionAPIView(GenericAPIView):
     serializer_class = StripeCheckoutSessionSerializer
     permission_classes = [IsAuthenticated]
@@ -159,6 +211,8 @@ class StripeCheckoutSessionAPIView(GenericAPIView):
             )
         except CheckoutNotAllowedError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_409_CONFLICT)
+        except EmailVerificationRequiredError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_403_FORBIDDEN)
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except stripe.error.StripeError as exc:

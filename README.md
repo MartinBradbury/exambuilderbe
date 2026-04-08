@@ -38,6 +38,7 @@ Email settings are environment-driven:
 
 - `DEFAULT_FROM_EMAIL`
 - `PASSWORD_RESET_URL`
+- `EMAIL_VERIFICATION_URL`
 - `FRONTEND_URL`
 - `EMAIL_BACKEND`
 - `EMAIL_HOST`
@@ -47,6 +48,38 @@ Email settings are environment-driven:
 - `EMAIL_USE_TLS`
 
 Local development defaults to Django's console email backend, so reset emails print in the server logs unless you override the backend.
+
+## Email verification
+
+Email verification uses a soft-verification flow.
+Users can register and log in immediately, but important actions such as starting Stripe checkout require a verified email address.
+
+Current behavior:
+
+- registration sends a verification email
+- user starts with `email_verified=False`
+- `POST /accounts/email-verification/confirm/` verifies the tokenized link
+- `POST /accounts/email-verification/resend/` sends a new verification email for the authenticated user
+- Stripe checkout is blocked until the user verifies their email
+
+Relevant user fields:
+
+- `email_verified`
+- `email_verified_at`
+
+API endpoints:
+
+- `POST /accounts/email-verification/confirm/`
+- `POST /accounts/email-verification/resend/`
+
+Config:
+
+- `EMAIL_VERIFICATION_URL`
+- defaults to `FRONTEND_URL/verify-email`
+
+Pragmatic migration note:
+
+- existing users are backfilled as verified during the migration so current accounts are not blocked unexpectedly
 
 ### Production password reset setup
 

@@ -12,6 +12,10 @@ class CheckoutNotAllowedError(Exception):
     pass
 
 
+class EmailVerificationRequiredError(Exception):
+    pass
+
+
 def stripe_value(obj, key, default=None):
     if obj is None:
         return default
@@ -39,6 +43,9 @@ def create_stripe_checkout_session(user, success_url=None, cancel_url=None):
 
     if not settings.STRIPE_PRICE_ID:
         raise ValueError('Stripe is not configured: STRIPE_PRICE_ID is missing.')
+
+    if not user.email_verified:
+        raise EmailVerificationRequiredError('Please verify your email before starting checkout.')
 
     entitlement, _ = UserEntitlement.objects.get_or_create(user=user)
     if entitlement.has_unlimited_access:

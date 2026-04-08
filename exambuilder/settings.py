@@ -173,6 +173,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000').rstrip('/')
+EMAIL_VERIFICATION_URL = os.getenv('EMAIL_VERIFICATION_URL', f'{FRONTEND_URL}/verify-email')
 PASSWORD_RESET_URL = os.getenv('PASSWORD_RESET_URL', f'{FRONTEND_URL}/reset-password')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@exambuilder.local')
 EMAIL_BACKEND = os.getenv(

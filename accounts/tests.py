@@ -11,6 +11,7 @@ from .models import CustomUser, UserEntitlement
 
 @override_settings(
 	EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+	EMAIL_VERIFICATION_URL='http://localhost:3000/verify-email',
 	PASSWORD_RESET_URL='http://localhost:3000/reset-password',
 )
 class PasswordResetFlowTests(APITestCase):
@@ -68,6 +69,93 @@ class PasswordResetFlowTests(APITestCase):
 
 
 @override_settings(
+	EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+	EMAIL_VERIFICATION_URL='http://localhost:3000/verify-email',
+)
+class EmailVerificationFlowTests(APITestCase):
+	def setUp(self):
+		self.register_url = reverse('user-registration')
+		self.confirm_url = reverse('email-verification-confirm')
+		self.resend_url = reverse('email-verification-resend')
+
+	def test_registration_sends_verification_email_and_user_starts_unverified(self):
+		response = self.client.post(
+			self.register_url,
+			{
+				'email': 'verify@example.com',
+				'username': 'verify-user',
+				'password1': 'VerifyPass123',
+				'password2': 'VerifyPass123',
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		user = CustomUser.objects.get(email='verify@example.com')
+		self.assertFalse(user.email_verified)
+		self.assertEqual(len(mail.outbox), 1)
+		self.assertIn('verify-email?uid=', mail.outbox[0].body)
+		self.assertIn('&token=', mail.outbox[0].body)
+
+	def test_email_verification_confirm_marks_user_verified(self):
+		send_response = self.client.post(
+			self.register_url,
+			{
+				'email': 'newconfirm@example.com',
+				'username': 'newconfirm-user',
+				'password1': 'ConfirmPass123',
+				'password2': 'ConfirmPass123',
+			},
+			format='json',
+		)
+		self.assertEqual(send_response.status_code, status.HTTP_201_CREATED)
+		verification_email = mail.outbox[-1].body
+		match = re.search(r'uid=([^&\s]+)&token=([^\s]+)', verification_email)
+		self.assertIsNotNone(match)
+		uid, token = match.groups()
+
+		response = self.client.post(
+			self.confirm_url,
+			{'uid': uid, 'token': token},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		verified_user = CustomUser.objects.get(email='newconfirm@example.com')
+		self.assertTrue(verified_user.email_verified)
+		self.assertIsNotNone(verified_user.email_verified_at)
+
+	def test_resend_verification_email_for_authenticated_unverified_user(self):
+		user = CustomUser.objects.create_user(
+			email='resend@example.com',
+			username='resend-user',
+			password='ResendPass123',
+		)
+
+		self.client.force_authenticate(user=user)
+		response = self.client.post(self.resend_url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['detail'], 'Verification email sent.')
+		self.assertEqual(len(mail.outbox), 1)
+
+	def test_resend_verification_email_for_verified_user_returns_already_verified(self):
+		user = CustomUser.objects.create_user(
+			email='verified@example.com',
+			username='verified-user',
+			password='VerifiedPass123',
+			email_verified=True,
+		)
+
+		self.client.force_authenticate(user=user)
+		response = self.client.post(self.resend_url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['detail'], 'Email is already verified.')
+		self.assertEqual(len(mail.outbox), 0)
+
+
+@override_settings(
 	STRIPE_SECRET_KEY='sk_test_123',
 	STRIPE_PUBLISHABLE_KEY='pk_test_123',
 	STRIPE_PRICE_ID='price_123',
@@ -82,6 +170,7 @@ class StripeBillingTests(APITestCase):
 			email='billing@example.com',
 			username='billing-user',
 			password='BillingPass123',
+			email_verified=True,
 		)
 		self.checkout_url = reverse('stripe-checkout-session')
 		self.webhook_url = reverse('stripe-webhook')
@@ -100,6 +189,16 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(response.data['session_id'], 'cs_test_123')
 		self.assertEqual(response.data['checkout_url'], 'https://checkout.stripe.com/c/pay/cs_test_123')
 		self.assertEqual(response.data['publishable_key'], 'pk_test_123')
+
+	def test_create_checkout_session_rejects_unverified_user(self):
+		self.user.email_verified = False
+		self.user.save(update_fields=['email_verified'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(self.checkout_url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+		self.assertEqual(response.data['detail'], 'Please verify your email before starting checkout.')
 
 	def test_create_checkout_session_rejects_user_with_unlimited_access(self):
 		entitlement = self.user.entitlement

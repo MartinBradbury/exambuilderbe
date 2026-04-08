@@ -4,8 +4,12 @@ from .models import CustomUser, CustomUserProfile, QuestionUsage, UserEntitlemen
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username',)
-    list_filter = ('email', 'username',)
+    list_display = ('email', 'username', 'email_verified', 'email_verified_at')
+    list_filter = ('email', 'username', 'email_verified')
+    fieldsets = UserAdmin.fieldsets + (
+        ('Verification', {'fields': ('email_verified', 'email_verified_at')}),
+    )
+    readonly_fields = ('email_verified_at',)
 
 @admin.register(CustomUserProfile)
 class CustomUserProfileAdmin(admin.ModelAdmin):

@@ -19,6 +19,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'email',
+            'email_verified',
+            'email_verified_at',
             'plan_type',
             'lifetime_unlocked',
             'has_unlimited_access',
@@ -123,6 +125,32 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         user = self.validated_data['user']
         user.set_password(self.validated_data['password1'])
         user.save(update_fields=['password'])
+        return user
+
+
+class EmailVerificationConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+
+    def validate(self, attrs):
+        try:
+            user_id = force_str(urlsafe_base64_decode(attrs['uid']))
+            user = CustomUser.objects.get(pk=user_id)
+        except (CustomUser.DoesNotExist, TypeError, ValueError, OverflowError):
+            raise serializers.ValidationError('Invalid email verification link')
+
+        if not default_token_generator.check_token(user, attrs['token']):
+            raise serializers.ValidationError('Invalid or expired email verification token')
+
+        attrs['user'] = user
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.validated_data['user']
+        if not user.email_verified:
+            user.email_verified = True
+            user.email_verified_at = timezone.now()
+            user.save(update_fields=['email_verified', 'email_verified_at'])
         return user
 
 
