@@ -349,7 +349,7 @@ class GCSEFlowTests(APITestCase):
 			username='gcse-user',
 			password='testpass123',
 		)
-		self.topic = GCSEScienceTopic.objects.create(topic='Atomic structure', exam_board='AQA', subject='CHEMISTRY')
+		self.topic = GCSEScienceTopic.objects.create(topic='Atomic structure', exam_board='AQA', subject='CHEMISTRY', tier='HIGHER')
 		self.subtopic = GCSEScienceSubTopic.objects.create(topic=self.topic, title='Atomic models')
 		self.subcategory = GCSEScienceSubCategory.objects.create(subtopic=self.subtopic, title='Electronic structure')
 		self.generate_url = reverse('generate-exam-questions')

@@ -39,20 +39,20 @@ class BiologySubCategoryAdmin(admin.ModelAdmin):  # fixed class name + colon
 
 @admin.register(GCSEScienceTopic)
 class GCSEScienceTopicAdmin(admin.ModelAdmin):
-    list_display = ("topic", "subject", "exam_board")
+    list_display = ("topic", "subject", "tier", "exam_board")
     search_fields = ("topic",)
-    list_filter = ("subject", "exam_board")
+    list_filter = ("subject", "tier", "exam_board")
 
 
 @admin.register(GCSEScienceSubTopic)
 class GCSEScienceSubTopicAdmin(admin.ModelAdmin):
     list_display = ("title", "topic")
     search_fields = ("title",)
-    list_filter = ("topic__subject", "topic__exam_board")
+    list_filter = ("topic__subject", "topic__tier", "topic__exam_board")
 
 
 @admin.register(GCSEScienceSubCategory)
 class GCSEScienceSubCategoryAdmin(admin.ModelAdmin):
     list_display = ("title", "subtopic")
     search_fields = ("title",)
-    list_filter = ("subtopic__topic__subject", "subtopic__topic__exam_board")
+    list_filter = ("subtopic__topic__subject", "subtopic__topic__tier", "subtopic__topic__exam_board")

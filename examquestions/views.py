@@ -726,6 +726,7 @@ def get_biology_subcategories(request):
 def get_gcse_topics(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
     subject = _normalize_gcse_subject(request.query_params.get("subject"))
+    tier = _normalize_gcse_tier(request.query_params.get("tier"))
     qs = GCSEScienceTopic.objects.all().order_by("topic")
     if board:
         if board not in ALLOWED_BOARDS:
@@ -735,6 +736,10 @@ def get_gcse_topics(request):
         if subject not in ALLOWED_GCSE_SUBJECTS:
             return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
         qs = qs.filter(subject=subject)
+    if tier:
+        if tier not in ALLOWED_GCSE_TIERS:
+            return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
+        qs = qs.filter(tier=tier)
     return Response(GCSETopicListSerializer(qs, many=True).data)
 
 
@@ -743,6 +748,7 @@ def get_gcse_topics(request):
 def get_gcse_subtopics(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
     subject = _normalize_gcse_subject(request.query_params.get("subject"))
+    tier = _normalize_gcse_tier(request.query_params.get("tier"))
     topic_id = request.query_params.get("topic_id")
     qs = GCSEScienceSubTopic.objects.select_related("topic").all().order_by("title")
     if topic_id:
@@ -755,6 +761,10 @@ def get_gcse_subtopics(request):
         if subject not in ALLOWED_GCSE_SUBJECTS:
             return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
         qs = qs.filter(topic__subject=subject)
+    if tier:
+        if tier not in ALLOWED_GCSE_TIERS:
+            return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
+        qs = qs.filter(topic__tier=tier)
     return Response(GCSESubTopicListSerializer(qs, many=True).data)
 
 
@@ -763,6 +773,7 @@ def get_gcse_subtopics(request):
 def get_gcse_subcategories(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
     subject = _normalize_gcse_subject(request.query_params.get("subject"))
+    tier = _normalize_gcse_tier(request.query_params.get("tier"))
     subtopic_id = request.query_params.get("subtopic_id")
     qs = GCSEScienceSubCategory.objects.select_related("subtopic", "subtopic__topic").all().order_by("title")
     if subtopic_id:
@@ -775,4 +786,8 @@ def get_gcse_subcategories(request):
         if subject not in ALLOWED_GCSE_SUBJECTS:
             return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
         qs = qs.filter(subtopic__topic__subject=subject)
+    if tier:
+        if tier not in ALLOWED_GCSE_TIERS:
+            return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
+        qs = qs.filter(subtopic__topic__tier=tier)
     return Response(GCSESubCategoryListSerializer(qs, many=True).data)

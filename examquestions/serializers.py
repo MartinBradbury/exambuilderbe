@@ -30,7 +30,7 @@ class BiologySubCategoryListSerializer(serializers.ModelSerializer):
 class GCSETopicListSerializer(serializers.ModelSerializer):
     class Meta:
         model = GCSEScienceTopic
-        fields = ["id", "topic", "subject", "exam_board"]
+        fields = ["id", "topic", "subject", "tier", "exam_board"]
 
 
 class GCSESubTopicListSerializer(serializers.ModelSerializer):

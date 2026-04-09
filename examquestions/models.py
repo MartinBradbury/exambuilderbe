@@ -60,18 +60,24 @@ class GCSEScienceTopic(models.Model):
         choices=GCSESubject.choices,
         db_index=True,
     )
+    tier = models.CharField(
+        max_length=16,
+        choices=GCSETier.choices,
+        default=GCSETier.HIGHER,
+        db_index=True,
+    )
 
     class Meta:
-        ordering = ["exam_board", "subject", "topic"]
+        ordering = ["exam_board", "subject", "tier", "topic"]
         constraints = [
             models.UniqueConstraint(
-                fields=["topic", "exam_board", "subject"],
+                fields=["topic", "exam_board", "subject", "tier"],
                 name="uniq_gcse_topic_per_board_subject",
             )
         ]
 
     def __str__(self):
-        return f"{self.get_subject_display()} | {self.topic} ({self.exam_board})"
+        return f"{self.get_subject_display()} | {self.get_tier_display()} | {self.topic} ({self.exam_board})"
 
 
 class GCSEScienceSubTopic(models.Model):
@@ -83,7 +89,7 @@ class GCSEScienceSubTopic(models.Model):
     title = models.CharField(max_length=200)
 
     class Meta:
-        ordering = ["topic__exam_board", "topic__subject", "topic__topic", "title"]
+        ordering = ["topic__exam_board", "topic__subject", "topic__tier", "topic__topic", "title"]
         constraints = [
             models.UniqueConstraint(
                 fields=["topic", "title"],
@@ -104,7 +110,7 @@ class GCSEScienceSubCategory(models.Model):
     title = models.CharField(max_length=200)
 
     class Meta:
-        ordering = ["subtopic__topic__exam_board", "subtopic__topic__subject", "subtopic__topic__topic", "subtopic__title", "title"]
+        ordering = ["subtopic__topic__exam_board", "subtopic__topic__subject", "subtopic__topic__tier", "subtopic__topic__topic", "subtopic__title", "title"]
         constraints = [
             models.UniqueConstraint(
                 fields=["subtopic", "title"],
@@ -216,6 +222,8 @@ class QuestionSession(models.Model):
                 raise ValidationError("GCSE Science sessions cannot include A-level Biology topic fields.")
             if self.gcse_topic and self.gcse_topic.subject != self.gcse_subject:
                 raise ValidationError("Selected GCSE topic does not match the GCSE subject.")
+            if self.gcse_topic and self.gcse_topic.tier != self.gcse_tier:
+                raise ValidationError("Selected GCSE topic does not match the GCSE tier.")
             if self.gcse_subtopic and self.gcse_subtopic.topic_id != self.gcse_topic_id:
                 raise ValidationError("Selected GCSE subtopic does not belong to the chosen GCSE topic.")
             if self.gcse_subcategory and self.gcse_subcategory.subtopic.topic_id != self.gcse_topic_id:
