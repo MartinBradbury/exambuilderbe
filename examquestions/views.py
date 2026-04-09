@@ -2,7 +2,24 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .services.ai import generate_questions, evaluate_batch_responses_with_openai, evaluate_response_with_openai
-from .models import QuestionSession, BiologyTopic, BiologySubCategory, BiologySubTopic, ServedQuestion
+from .services.aiGCSE import (
+    generate_questions as generate_gcse_questions,
+    evaluate_batch_responses_with_openai as evaluate_gcse_batch_responses_with_openai,
+    evaluate_response_with_openai as evaluate_gcse_response_with_openai,
+)
+from .models import (
+    QuestionSession,
+    BiologyTopic,
+    BiologySubCategory,
+    BiologySubTopic,
+    GCSEScienceTopic,
+    GCSEScienceSubTopic,
+    GCSEScienceSubCategory,
+    ServedQuestion,
+    QualificationPath,
+    GCSESubject,
+    GCSETier,
+)
 from accounts.models import QuestionUsage, UserEntitlement
 from django.db import transaction
 from django.utils import timezone
@@ -13,6 +30,9 @@ from .serializers import (
     BiologySubCategoryListSerializer,
     BiologySubTopicListSerializer,
     BiologyTopicListSerializer,
+    GCSETopicListSerializer,
+    GCSESubTopicListSerializer,
+    GCSESubCategoryListSerializer,
 )
 import logging
 
@@ -31,10 +51,32 @@ FALLBACK_QUESTION_PATHS = {
     "AQA": Path(__file__).resolve().parent.parent / "examquestions/aqa_questions.json",
 }
 ALLOWED_BOARDS = {"OCR", "AQA"}
+ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
+ALLOWED_GCSE_SUBJECTS = {choice for choice, _ in GCSESubject.choices}
+ALLOWED_GCSE_TIERS = {choice for choice, _ in GCSETier.choices}
 
 
 class DailyQuestionLimitExceeded(Exception):
     pass
+
+
+def _normalize_choice(raw_value):
+    return str(raw_value or "").strip().replace("-", "_").replace(" ", "_").upper()
+
+
+def _normalize_qualification(raw_value):
+    normalized = _normalize_choice(raw_value)
+    if not normalized:
+        return QualificationPath.ALEVEL_BIOLOGY
+    return normalized
+
+
+def _normalize_gcse_subject(raw_value):
+    return _normalize_choice(raw_value)
+
+
+def _normalize_gcse_tier(raw_value):
+    return _normalize_choice(raw_value)
 
 
 def _coerce_numeric_score(value):
@@ -172,6 +214,14 @@ def question_text_from_item(question_item):
     return str(question_item.get("question", "")).strip()
 
 
+def build_gcse_scope_metadata(topic, subtopic=None, subcategory=None, tier=None):
+    if subcategory:
+        return subcategory.title, f"gcse-subcategory:{subcategory.id}:{tier}"
+    if subtopic:
+        return subtopic.title, f"gcse-subtopic:{subtopic.id}:{tier}"
+    return topic.topic, f"gcse-topic:{topic.id}:{tier}"
+
+
 @lru_cache(maxsize=None)
 def load_fallback_bank_for_board(exam_board: str) -> dict:
     board_key = (exam_board or "").strip().upper()
@@ -286,6 +336,7 @@ def generate_exam_questions(request):
     subtopic_id = request.data.get("subtopic_id")         # optional
     subcategory_id = request.data.get("subcategory_id")   # optional
     exam_board = request.data.get("exam_board")
+    qualification = _normalize_qualification(request.data.get("qualification"))
     try:
         number = int(request.data.get("number_of_questions"))
     except (TypeError, ValueError):
@@ -297,6 +348,8 @@ def generate_exam_questions(request):
     board_key = (exam_board or "").strip().upper()
     if board_key not in ALLOWED_BOARDS:
         return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+    if qualification not in ALLOWED_QUALIFICATIONS:
+        return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
 
     entitlement = get_or_create_entitlement(request.user)
     today = timezone.localdate()
@@ -324,79 +377,138 @@ def generate_exam_questions(request):
             )
 
     try:
-        # 1) Fetch the topic for THIS board (critical change)
-        topic = BiologyTopic.objects.get(id=topic_id, exam_board=board_key)
+        if qualification == QualificationPath.ALEVEL_BIOLOGY:
+            topic = BiologyTopic.objects.get(id=topic_id, exam_board=board_key)
 
-        # 2) Validate optional relationships strictly under this topic
-        subtopic = None
-        if subtopic_id:
-            subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
+            subtopic = None
+            if subtopic_id:
+                subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
 
-        subcategory = None
-        if subcategory_id:
-            if not subtopic_id:
-                return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
-            subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
+            subcategory = None
+            if subcategory_id:
+                if not subtopic_id:
+                    return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
+                subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
 
-        # Load fallback bank for the selected exam board
-        all_fallback_questions = load_fallback_bank_for_board(board_key)
-        scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
-        served_questions = get_user_served_question_set(request.user, board_key, scope_key)
+            all_fallback_questions = load_fallback_bank_for_board(board_key)
+            scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
+            served_questions = get_user_served_question_set(request.user, board_key, scope_key)
 
-        # Prefer most specific key present in your JSON: subcategory -> subtopic -> topic
-        fallback_pool = []
-        if scope_title in all_fallback_questions:
-            fallback_pool = all_fallback_questions[scope_title]
-        elif topic.topic in all_fallback_questions:
-            fallback_pool = all_fallback_questions[topic.topic]
+            fallback_pool = []
+            if scope_title in all_fallback_questions:
+                fallback_pool = all_fallback_questions[scope_title]
+            elif topic.topic in all_fallback_questions:
+                fallback_pool = all_fallback_questions[topic.topic]
 
-        fallback_count = number // 2
-        ai_count = number - fallback_count
+            fallback_count = number // 2
+            ai_count = number - fallback_count
 
-        fallback_selected = []
-        if isinstance(fallback_pool, list) and fallback_pool:
-            fallback_selected = select_fallback_questions(fallback_pool, fallback_count, served_questions)
-        else:
-            # no fallback available -> all AI
-            ai_count = number
             fallback_selected = []
+            if isinstance(fallback_pool, list) and fallback_pool:
+                fallback_selected = select_fallback_questions(fallback_pool, fallback_count, served_questions)
+            else:
+                ai_count = number
 
-        scope = topic.topic
-        if subtopic:
-            scope += f' (SubTopic: {subtopic.title})'
-        if subcategory:
-            scope += f' (SubCategory: {subcategory.title})'
+            scope = topic.topic
+            if subtopic:
+                scope += f' (SubTopic: {subtopic.title})'
+            if subcategory:
+                scope += f' (SubCategory: {subcategory.title})'
 
-        ai_response = generate_questions(scope, board_key, ai_count)
-        ai_questions = ai_response.get("questions", [])
+            ai_response = generate_questions(scope, board_key, ai_count)
+            ai_questions = ai_response.get("questions", [])
 
-        combined_questions = list(fallback_selected)
-        current_batch_questions = {
-            normalize_question_text(question_text_from_item(question_item))
-            for question_item in combined_questions
-        }
+            combined_questions = list(fallback_selected)
+            current_batch_questions = {
+                normalize_question_text(question_text_from_item(question_item))
+                for question_item in combined_questions
+            }
 
-        for ai_question in ai_questions:
-            normalized = normalize_question_text(question_text_from_item(ai_question))
-            if not normalized or normalized in served_questions or normalized in current_batch_questions:
-                continue
-            current_batch_questions.add(normalized)
-            combined_questions.append(ai_question)
+            for ai_question in ai_questions:
+                normalized = normalize_question_text(question_text_from_item(ai_question))
+                if not normalized or normalized in served_questions or normalized in current_batch_questions:
+                    continue
+                current_batch_questions.add(normalized)
+                combined_questions.append(ai_question)
 
-        if len(combined_questions) < number:
-            combined_questions, served_questions = replace_duplicate_questions_from_fallback(
-                user=request.user,
-                exam_board=board_key,
-                scope_key=scope_key,
-                fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
-                accepted_questions=combined_questions,
-                requested_count=number,
-                served_questions=served_questions,
-            )
+            if len(combined_questions) < number:
+                combined_questions, served_questions = replace_duplicate_questions_from_fallback(
+                    user=request.user,
+                    exam_board=board_key,
+                    scope_key=scope_key,
+                    fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
+                    accepted_questions=combined_questions,
+                    requested_count=number,
+                    served_questions=served_questions,
+                )
 
-        random.shuffle(combined_questions)
+            random.shuffle(combined_questions)
 
-        total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+            total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+            session_kwargs = {
+                "topic": topic,
+                "subtopic": subtopic,
+                "subcategory": subcategory,
+                "qualification": qualification,
+                "exam_board": board_key,
+                "number_of_questions": number,
+                "total_available": total_available,
+            }
+        else:
+            gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
+            gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
+            if gcse_subject not in ALLOWED_GCSE_SUBJECTS:
+                return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+            if gcse_tier not in ALLOWED_GCSE_TIERS:
+                return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
+
+            gcse_topic = GCSEScienceTopic.objects.get(id=topic_id, exam_board=board_key, subject=gcse_subject)
+            gcse_subtopic = None
+            if subtopic_id:
+                gcse_subtopic = GCSEScienceSubTopic.objects.get(id=subtopic_id, topic_id=gcse_topic.id)
+
+            gcse_subcategory = None
+            if subcategory_id:
+                if not subtopic_id:
+                    return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
+                gcse_subcategory = GCSEScienceSubCategory.objects.get(id=subcategory_id, subtopic_id=gcse_subtopic.id)
+
+            scope_title, scope_key = build_gcse_scope_metadata(gcse_topic, gcse_subtopic, gcse_subcategory, gcse_tier)
+            served_questions = get_user_served_question_set(request.user, board_key, scope_key)
+
+            scope = gcse_topic.topic
+            if gcse_subtopic:
+                scope += f' (SubTopic: {gcse_subtopic.title})'
+            if gcse_subcategory:
+                scope += f' (SubCategory: {gcse_subcategory.title})'
+
+            ai_response = generate_gcse_questions(scope, board_key, number, gcse_subject, gcse_tier)
+            ai_questions = ai_response.get("questions", [])
+
+            combined_questions = []
+            current_batch_questions = set()
+            for ai_question in ai_questions:
+                normalized = normalize_question_text(question_text_from_item(ai_question))
+                if not normalized or normalized in served_questions or normalized in current_batch_questions:
+                    continue
+                current_batch_questions.add(normalized)
+                combined_questions.append(ai_question)
+
+            if len(combined_questions) < number:
+                raise ValueError("The AI did not return enough unique GCSE questions for this topic.")
+
+            total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+            session_kwargs = {
+                "qualification": qualification,
+                "gcse_topic": gcse_topic,
+                "gcse_subtopic": gcse_subtopic,
+                "gcse_subcategory": gcse_subcategory,
+                "gcse_subject": gcse_subject,
+                "gcse_tier": gcse_tier,
+                "exam_board": board_key,
+                "number_of_questions": number,
+                "total_available": total_available,
+            }
 
         with transaction.atomic():
             if not entitlement.has_unlimited_access:
@@ -414,12 +526,7 @@ def generate_exam_questions(request):
 
             session = QuestionSession.objects.create(
                 user=request.user,
-                topic=topic,
-                subtopic=subtopic,
-                subcategory=subcategory,
-                exam_board=board_key,
-                number_of_questions=number,
-                total_available=total_available
+                **session_kwargs,
             )
             record_served_questions(request.user, board_key, scope_key, combined_questions)
 
@@ -434,6 +541,7 @@ def generate_exam_questions(request):
         return Response({
             "questions": combined_questions,
             "session_id": session.id,
+            "qualification": qualification,
             "questions_remaining_today": questions_remaining_today,
             "plan_type": entitlement.plan_type,
         }, status=200)
@@ -453,6 +561,12 @@ def generate_exam_questions(request):
         return Response({"error": "Invalid subtopic for the selected topic"}, status=400)
     except BiologySubCategory.DoesNotExist:
         return Response({"error": "Invalid subcategory for the selected subtopic"}, status=400)
+    except GCSEScienceTopic.DoesNotExist:
+        return Response({"error": "Invalid GCSE topic selected for this exam board and subject"}, status=400)
+    except GCSEScienceSubTopic.DoesNotExist:
+        return Response({"error": "Invalid GCSE subtopic for the selected GCSE topic"}, status=400)
+    except GCSEScienceSubCategory.DoesNotExist:
+        return Response({"error": "Invalid GCSE subcategory for the selected GCSE subtopic"}, status=400)
     except json.JSONDecodeError:
         return Response({"error": "Invalid JSON format in fallback question bank"}, status=500)
     except Exception as e:
@@ -463,18 +577,35 @@ def generate_exam_questions(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mark_user_answer(request):
+    qualification = _normalize_qualification(request.data.get("qualification"))
     answers = request.data.get("answers")
+    exam_board = (request.data.get("exam_board", "AQA") or "AQA").strip().upper()
+    if exam_board not in ALLOWED_BOARDS:
+        return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+    if qualification not in ALLOWED_QUALIFICATIONS:
+        return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
+
+    gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
+    gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
+    if qualification == QualificationPath.GCSE_SCIENCE:
+        if gcse_subject not in ALLOWED_GCSE_SUBJECTS:
+            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+        if gcse_tier not in ALLOWED_GCSE_TIERS:
+            return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
+
     if answers is not None:
         if not isinstance(answers, list) or not answers:
             return Response({"error": "answers must be a non-empty list."}, status=400)
 
-        exam_board = request.data.get("exam_board", "AQA")
         for answer in answers:
             if not answer.get("question") or not answer.get("mark_scheme"):
                 return Response({"error": "Each answer must include question and mark_scheme."}, status=400)
 
         try:
-            result = evaluate_batch_responses_with_openai(answers, exam_board)
+            if qualification == QualificationPath.GCSE_SCIENCE:
+                result = evaluate_gcse_batch_responses_with_openai(answers, exam_board, gcse_subject, gcse_tier)
+            else:
+                result = evaluate_batch_responses_with_openai(answers, exam_board)
             return Response(result, status=200)
         except json.JSONDecodeError as e:
             logger.error("Invalid JSON from OpenAI batch marking: %s", e)
@@ -486,19 +617,22 @@ def mark_user_answer(request):
     question = request.data.get("question")
     mark_scheme = request.data.get("mark_scheme")
     user_answer = request.data.get("user_answer")
-    exam_board = request.data.get("exam_board", "AQA")
 
     logger.info("Incoming marking request:")
     logger.info("Question: %s", question)
     logger.info("User Answer: %s", user_answer)
     logger.info("Mark Scheme: %s", mark_scheme)
     logger.info("Exam Board: %s", exam_board)
+    logger.info("Qualification: %s", qualification)
 
     if not all([question, mark_scheme, user_answer]):
         return Response({"error": "Missing one or more fields."}, status=400)
 
     try:
-        result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board)
+        if qualification == QualificationPath.GCSE_SCIENCE:
+            result = evaluate_gcse_response_with_openai(question, mark_scheme, user_answer, exam_board, gcse_subject, gcse_tier)
+        else:
+            result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board)
         return Response(result, status=200)
     except json.JSONDecodeError as e:
         logger.error("Invalid JSON from OpenAI: %s", e)
@@ -585,3 +719,60 @@ def get_biology_subcategories(request):
             return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
         qs = qs.filter(subtopic__topic__exam_board=board)
     return Response(BiologySubCategoryListSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_gcse_topics(request):
+    board = (request.query_params.get("exam_board") or "").strip().upper()
+    subject = _normalize_gcse_subject(request.query_params.get("subject"))
+    qs = GCSEScienceTopic.objects.all().order_by("topic")
+    if board:
+        if board not in ALLOWED_BOARDS:
+            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        qs = qs.filter(exam_board=board)
+    if subject:
+        if subject not in ALLOWED_GCSE_SUBJECTS:
+            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+        qs = qs.filter(subject=subject)
+    return Response(GCSETopicListSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_gcse_subtopics(request):
+    board = (request.query_params.get("exam_board") or "").strip().upper()
+    subject = _normalize_gcse_subject(request.query_params.get("subject"))
+    topic_id = request.query_params.get("topic_id")
+    qs = GCSEScienceSubTopic.objects.select_related("topic").all().order_by("title")
+    if topic_id:
+        qs = qs.filter(topic_id=topic_id)
+    if board:
+        if board not in ALLOWED_BOARDS:
+            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        qs = qs.filter(topic__exam_board=board)
+    if subject:
+        if subject not in ALLOWED_GCSE_SUBJECTS:
+            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+        qs = qs.filter(topic__subject=subject)
+    return Response(GCSESubTopicListSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_gcse_subcategories(request):
+    board = (request.query_params.get("exam_board") or "").strip().upper()
+    subject = _normalize_gcse_subject(request.query_params.get("subject"))
+    subtopic_id = request.query_params.get("subtopic_id")
+    qs = GCSEScienceSubCategory.objects.select_related("subtopic", "subtopic__topic").all().order_by("title")
+    if subtopic_id:
+        qs = qs.filter(subtopic_id=subtopic_id)
+    if board:
+        if board not in ALLOWED_BOARDS:
+            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        qs = qs.filter(subtopic__topic__exam_board=board)
+    if subject:
+        if subject not in ALLOWED_GCSE_SUBJECTS:
+            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+        qs = qs.filter(subtopic__topic__subject=subject)
+    return Response(GCSESubCategoryListSerializer(qs, many=True).data)

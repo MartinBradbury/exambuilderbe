@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage, UserEntitlement
 from accounts.models import CustomUser
-from .models import BiologyTopic, QuestionSession, ServedQuestion
+from .models import BiologyTopic, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
 
 
 class GenerateExamQuestionsLimitTests(APITestCase):
@@ -340,3 +340,94 @@ class MarkingFlowTests(APITestCase):
 		self.assertEqual(len(response.data['feedback']['strengths']), 3)
 		self.assertEqual(len(response.data['feedback']['improvements']), 3)
 		mock_batch_mark.assert_not_called()
+
+
+class GCSEFlowTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='gcse@example.com',
+			username='gcse-user',
+			password='testpass123',
+		)
+		self.topic = GCSEScienceTopic.objects.create(topic='Atomic structure', exam_board='AQA', subject='CHEMISTRY')
+		self.subtopic = GCSEScienceSubTopic.objects.create(topic=self.topic, title='Atomic models')
+		self.subcategory = GCSEScienceSubCategory.objects.create(subtopic=self.subtopic, title='Electronic structure')
+		self.generate_url = reverse('generate-exam-questions')
+		self.mark_url = reverse('mark-user-answer')
+		self.client.force_authenticate(user=self.user)
+
+	@patch('examquestions.views.generate_gcse_questions')
+	def test_generate_exam_questions_routes_to_gcse_service(self, mock_generate_gcse_questions):
+		mock_generate_gcse_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Describe the structure of an atom. [2 marks]',
+					'total_marks': 2,
+					'mark_scheme': ['A nucleus contains protons and neutrons (1 mark)', 'Electrons are in shells around the nucleus (1 mark)'],
+				}
+			]
+		}
+
+		entitlement = self.user.entitlement
+		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
+		entitlement.lifetime_unlocked = True
+		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+
+		response = self.client.post(
+			self.generate_url,
+			{
+				'qualification': 'GCSE_SCIENCE',
+				'topic_id': self.topic.id,
+				'subtopic_id': self.subtopic.id,
+				'subcategory_id': self.subcategory.id,
+				'exam_board': 'AQA',
+				'subject': 'chemistry',
+				'tier': 'higher',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['qualification'], QualificationPath.GCSE_SCIENCE)
+		self.assertEqual(response.data['questions'][0]['question'], 'Describe the structure of an atom. [2 marks]')
+		mock_generate_gcse_questions.assert_called_once_with('Atomic structure (SubTopic: Atomic models) (SubCategory: Electronic structure)', 'AQA', 1, 'CHEMISTRY', 'HIGHER')
+		session = QuestionSession.objects.get(user=self.user)
+		self.assertEqual(session.qualification, QualificationPath.GCSE_SCIENCE)
+		self.assertEqual(session.gcse_topic, self.topic)
+		self.assertEqual(session.gcse_subtopic, self.subtopic)
+		self.assertEqual(session.gcse_subcategory, self.subcategory)
+		self.assertEqual(session.gcse_subject, 'CHEMISTRY')
+		self.assertEqual(session.gcse_tier, 'HIGHER')
+
+	@patch('examquestions.views.evaluate_gcse_batch_responses_with_openai')
+	def test_mark_user_answer_routes_to_gcse_marking_service(self, mock_gcse_mark):
+		mock_gcse_mark.return_value = {
+			'results': [
+				{'index': 1, 'score': 2, 'out_of': 2, 'feedback': 'Full marks.'},
+			],
+			'strengths': ['Strength 1', 'Strength 2', 'Strength 3'],
+			'improvements': ['Improve 1', 'Improve 2', 'Improve 3'],
+		}
+		payload = {
+			'qualification': 'GCSE_SCIENCE',
+			'exam_board': 'AQA',
+			'subject': 'CHEMISTRY',
+			'tier': 'FOUNDATION',
+			'answers': [
+				{
+					'question': 'State the relative charge of a proton. [1 mark]',
+					'mark_scheme': ['A proton has a charge of +1'],
+					'user_answer': '+1',
+				},
+			],
+		}
+
+		response = self.client.post(
+			self.mark_url,
+			payload,
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		mock_gcse_mark.assert_called_once_with(payload['answers'], 'AQA', 'CHEMISTRY', 'FOUNDATION')
