@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage, UserEntitlement
 from accounts.models import CustomUser
-from .models import BiologyTopic, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
+from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
 
 
 class GenerateExamQuestionsLimitTests(APITestCase):
@@ -431,3 +431,75 @@ class GCSEFlowTests(APITestCase):
 
 		self.assertEqual(response.status_code, 200)
 		mock_gcse_mark.assert_called_once_with(payload['answers'], 'AQA', 'CHEMISTRY', 'FOUNDATION')
+
+
+class UserSessionsSerializerTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='sessions@example.com',
+			username='sessions-user',
+			password='testpass123',
+		)
+		self.url = reverse('get_user_sessions')
+		self.client.force_authenticate(user=self.user)
+
+	def test_get_user_sessions_returns_separate_alevel_result_card_fields(self):
+		topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+		subtopic = BiologySubTopic.objects.create(topic=topic, title='Cell membrane')
+		subcategory = BiologySubCategory.objects.create(subtopic=subtopic, title='Transport across membranes')
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			subtopic=subtopic,
+			subcategory=subcategory,
+			exam_board='OCR',
+			number_of_questions=2,
+			total_score=5,
+			total_available=6,
+		)
+
+		response = self.client.get(self.url)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data), 1)
+		self.assertEqual(response.data[0]['level'], 'A level')
+		self.assertEqual(response.data[0]['qualification'], QualificationPath.ALEVEL_BIOLOGY)
+		self.assertEqual(response.data[0]['exam_board'], 'OCR')
+		self.assertEqual(response.data[0]['topic_name'], 'Cells')
+		self.assertEqual(response.data[0]['subtopic_name'], 'Cell membrane')
+		self.assertEqual(response.data[0]['subcategory_name'], 'Transport across membranes')
+
+	def test_get_user_sessions_returns_separate_gcse_result_card_fields(self):
+		topic = GCSEScienceTopic.objects.create(
+			topic='Atomic structure',
+			exam_board='AQA',
+			subject='CHEMISTRY',
+			tier='HIGHER',
+		)
+		subtopic = GCSEScienceSubTopic.objects.create(topic=topic, title='Atomic models')
+		subcategory = GCSEScienceSubCategory.objects.create(subtopic=subtopic, title='Electronic structure')
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.GCSE_SCIENCE,
+			gcse_topic=topic,
+			gcse_subtopic=subtopic,
+			gcse_subcategory=subcategory,
+			gcse_subject='CHEMISTRY',
+			gcse_tier='HIGHER',
+			exam_board='AQA',
+			number_of_questions=1,
+			total_score=2,
+			total_available=2,
+		)
+
+		response = self.client.get(self.url)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data), 1)
+		self.assertEqual(response.data[0]['level'], 'GCSE')
+		self.assertEqual(response.data[0]['qualification'], QualificationPath.GCSE_SCIENCE)
+		self.assertEqual(response.data[0]['exam_board'], 'AQA')
+		self.assertEqual(response.data[0]['topic_name'], 'Atomic structure')
+		self.assertEqual(response.data[0]['subtopic_name'], 'Atomic models')
+		self.assertEqual(response.data[0]['subcategory_name'], 'Electronic structure')

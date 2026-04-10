@@ -676,7 +676,14 @@ def submit_question_session(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_sessions(request):
-    sessions = QuestionSession.objects.filter(user=request.user).order_by('-created_at')
+    sessions = QuestionSession.objects.select_related(
+        'topic',
+        'subtopic',
+        'subcategory',
+        'gcse_topic',
+        'gcse_subtopic',
+        'gcse_subcategory',
+    ).filter(user=request.user).order_by('-created_at')
     serializer = QuestionSessionSerializer(sessions, many=True)
     return Response(serializer.data)
 
