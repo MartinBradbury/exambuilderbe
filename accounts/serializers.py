@@ -21,6 +21,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'email',
             'email_verified',
             'email_verified_at',
+            'performance_tracking_start_date',
             'plan_type',
             'lifetime_unlocked',
             'has_unlimited_access',

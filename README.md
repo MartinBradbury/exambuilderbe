@@ -9,6 +9,7 @@ netlify frontend
 
 ## Local database safety
 
+
 Local development now defaults to SQLite in `db.sqlite3`, even if `DATABASE_URL` is present in your shell or `.env`.
 
 - Local default: `USE_LOCAL_DB=True`
@@ -71,6 +72,36 @@ API endpoints:
 
 - `POST /accounts/email-verification/confirm/`
 - `POST /accounts/email-verification/resend/`
+
+## Results deletion
+
+Users can clear current performance tracking without losing result history, or permanently remove all saved results.
+
+API endpoint:
+
+- `DELETE /api/user-sessions/delete-all/`
+
+Behavior:
+
+- default behavior is a soft reset, which updates the authenticated user's `performance_tracking_start_date`
+- soft reset keeps all `QuestionSession` rows and keeps them visible in `GET /api/user-sessions/`
+- the frontend can use `performance_tracking_start_date` to exclude older results from rolling averages
+- send `mode=hard` to permanently remove all of the authenticated user's saved `QuestionSession` rows
+
+Examples:
+
+```http
+DELETE /api/user-sessions/delete-all/
+Content-Type: application/json
+
+{
+	"mode": "soft"
+}
+```
+
+```http
+DELETE /api/user-sessions/delete-all/?mode=hard
+```
 
 Config:
 

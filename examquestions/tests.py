@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage, UserEntitlement
@@ -441,6 +442,8 @@ class UserSessionsSerializerTests(APITestCase):
 			password='testpass123',
 		)
 		self.url = reverse('get_user_sessions')
+		self.delete_url = reverse('delete_user_results')
+		self.user_info_url = reverse('user-info')
 		self.client.force_authenticate(user=self.user)
 
 	def test_get_user_sessions_returns_separate_alevel_result_card_fields(self):
@@ -503,3 +506,91 @@ class UserSessionsSerializerTests(APITestCase):
 		self.assertEqual(response.data[0]['topic_name'], 'Atomic structure')
 		self.assertEqual(response.data[0]['subtopic_name'], 'Atomic models')
 		self.assertEqual(response.data[0]['subcategory_name'], 'Electronic structure')
+
+	def test_get_user_sessions_still_returns_history_after_soft_reset(self):
+		topic = BiologyTopic.objects.create(topic='Inheritance', exam_board='AQA')
+		first_session = QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			exam_board='AQA',
+			number_of_questions=1,
+			total_score=1,
+			total_available=1,
+		)
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			exam_board='AQA',
+			number_of_questions=1,
+			total_score=0,
+			total_available=1,
+		)
+
+		reset_response = self.client.delete(self.delete_url, {'mode': 'soft'}, format='json')
+
+		response = self.client.get(self.url)
+
+		self.assertEqual(reset_response.status_code, 200)
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data), 2)
+		self.assertEqual(response.data[-1]['id'], first_session.id)
+
+	def test_delete_user_results_soft_resets_performance_tracking_start_date(self):
+		topic = BiologyTopic.objects.create(topic='Ecology', exam_board='OCR')
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			exam_board='OCR',
+			number_of_questions=2,
+			total_score=3,
+			total_available=4,
+		)
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			exam_board='OCR',
+			number_of_questions=1,
+			total_score=1,
+			total_available=2,
+		)
+
+		response = self.client.delete(self.delete_url, {'mode': 'soft'}, format='json')
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['mode'], 'soft')
+		self.assertEqual(response.data['deleted_count'], 0)
+		self.user.refresh_from_db()
+		self.assertIsNotNone(self.user.performance_tracking_start_date)
+		self.assertLessEqual(self.user.performance_tracking_start_date, timezone.now())
+		self.assertEqual(QuestionSession.objects.filter(user=self.user).count(), 2)
+		user_info_response = self.client.get(self.user_info_url)
+		self.assertEqual(user_info_response.status_code, 200)
+		self.assertIsNotNone(user_info_response.data['performance_tracking_start_date'])
+
+	def test_delete_user_results_hard_deletes_all_sessions(self):
+		topic = BiologyTopic.objects.create(topic='Homeostasis', exam_board='OCR')
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			exam_board='OCR',
+			number_of_questions=1,
+			total_score=1,
+			total_available=1,
+		)
+
+		response = self.client.delete(self.delete_url, {'mode': 'hard'}, format='json')
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['mode'], 'hard')
+		self.assertEqual(QuestionSession.objects.filter(user=self.user).count(), 0)
+
+	def test_delete_user_results_rejects_invalid_mode(self):
+		response = self.client.delete(self.delete_url, {'mode': 'archive'}, format='json')
+
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data['error'], "Invalid mode. Use 'soft' or 'hard'.")
