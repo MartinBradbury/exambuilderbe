@@ -2,14 +2,29 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, CustomUserProfile, QuestionUsage, UserEntitlement
 
+
+def membership_label_for_user(user):
+    if user.has_gcse_paid_access and user.has_alevel_paid_access:
+        return 'GCSE + A Level'
+    if user.has_gcse_paid_access:
+        return 'GCSE'
+    if user.has_alevel_paid_access:
+        return 'A Level'
+    return 'Free'
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username', 'email_verified', 'email_verified_at')
-    list_filter = ('email', 'username', 'email_verified')
+    list_display = ('email', 'username', 'membership_type', 'email_verified', 'email_verified_at')
+    list_filter = ('email', 'username', 'email_verified', 'has_gcse_paid_access', 'has_alevel_paid_access')
     fieldsets = UserAdmin.fieldsets + (
         ('Verification', {'fields': ('email_verified', 'email_verified_at')}),
+        ('Membership', {'fields': ('has_gcse_paid_access', 'has_alevel_paid_access')}),
     )
     readonly_fields = ('email_verified_at',)
+
+    @admin.display(description='Membership')
+    def membership_type(self, obj):
+        return membership_label_for_user(obj)
 
 @admin.register(CustomUserProfile)
 class CustomUserProfileAdmin(admin.ModelAdmin):
@@ -21,6 +36,7 @@ class CustomUserProfileAdmin(admin.ModelAdmin):
 class UserEntitlementAdmin(admin.ModelAdmin):
     list_display = (
         'user',
+        'membership_type',
         'plan_type',
         'has_unlimited_access_display',
         'lifetime_unlocked',
@@ -58,6 +74,10 @@ class UserEntitlementAdmin(admin.ModelAdmin):
     @admin.display(boolean=True, description='Unlimited')
     def has_unlimited_access_display(self, obj):
         return obj.has_unlimited_access
+
+    @admin.display(description='Membership')
+    def membership_type(self, obj):
+        return membership_label_for_user(obj.user)
 
     @admin.action(description='Mark selected users as free')
     def mark_as_free(self, request, queryset):
