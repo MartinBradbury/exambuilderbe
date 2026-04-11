@@ -691,31 +691,20 @@ def get_user_sessions(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_user_results(request):
-    delete_mode = str(
-        request.data.get('mode')
-        or request.query_params.get('mode')
-        or 'soft'
-    ).strip().lower()
-    if delete_mode not in {'soft', 'hard'}:
-        return Response({'error': "Invalid mode. Use 'soft' or 'hard'."}, status=400)
+    delete_mode = str(request.data.get('mode') or request.query_params.get('mode') or 'hard').strip().lower()
+    if delete_mode != 'hard':
+        return Response(
+            {'error': "Soft reset moved to POST /accounts/reset-performance-tracking/. Use mode='hard' for permanent deletion here."},
+            status=400,
+        )
 
-    if delete_mode == 'hard':
-        sessions = QuestionSession.objects.filter(user=request.user)
-        deleted_count = sessions.count()
-        sessions.delete()
-        return Response({
-            'message': 'All user results permanently deleted.',
-            'mode': 'hard',
-            'deleted_count': deleted_count,
-            'performance_tracking_start_date': request.user.performance_tracking_start_date,
-        }, status=200)
-
-    request.user.performance_tracking_start_date = timezone.now()
-    request.user.save(update_fields=['performance_tracking_start_date'])
+    sessions = QuestionSession.objects.filter(user=request.user)
+    deleted_count = sessions.count()
+    sessions.delete()
     return Response({
-        'message': 'Performance tracking reset. Existing results remain in history.',
-        'mode': 'soft',
-        'deleted_count': 0,
+        'message': 'All user results permanently deleted.',
+        'mode': 'hard',
+        'deleted_count': deleted_count,
         'performance_tracking_start_date': request.user.performance_tracking_start_date,
     }, status=200)
 

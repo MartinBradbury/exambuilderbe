@@ -444,6 +444,7 @@ class UserSessionsSerializerTests(APITestCase):
 		self.url = reverse('get_user_sessions')
 		self.delete_url = reverse('delete_user_results')
 		self.user_info_url = reverse('user-info')
+		self.reset_tracking_url = reverse('reset-performance-tracking')
 		self.client.force_authenticate(user=self.user)
 
 	def test_get_user_sessions_returns_separate_alevel_result_card_fields(self):
@@ -528,7 +529,7 @@ class UserSessionsSerializerTests(APITestCase):
 			total_available=1,
 		)
 
-		reset_response = self.client.delete(self.delete_url, {'mode': 'soft'}, format='json')
+		reset_response = self.client.post(self.reset_tracking_url, {}, format='json')
 
 		response = self.client.get(self.url)
 
@@ -537,7 +538,7 @@ class UserSessionsSerializerTests(APITestCase):
 		self.assertEqual(len(response.data), 2)
 		self.assertEqual(response.data[-1]['id'], first_session.id)
 
-	def test_delete_user_results_soft_resets_performance_tracking_start_date(self):
+	def test_reset_performance_tracking_keeps_sessions_and_updates_user_baseline(self):
 		topic = BiologyTopic.objects.create(topic='Ecology', exam_board='OCR')
 		QuestionSession.objects.create(
 			user=self.user,
@@ -558,11 +559,10 @@ class UserSessionsSerializerTests(APITestCase):
 			total_available=2,
 		)
 
-		response = self.client.delete(self.delete_url, {'mode': 'soft'}, format='json')
+		response = self.client.post(self.reset_tracking_url, {}, format='json')
 
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.data['mode'], 'soft')
-		self.assertEqual(response.data['deleted_count'], 0)
+		self.assertEqual(response.data['detail'], 'Performance tracking reset successfully.')
 		self.user.refresh_from_db()
 		self.assertIsNotNone(self.user.performance_tracking_start_date)
 		self.assertLessEqual(self.user.performance_tracking_start_date, timezone.now())
@@ -589,8 +589,8 @@ class UserSessionsSerializerTests(APITestCase):
 		self.assertEqual(response.data['mode'], 'hard')
 		self.assertEqual(QuestionSession.objects.filter(user=self.user).count(), 0)
 
-	def test_delete_user_results_rejects_invalid_mode(self):
-		response = self.client.delete(self.delete_url, {'mode': 'archive'}, format='json')
+	def test_delete_user_results_rejects_soft_mode(self):
+		response = self.client.delete(self.delete_url, {'mode': 'soft'}, format='json')
 
 		self.assertEqual(response.status_code, 400)
-		self.assertEqual(response.data['error'], "Invalid mode. Use 'soft' or 'hard'.")
+		self.assertEqual(response.data['error'], "Soft reset moved to POST /accounts/reset-performance-tracking/. Use mode='hard' for permanent deletion here.")

@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 import stripe
@@ -109,6 +110,21 @@ class UserInfoAPIView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class ResetPerformanceTrackingAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        request.user.performance_tracking_start_date = timezone.now()
+        request.user.save(update_fields=['performance_tracking_start_date'])
+        return Response(
+            {
+                'detail': 'Performance tracking reset successfully.',
+                'performance_tracking_start_date': request.user.performance_tracking_start_date,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class PasswordResetRequestAPIView(GenericAPIView):

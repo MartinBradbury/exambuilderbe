@@ -272,3 +272,28 @@ class StripeBillingTests(APITestCase):
 		entitlement.refresh_from_db()
 		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.FREE)
 		self.assertFalse(entitlement.has_unlimited_access)
+
+
+class PerformanceTrackingResetTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='tracking@example.com',
+			username='tracking-user',
+			password='TrackingPass123',
+		)
+		self.url = reverse('reset-performance-tracking')
+
+	def test_reset_performance_tracking_sets_start_date(self):
+		self.client.force_authenticate(user=self.user)
+
+		response = self.client.post(self.url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertIsNotNone(self.user.performance_tracking_start_date)
+		self.assertEqual(response.data['detail'], 'Performance tracking reset successfully.')
+
+	def test_reset_performance_tracking_requires_authentication(self):
+		response = self.client.post(self.url, {}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

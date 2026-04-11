@@ -77,30 +77,30 @@ API endpoints:
 
 Users can clear current performance tracking without losing result history, or permanently remove all saved results.
 
-API endpoint:
+Performance tracking reset endpoint:
+
+- `POST /accounts/reset-performance-tracking/`
+
+Hard delete endpoint:
 
 - `DELETE /api/user-sessions/delete-all/`
 
 Behavior:
 
-- default behavior is a soft reset, which updates the authenticated user's `performance_tracking_start_date`
-- soft reset keeps all `QuestionSession` rows and keeps them visible in `GET /api/user-sessions/`
+- `POST /accounts/reset-performance-tracking/` updates the authenticated user's `performance_tracking_start_date`
+- performance reset keeps all `QuestionSession` rows and keeps them visible in `GET /api/user-sessions/`
 - the frontend can use `performance_tracking_start_date` to exclude older results from rolling averages
-- send `mode=hard` to permanently remove all of the authenticated user's saved `QuestionSession` rows
+- `DELETE /api/user-sessions/delete-all/` permanently removes all of the authenticated user's saved `QuestionSession` rows
 
 Examples:
 
 ```http
-DELETE /api/user-sessions/delete-all/
+POST /accounts/reset-performance-tracking/
 Content-Type: application/json
-
-{
-	"mode": "soft"
-}
 ```
 
 ```http
-DELETE /api/user-sessions/delete-all/?mode=hard
+DELETE /api/user-sessions/delete-all/
 ```
 
 Config:
