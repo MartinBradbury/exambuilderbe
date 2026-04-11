@@ -21,6 +21,12 @@ class CustomUser(AbstractUser):
     def normalize_paid_access_qualification(raw_value):
         normalized = str(raw_value or '').strip().replace('-', '_').replace(' ', '_').upper()
         qualification_map = {
+            'BOTH': 'BOTH',
+            'ALL': 'BOTH',
+            'GCSE_AND_ALEVEL': 'BOTH',
+            'GCSE_AND_A_LEVEL': 'BOTH',
+            'GCSE_ALEVEL': 'BOTH',
+            'GCSE_A_LEVEL': 'BOTH',
             'GCSE': 'GCSE_SCIENCE',
             'GCSE_SCIENCE': 'GCSE_SCIENCE',
             'ALEVEL': 'ALEVEL_BIOLOGY',
@@ -32,6 +38,8 @@ class CustomUser(AbstractUser):
 
     def has_paid_access_for_qualification(self, qualification):
         normalized = self.normalize_paid_access_qualification(qualification)
+        if normalized == 'BOTH':
+            return self.has_full_paid_access
         if normalized == 'GCSE_SCIENCE':
             return self.has_gcse_paid_access
         if normalized == 'ALEVEL_BIOLOGY':

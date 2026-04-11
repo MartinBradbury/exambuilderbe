@@ -169,5 +169,5 @@ class StripeCheckoutSessionSerializer(serializers.Serializer):
     def validate_qualification(self, value):
         normalized = CustomUser.normalize_paid_access_qualification(value)
         if not normalized:
-            raise serializers.ValidationError("Invalid qualification. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'.")
+            raise serializers.ValidationError("Invalid qualification. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', or 'BOTH'.")
         return normalized

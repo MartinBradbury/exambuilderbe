@@ -210,6 +210,83 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 		self.assertEqual(response.data['detail'], 'This account already has paid access for this qualification.')
 
+	@patch('accounts.views.create_stripe_checkout_session')
+	def test_create_checkout_session_allows_combined_purchase_when_user_has_only_one_access_type(self, mock_create_session):
+		mock_create_session.return_value = SimpleNamespace(
+			id='cs_test_both',
+			url='https://checkout.stripe.com/c/pay/cs_test_both',
+		)
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(self.checkout_url, {'qualification': 'BOTH'}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['session_id'], 'cs_test_both')
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_checkout_completed_webhook_promotes_user_to_both_paid_access(self, mock_construct_event):
+		mock_construct_event.return_value = {
+			'type': 'checkout.session.completed',
+			'data': {
+				'object': {
+					'id': 'cs_live_both',
+					'customer': 'cus_123',
+					'subscription': 'sub_123',
+					'client_reference_id': str(self.user.id),
+					'metadata': {'plan_type': UserEntitlement.PlanType.PAID, 'qualification': 'BOTH'},
+				}
+			},
+		}
+
+		response = self.client.post(
+			self.webhook_url,
+			data='{}',
+			content_type='application/json',
+			HTTP_STRIPE_SIGNATURE='sig_test',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_subscription_deleted_webhook_removes_both_access_flags_for_combined_plan(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		self.user.has_gcse_paid_access = True
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access', 'has_alevel_paid_access'])
+		entitlement.plan_type = UserEntitlement.PlanType.PAID
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.save(update_fields=['plan_type', 'stripe_customer_id', 'stripe_subscription_id'])
+
+		mock_construct_event.return_value = {
+			'type': 'customer.subscription.deleted',
+			'data': {
+				'object': {
+					'id': 'sub_123',
+					'customer': 'cus_123',
+					'status': 'canceled',
+					'metadata': {'qualification': 'BOTH'},
+				}
+			},
+		}
+
+		response = self.client.post(
+			self.webhook_url,
+			data='{}',
+			content_type='application/json',
+			HTTP_STRIPE_SIGNATURE='sig_test',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
 	@patch('accounts.views.construct_stripe_event')
 	def test_checkout_completed_webhook_promotes_user_to_paid(self, mock_construct_event):
 		mock_construct_event.return_value = {
