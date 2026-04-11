@@ -20,7 +20,7 @@ from .models import (
     GCSESubject,
     GCSETier,
 )
-from accounts.models import QuestionUsage, UserEntitlement
+from accounts.models import CustomUser, QuestionUsage, UserEntitlement
 from django.db import transaction
 from django.utils import timezone
 from functools import lru_cache
@@ -64,11 +64,21 @@ def _normalize_choice(raw_value):
     return str(raw_value or "").strip().replace("-", "_").replace(" ", "_").upper()
 
 
-def _normalize_qualification(raw_value):
-    normalized = _normalize_choice(raw_value)
-    if not normalized:
-        return QualificationPath.ALEVEL_BIOLOGY
-    return normalized
+def _normalize_qualification(raw_value, default=QualificationPath.ALEVEL_BIOLOGY):
+    return CustomUser.normalize_paid_access_qualification(raw_value) or default
+
+
+def _has_paid_generation_access(user, qualification):
+    # Paid access is qualification-specific, but the free quota remains shared per user per day.
+    return user.has_paid_access_for_qualification(qualification)
+
+
+def _current_plan_type(user, entitlement):
+    if entitlement.lifetime_unlocked:
+        return UserEntitlement.PlanType.LIFETIME
+    if user.has_gcse_paid_access or user.has_alevel_paid_access:
+        return UserEntitlement.PlanType.PAID
+    return UserEntitlement.PlanType.FREE
 
 
 def _normalize_gcse_subject(raw_value):
@@ -336,7 +346,7 @@ def generate_exam_questions(request):
     subtopic_id = request.data.get("subtopic_id")         # optional
     subcategory_id = request.data.get("subcategory_id")   # optional
     exam_board = request.data.get("exam_board")
-    qualification = _normalize_qualification(request.data.get("qualification"))
+    qualification = _normalize_qualification(request.data.get("qualification"), default='')
     try:
         number = int(request.data.get("number_of_questions"))
     except (TypeError, ValueError):
@@ -344,6 +354,8 @@ def generate_exam_questions(request):
 
     if not all([topic_id, exam_board, number]):
         return Response({"error": "Missing required fields"}, status=400)
+    if request.data.get('qualification') in {None, ''}:
+        return Response({"error": "qualification is required. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'."}, status=400)
 
     board_key = (exam_board or "").strip().upper()
     if board_key not in ALLOWED_BOARDS:
@@ -352,10 +364,12 @@ def generate_exam_questions(request):
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
 
     entitlement = get_or_create_entitlement(request.user)
+    current_plan_type = _current_plan_type(request.user, entitlement)
     today = timezone.localdate()
     questions_remaining_today = None
+    has_paid_access_for_request = _has_paid_generation_access(request.user, qualification)
 
-    if not entitlement.has_unlimited_access:
+    if not has_paid_access_for_request:
         current_usage = (
             QuestionUsage.objects.filter(user=request.user, date=today)
             .values_list("question_count", flat=True)
@@ -369,8 +383,8 @@ def generate_exam_questions(request):
         if number > questions_remaining_today:
             return Response(
                 {
-                    "error": "Free users can only generate 1 question per day. Upgrade for unlimited access.",
-                    "plan_type": entitlement.plan_type,
+                    "error": "Free users can only generate 1 question per day total. Upgrade this qualification for unlimited access.",
+                    "plan_type": current_plan_type,
                     "questions_remaining_today": questions_remaining_today,
                 },
                 status=403,
@@ -511,7 +525,7 @@ def generate_exam_questions(request):
             }
 
         with transaction.atomic():
-            if not entitlement.has_unlimited_access:
+            if not has_paid_access_for_request:
                 usage, _ = QuestionUsage.objects.select_for_update().get_or_create(
                     user=request.user,
                     date=today,
@@ -530,7 +544,7 @@ def generate_exam_questions(request):
             )
             record_served_questions(request.user, board_key, scope_key, combined_questions)
 
-            if not entitlement.has_unlimited_access:
+            if not has_paid_access_for_request:
                 usage.question_count += number
                 usage.save(update_fields=["question_count"])
                 questions_remaining_today = max(
@@ -543,14 +557,14 @@ def generate_exam_questions(request):
             "session_id": session.id,
             "qualification": qualification,
             "questions_remaining_today": questions_remaining_today,
-            "plan_type": entitlement.plan_type,
+            "plan_type": current_plan_type,
         }, status=200)
 
     except DailyQuestionLimitExceeded:
         return Response(
             {
-                "error": "Free users can only generate 1 question per day. Upgrade for unlimited access.",
-                "plan_type": entitlement.plan_type,
+                "error": "Free users can only generate 1 question per day total. Upgrade this qualification for unlimited access.",
+                "plan_type": current_plan_type,
                 "questions_remaining_today": 0,
             },
             status=403,

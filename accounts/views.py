@@ -222,6 +222,7 @@ class StripeCheckoutSessionAPIView(GenericAPIView):
         try:
             session = create_stripe_checkout_session(
                 user=request.user,
+                qualification=serializer.validated_data['qualification'],
                 success_url=serializer.validated_data.get('success_url'),
                 cancel_url=serializer.validated_data.get('cancel_url'),
             )

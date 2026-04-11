@@ -22,6 +22,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'email_verified',
             'email_verified_at',
             'performance_tracking_start_date',
+            'has_gcse_paid_access',
+            'has_alevel_paid_access',
             'plan_type',
             'lifetime_unlocked',
             'has_unlimited_access',
@@ -35,17 +37,21 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return entitlement
 
     def get_plan_type(self, obj):
-        return self._get_entitlement(obj).plan_type
+        entitlement = self._get_entitlement(obj)
+        if entitlement.lifetime_unlocked:
+            return UserEntitlement.PlanType.LIFETIME
+        if obj.has_gcse_paid_access or obj.has_alevel_paid_access:
+            return UserEntitlement.PlanType.PAID
+        return UserEntitlement.PlanType.FREE
 
     def get_lifetime_unlocked(self, obj):
         return self._get_entitlement(obj).lifetime_unlocked
 
     def get_has_unlimited_access(self, obj):
-        return self._get_entitlement(obj).has_unlimited_access
+        return obj.has_full_paid_access
 
     def get_questions_remaining_today(self, obj):
-        entitlement = self._get_entitlement(obj)
-        if entitlement.has_unlimited_access:
+        if obj.has_full_paid_access:
             return None
 
         question_count = (
@@ -156,5 +162,12 @@ class EmailVerificationConfirmSerializer(serializers.Serializer):
 
 
 class StripeCheckoutSessionSerializer(serializers.Serializer):
+    qualification = serializers.CharField()
     success_url = serializers.URLField(required=False)
     cancel_url = serializers.URLField(required=False)
+
+    def validate_qualification(self, value):
+        normalized = CustomUser.normalize_paid_access_qualification(value)
+        if not normalized:
+            raise serializers.ValidationError("Invalid qualification. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'.")
+        return normalized

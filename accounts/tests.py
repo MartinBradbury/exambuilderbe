@@ -183,7 +183,7 @@ class StripeBillingTests(APITestCase):
 		)
 
 		self.client.force_authenticate(user=self.user)
-		response = self.client.post(self.checkout_url, {}, format='json')
+		response = self.client.post(self.checkout_url, {'qualification': 'ALEVEL'}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.data['session_id'], 'cs_test_123')
@@ -195,21 +195,20 @@ class StripeBillingTests(APITestCase):
 		self.user.save(update_fields=['email_verified'])
 
 		self.client.force_authenticate(user=self.user)
-		response = self.client.post(self.checkout_url, {}, format='json')
+		response = self.client.post(self.checkout_url, {'qualification': 'ALEVEL_BIOLOGY'}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 		self.assertEqual(response.data['detail'], 'Please verify your email before starting checkout.')
 
-	def test_create_checkout_session_rejects_user_with_unlimited_access(self):
-		entitlement = self.user.entitlement
-		entitlement.plan_type = UserEntitlement.PlanType.PAID
-		entitlement.save(update_fields=['plan_type'])
+	def test_create_checkout_session_rejects_user_with_existing_qualification_access(self):
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
 
 		self.client.force_authenticate(user=self.user)
-		response = self.client.post(self.checkout_url, {}, format='json')
+		response = self.client.post(self.checkout_url, {'qualification': 'GCSE'}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
-		self.assertEqual(response.data['detail'], 'This account already has unlimited access.')
+		self.assertEqual(response.data['detail'], 'This account already has paid access for this qualification.')
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_checkout_completed_webhook_promotes_user_to_paid(self, mock_construct_event):
@@ -221,7 +220,7 @@ class StripeBillingTests(APITestCase):
 					'customer': 'cus_123',
 					'subscription': 'sub_123',
 					'client_reference_id': str(self.user.id),
-					'metadata': {'plan_type': UserEntitlement.PlanType.PAID},
+					'metadata': {'plan_type': UserEntitlement.PlanType.PAID, 'qualification': 'ALEVEL_BIOLOGY'},
 				}
 			},
 		}
@@ -240,11 +239,15 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(entitlement.stripe_customer_id, 'cus_123')
 		self.assertEqual(entitlement.stripe_checkout_session_id, 'cs_live_123')
 		self.assertEqual(entitlement.stripe_subscription_id, 'sub_123')
-		self.assertTrue(entitlement.has_unlimited_access)
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_alevel_paid_access)
+		self.assertFalse(self.user.has_gcse_paid_access)
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_subscription_deleted_webhook_downgrades_user_to_free(self, mock_construct_event):
 		entitlement = self.user.entitlement
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
 		entitlement.plan_type = UserEntitlement.PlanType.PAID
 		entitlement.stripe_customer_id = 'cus_123'
 		entitlement.stripe_subscription_id = 'sub_123'
@@ -257,6 +260,7 @@ class StripeBillingTests(APITestCase):
 					'id': 'sub_123',
 					'customer': 'cus_123',
 					'status': 'canceled',
+					'metadata': {'qualification': 'GCSE_SCIENCE'},
 				}
 			},
 		}
@@ -270,8 +274,9 @@ class StripeBillingTests(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		entitlement.refresh_from_db()
+		self.user.refresh_from_db()
 		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.FREE)
-		self.assertFalse(entitlement.has_unlimited_access)
+		self.assertFalse(self.user.has_gcse_paid_access)
 
 
 class PerformanceTrackingResetTests(APITestCase):

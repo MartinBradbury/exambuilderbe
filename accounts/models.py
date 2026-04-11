@@ -10,9 +10,37 @@ class CustomUser(AbstractUser):
     email_verified = models.BooleanField(default=False)
     email_verified_at = models.DateTimeField(blank=True, null=True)
     performance_tracking_start_date = models.DateTimeField(blank=True, null=True)
+    # Qualification access now unlocks independently so paid GCSE does not imply paid A level.
+    has_gcse_paid_access = models.BooleanField(default=False)
+    has_alevel_paid_access = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username',]
+
+    @staticmethod
+    def normalize_paid_access_qualification(raw_value):
+        normalized = str(raw_value or '').strip().replace('-', '_').replace(' ', '_').upper()
+        qualification_map = {
+            'GCSE': 'GCSE_SCIENCE',
+            'GCSE_SCIENCE': 'GCSE_SCIENCE',
+            'ALEVEL': 'ALEVEL_BIOLOGY',
+            'A_LEVEL': 'ALEVEL_BIOLOGY',
+            'ALEVEL_BIOLOGY': 'ALEVEL_BIOLOGY',
+            'A_LEVEL_BIOLOGY': 'ALEVEL_BIOLOGY',
+        }
+        return qualification_map.get(normalized)
+
+    def has_paid_access_for_qualification(self, qualification):
+        normalized = self.normalize_paid_access_qualification(qualification)
+        if normalized == 'GCSE_SCIENCE':
+            return self.has_gcse_paid_access
+        if normalized == 'ALEVEL_BIOLOGY':
+            return self.has_alevel_paid_access
+        return False
+
+    @property
+    def has_full_paid_access(self):
+        return self.has_gcse_paid_access and self.has_alevel_paid_access
 
     def __str__(self):
         return self.email
@@ -39,6 +67,7 @@ class UserEntitlement(models.Model):
     FREE_DAILY_QUESTION_LIMIT = 1
 
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='entitlement')
+    # Legacy billing summary kept for compatibility with existing Stripe and frontend flows.
     plan_type = models.CharField(max_length=20, choices=PlanType.choices, default=PlanType.FREE)
     lifetime_unlocked = models.BooleanField(default=False)
     stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
@@ -51,7 +80,8 @@ class UserEntitlement(models.Model):
 
     @property
     def has_unlimited_access(self):
-        return self.plan_type in {self.PlanType.PAID, self.PlanType.LIFETIME} or self.lifetime_unlocked
+        # Legacy compatibility: true only when both qualifications are effectively unlocked.
+        return self.lifetime_unlocked or self.user.has_full_paid_access
 
 
 class QuestionUsage(models.Model):

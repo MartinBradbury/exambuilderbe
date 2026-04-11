@@ -2,7 +2,7 @@ from unittest.mock import patch
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from accounts.models import QuestionUsage, UserEntitlement
+from accounts.models import QuestionUsage
 from accounts.models import CustomUser
 from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
 
@@ -31,6 +31,7 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 
 		self.client.force_authenticate(user=self.user)
 		payload = {
+			'qualification': 'ALEVEL',
 			'topic_id': self.topic.id,
 			'exam_board': 'OCR',
 			'number_of_questions': 1,
@@ -55,6 +56,7 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		response = self.client.post(
 			self.url,
 			{
+				'qualification': 'ALEVEL_BIOLOGY',
 				'topic_id': self.topic.id,
 				'exam_board': 'OCR',
 				'number_of_questions': 2,
@@ -67,7 +69,7 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		self.assertFalse(QuestionUsage.objects.filter(user=self.user).exists())
 
 	@patch('examquestions.views.generate_questions')
-	def test_lifetime_user_has_unlimited_generation(self, mock_generate_questions):
+	def test_alevel_paid_user_has_unlimited_alevel_generation(self, mock_generate_questions):
 		mock_generate_questions.return_value = {
 			'questions': [
 				{
@@ -83,15 +85,14 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 			]
 		}
 
-		entitlement = self.user.entitlement
-		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
-		entitlement.lifetime_unlocked = True
-		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
 
 		self.client.force_authenticate(user=self.user)
 		response = self.client.post(
 			self.url,
 			{
+				'qualification': 'ALEVEL',
 				'topic_id': self.topic.id,
 				'exam_board': 'OCR',
 				'number_of_questions': 2,
@@ -100,9 +101,140 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		)
 
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(response.data['plan_type'], UserEntitlement.PlanType.LIFETIME)
+		self.assertEqual(response.data['plan_type'], 'paid')
 		self.assertIsNone(response.data['questions_remaining_today'])
 		self.assertFalse(QuestionUsage.objects.filter(user=self.user).exists())
+
+	@patch('examquestions.views.generate_gcse_questions')
+	@patch('examquestions.views.generate_questions')
+	def test_free_daily_limit_is_shared_across_gcse_and_alevel(self, mock_generate_questions, mock_generate_gcse_questions):
+		gcse_topic = GCSEScienceTopic.objects.create(topic='Particles', exam_board='OCR', subject='PHYSICS', tier='FOUNDATION')
+		mock_generate_gcse_questions.return_value = {
+			'questions': [
+				{
+					'question': 'State one property of waves. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Any valid property (1 mark)'],
+				}
+			]
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Explain diffusion. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Particles move down a concentration gradient (1 mark)'],
+				}
+			]
+		}
+
+		self.client.force_authenticate(user=self.user)
+		gcse_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'GCSE',
+				'topic_id': gcse_topic.id,
+				'exam_board': 'OCR',
+				'subject': 'PHYSICS',
+				'tier': 'FOUNDATION',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+		alevel_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(gcse_response.status_code, 200)
+		self.assertEqual(alevel_response.status_code, 403)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+
+	@patch('examquestions.views.generate_gcse_questions')
+	@patch('examquestions.views.generate_questions')
+	def test_gcse_paid_access_does_not_remove_alevel_free_limit(self, mock_generate_questions, mock_generate_gcse_questions):
+		gcse_topic = GCSEScienceTopic.objects.create(topic='Energy', exam_board='AQA', subject='BIOLOGY', tier='HIGHER')
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+		mock_generate_gcse_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Describe aerobic respiration. [2 marks]',
+					'total_marks': 2,
+					'mark_scheme': ['Uses oxygen (1 mark)', 'Releases energy (1 mark)'],
+				}
+			]
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Explain osmosis. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Water moves down a water potential gradient (1 mark)'],
+				}
+			]
+		}
+
+		self.client.force_authenticate(user=self.user)
+		gcse_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'GCSE_SCIENCE',
+				'topic_id': gcse_topic.id,
+				'exam_board': 'AQA',
+				'subject': 'BIOLOGY',
+				'tier': 'HIGHER',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+		first_alevel_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+		second_alevel_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(gcse_response.status_code, 200)
+		self.assertEqual(first_alevel_response.status_code, 200)
+		self.assertEqual(second_alevel_response.status_code, 403)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+
+	def test_generate_exam_questions_requires_qualification(self):
+		self.client.force_authenticate(user=self.user)
+
+		response = self.client.post(
+			self.url,
+			{
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data['error'], "qualification is required. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'.")
 
 	@patch('examquestions.views.load_fallback_bank_for_board')
 	@patch('examquestions.views.generate_questions')
@@ -143,15 +275,14 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 			normalized_question='repeated question.',
 		)
 
-		entitlement = self.user.entitlement
-		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
-		entitlement.lifetime_unlocked = True
-		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
 
 		self.client.force_authenticate(user=self.user)
 		response = self.client.post(
 			self.url,
 			{
+				'qualification': 'ALEVEL_BIOLOGY',
 				'topic_id': self.topic.id,
 				'exam_board': 'OCR',
 				'number_of_questions': 2,
@@ -196,15 +327,14 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 			normalized_question='fallback only question.',
 		)
 
-		entitlement = self.user.entitlement
-		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
-		entitlement.lifetime_unlocked = True
-		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
 
 		self.client.force_authenticate(user=self.user)
 		response = self.client.post(
 			self.url,
 			{
+				'qualification': 'ALEVEL',
 				'topic_id': self.topic.id,
 				'exam_board': 'OCR',
 				'number_of_questions': 1,
@@ -369,10 +499,8 @@ class GCSEFlowTests(APITestCase):
 			]
 		}
 
-		entitlement = self.user.entitlement
-		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
-		entitlement.lifetime_unlocked = True
-		entitlement.save(update_fields=['plan_type', 'lifetime_unlocked'])
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
 
 		response = self.client.post(
 			self.generate_url,
