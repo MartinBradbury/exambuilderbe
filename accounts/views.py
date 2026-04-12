@@ -12,7 +12,6 @@ import logging
 from .models import CustomUser
 from .services.stripe import (
     CheckoutNotAllowedError,
-    EmailVerificationRequiredError,
     create_stripe_checkout_session,
     construct_stripe_event,
     stripe_value,
@@ -228,8 +227,6 @@ class StripeCheckoutSessionAPIView(GenericAPIView):
             )
         except CheckoutNotAllowedError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_409_CONFLICT)
-        except EmailVerificationRequiredError as exc:
-            return Response({'detail': str(exc)}, status=status.HTTP_403_FORBIDDEN)
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except stripe.error.StripeError as exc:

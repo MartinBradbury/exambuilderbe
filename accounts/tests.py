@@ -190,15 +190,21 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(response.data['checkout_url'], 'https://checkout.stripe.com/c/pay/cs_test_123')
 		self.assertEqual(response.data['publishable_key'], 'pk_test_123')
 
-	def test_create_checkout_session_rejects_unverified_user(self):
+	@patch('accounts.views.create_stripe_checkout_session')
+	def test_create_checkout_session_allows_unverified_user(self, mock_create_session):
+		mock_create_session.return_value = SimpleNamespace(
+			id='cs_test_unverified',
+			url='https://checkout.stripe.com/c/pay/cs_test_unverified',
+		)
 		self.user.email_verified = False
 		self.user.save(update_fields=['email_verified'])
 
 		self.client.force_authenticate(user=self.user)
 		response = self.client.post(self.checkout_url, {'qualification': 'ALEVEL_BIOLOGY'}, format='json')
 
-		self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-		self.assertEqual(response.data['detail'], 'Please verify your email before starting checkout.')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['session_id'], 'cs_test_unverified')
+		self.assertEqual(response.data['checkout_url'], 'https://checkout.stripe.com/c/pay/cs_test_unverified')
 
 	def test_create_checkout_session_rejects_user_with_existing_qualification_access(self):
 		self.user.has_gcse_paid_access = True

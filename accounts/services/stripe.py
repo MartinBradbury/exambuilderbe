@@ -13,10 +13,6 @@ class CheckoutNotAllowedError(Exception):
     pass
 
 
-class EmailVerificationRequiredError(Exception):
-    pass
-
-
 def stripe_value(obj, key, default=None):
     if obj is None:
         return default
@@ -87,9 +83,6 @@ def _sync_legacy_plan_type(entitlement):
 def create_stripe_checkout_session(user, qualification, success_url=None, cancel_url=None):
     _configure_stripe()
     normalized_qualification, price_id = _get_price_id_for_qualification(qualification)
-
-    if not user.email_verified:
-        raise EmailVerificationRequiredError('Please verify your email before starting checkout.')
 
     entitlement, _ = UserEntitlement.objects.get_or_create(user=user)
     if user.has_paid_access_for_qualification(normalized_qualification):
