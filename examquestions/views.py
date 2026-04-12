@@ -57,6 +57,7 @@ OCR_GCSE_SEPARATE_FALLBACK_PATHS = {
     GCSESubject.BIOLOGY: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_biology_fallback_questions.json",
     GCSESubject.CHEMISTRY: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_chemistry_fallback_questions.json",
     GCSESubject.PHYSICS: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_physics_fallback_questions.json",
+    GCSESubject.COMBINED: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_combined.json",
 }
 AQA_GCSE_SEPARATE_FALLBACK_PATHS = {
     GCSESubject.BIOLOGY: FALLBACK_QUESTIONS_DIR / "aqa_triple_biology_compact_exam_style.json",
