@@ -313,6 +313,107 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 
 	@patch('examquestions.views.load_fallback_bank_for_board')
 	@patch('examquestions.views.generate_questions')
+	def test_alevel_requests_full_question_count_from_ai_even_when_fallback_pool_exists(self, mock_generate_questions, mock_load_fallback_bank):
+		mock_load_fallback_bank.return_value = {
+			'Test Topic': [
+				{
+					'question': 'Fallback question one. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Fallback point (1 mark)'],
+				},
+			],
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'AI question one. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['AI point (1 mark)'],
+				},
+				{
+					'question': 'AI question two. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['AI point (1 mark)'],
+				},
+			],
+		}
+
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 2,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		mock_generate_questions.assert_called_once_with('Test Topic', 'OCR', 2)
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_alevel_returns_valid_ai_questions_without_preloading_fallback(self, mock_generate_questions, mock_load_fallback_bank):
+		mock_load_fallback_bank.return_value = {
+			'Test Topic': [
+				{
+					'question': 'Fallback question one. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Fallback point (1 mark)'],
+				},
+				{
+					'question': 'Fallback question two. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Fallback point (1 mark)'],
+				},
+			],
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Explain the role of water in transport. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Water acts as a solvent for transport (1 mark)'],
+				},
+				{
+					'question': 'State one function of the cell membrane. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Controls movement of substances into and out of the cell (1 mark)'],
+				},
+			],
+		}
+
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 2,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(
+			{question['question'] for question in response.data['questions']},
+			{
+				'Explain the role of water in transport. [1 mark]',
+				'State one function of the cell membrane. [1 mark]',
+			},
+		)
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
 	def test_ai_questions_missing_method_context_are_replaced_from_fallback(self, mock_generate_questions, mock_load_fallback_bank):
 		mock_load_fallback_bank.return_value = {
 			'Test Topic': [

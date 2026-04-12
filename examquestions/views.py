@@ -551,29 +551,17 @@ def generate_exam_questions(request):
 
             fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, topic.topic)
 
-            fallback_count = number // 2
-            ai_count = number - fallback_count
-
-            fallback_selected = []
-            if isinstance(fallback_pool, list) and fallback_pool:
-                fallback_selected = select_fallback_questions(fallback_pool, fallback_count, served_questions)
-            else:
-                ai_count = number
-
             scope = topic.topic
             if subtopic:
                 scope += f' (SubTopic: {subtopic.title})'
             if subcategory:
                 scope += f' (SubCategory: {subcategory.title})'
 
-            ai_response = generate_questions(scope, board_key, ai_count)
+            ai_response = generate_questions(scope, board_key, number)
             ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
 
-            combined_questions = list(fallback_selected)
-            current_batch_questions = {
-                normalize_question_text(question_text_from_item(question_item))
-                for question_item in combined_questions
-            }
+            combined_questions = []
+            current_batch_questions = set()
 
             for ai_question in ai_questions:
                 normalized = normalize_question_text(question_text_from_item(ai_question))
@@ -592,8 +580,6 @@ def generate_exam_questions(request):
                     requested_count=number,
                     served_questions=served_questions,
                 )
-
-            random.shuffle(combined_questions)
 
             total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
             session_kwargs = {
