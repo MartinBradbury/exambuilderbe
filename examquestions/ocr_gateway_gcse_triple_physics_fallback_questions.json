@@ -1,0 +1,751 @@
+{
+  "P1 Matter": [
+    {
+      "question": "Explain what is meant by the term 'density' and describe how you would determine the density of an irregular solid object in the laboratory [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Density is mass per unit volume (1 mark)",
+        "Measure mass using a balance in grams or kilograms (1 mark)",
+        "Find volume by water displacement using a measuring cylinder/eureka can (1 mark)",
+        "Divide mass by volume or use formula \u03c1 = m/V (1 mark)"
+      ]
+    },
+    {
+      "question": "A student observes that ice floats on water. Explain this observation in terms of particle arrangement and density [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Ice has a less dense structure than liquid water (1 mark)",
+        "Solid ice has particles arranged in a regular lattice with more space between them (1 mark)",
+        "Water has denser packing of particles so ice floats on top (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare and contrast the properties of ionic compounds and covalent compounds. Explain these differences in terms of bonding and structure [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Ionic compounds have electrostatic forces between oppositely charged ions; covalent compounds have shared electrons (1 mark)",
+        "Ionic compounds typically have high melting points due to strong electrostatic attractions; many covalent compounds have low melting points (1 mark)",
+        "Ionic compounds conduct electricity when molten or dissolved; covalent compounds typically do not conduct (1 mark)",
+        "Ionic compounds form crystals; molecular covalent compounds form discrete molecules (1 mark)",
+        "Covalent network structures like diamond have very high melting points due to continuous strong bonds throughout (1 mark)"
+      ]
+    },
+    {
+      "question": "State three physical properties of metals and explain each property in terms of their structure and bonding [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Good heat conductors - free electrons can move and transfer kinetic energy throughout the structure (1 mark)",
+        "Good electrical conductors - delocalized electrons are mobile and transfer charge (1 mark)",
+        "Malleable and ductile - layers of atoms can slide past each other without breaking metallic bonds as electrons adjust (1 mark)",
+        "High melting points - strong metallic bonding throughout the structure (1 mark)",
+        "Lustrous appearance - free electrons can absorb and re-emit light (1 mark)",
+        "Any 3 properly explained properties scores full marks (1 mark)"
+      ]
+    },
+    {
+      "question": "A piece of copper metal has a mass of 64 g and a volume of 7.14 cm\u00b3. Calculate its density [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use \u03c1 = m/V = 64/7.14 (1 mark)",
+        "Density = 8.96 g/cm\u00b3 or 8960 kg/m\u00b3 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why diamond is extremely hard while graphite is soft, despite both being forms of carbon [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Diamond has each carbon atom bonded to four other carbons in a continuous tetrahedral network (1 mark)",
+        "All bonds must be broken for the material to distort, requiring very high force (1 mark)",
+        "Graphite has carbon atoms bonded in sheets/layers with weak van der Waals forces between layers (1 mark)",
+        "Layers can slide over each other easily with minimal force required (1 mark)"
+      ]
+    },
+    {
+      "question": "A student measures the volume of a liquid using a measuring cylinder and finds it occupies 25 mL. The mass of the liquid is 35 g. Calculate the density in g/cm\u00b3 [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Density = mass/volume = 35 g / 25 cm\u00b3 or (35 g / 25 mL) (1 mark)",
+        "Density = 1.4 g/cm\u00b3 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the difference between an element, a compound, and a mixture. Give one example of each [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Element: only one type of atom; example: oxygen gas/iron/gold (1 mark)",
+        "Compound: two or more elements chemically bonded in fixed ratio; example: water/salt/carbon dioxide (1 mark)",
+        "Mixture: two or more substances physically combined; example: seawater/sand and iron filings/air (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the structure of a simple molecular compound and explain why these compounds typically have low melting points [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Atoms within molecules are held by strong covalent bonds (1 mark)",
+        "Between molecules are weak van der Waals/intermolecular forces (1 mark)",
+        "Little energy needed to overcome weak intermolecular forces, so low melting points (1 mark)"
+      ]
+    },
+    {
+      "question": "What is meant by relative atomic mass and relative formula mass? Calculate the relative formula mass of calcium carbonate (CaCO\u2083). [Ar: Ca = 40, C = 12, O = 16] [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Relative atomic mass is the average mass of atoms of an element compared to carbon-12 (1 mark)",
+        "Relative formula mass is the sum of relative atomic masses of all atoms in a compound (1 mark)",
+        "CaCO\u2083 = 40 + 12 + (3 \u00d7 16) = 40 + 12 + 48 = 100 (1 mark)"
+      ]
+    }
+  ],
+  "P2 Forces": [
+    {
+      "question": "Define 'force' and state the SI unit. Name three effects that forces can have on objects [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Force is a push or pull (1 mark)",
+        "SI unit is newton (N) or kg\u00b7m/s\u00b2 (1 mark)",
+        "Can change shape of an object (1 mark)",
+        "Can change direction of motion/velocity (1 mark)",
+        "Can change speed of an object (any three effects required) (1 mark)"
+      ]
+    },
+    {
+      "question": "A car of mass 1500 kg accelerates from rest to 20 m/s in 5 seconds. Calculate the magnitude of the net force acting on the car [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Calculate acceleration: a = v - u / t = 20 - 0 / 5 = 4 m/s\u00b2 (1 mark)",
+        "Use F = ma (1 mark)",
+        "F = 1500 \u00d7 4 = 6000 N (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by 'resultant force' and describe how to find the resultant when two forces act on an object in the same direction [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Resultant force is the single force that has the same effect as all forces combined (1 mark)",
+        "Forces in same direction add together algebraically/are summed (1 mark)",
+        "Resultant = Force 1 + Force 2 acting in same direction (1 mark)"
+      ]
+    },
+    {
+      "question": "A block of mass 5 kg is placed on a horizontal surface. A friction force of 12 N acts opposite to the direction of motion. What force is needed to keep the block moving at constant velocity? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "At constant velocity, acceleration is zero, so net force must be zero (1 mark)",
+        "Applied force must equal friction force = 12 N (1 mark)"
+      ]
+    },
+    {
+      "question": "State Newton's three laws of motion and give an example for each law [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "First law: An object remains at rest or continues at constant velocity unless acted on by a net force; example: a book on a table stays at rest (1 mark)",
+        "Second law: F = ma or acceleration is proportional to net force and inversely proportional to mass; example: a heavier cart needs more force to accelerate (1 mark)",
+        "Third law: If A exerts a force on B, then B exerts an equal and opposite force on A; example: a person pushing off a wall moves away as wall pushes back with equal force (1 mark)"
+      ]
+    },
+    {
+      "question": "A ball is thrown vertically upward. At the highest point of its trajectory, explain why its velocity is zero but its acceleration is not zero [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Velocity is zero because the ball momentarily stops before falling back down (1 mark)",
+        "Gravitational force (weight) acts downward throughout the motion (1 mark)",
+        "This gravitational force produces constant downward acceleration of 9.8 m/s\u00b2 even when velocity is zero (1 mark)"
+      ]
+    },
+    {
+      "question": "A friction force of 8 N opposes the motion of a toy car on a table. Calculate the coefficient of friction if the normal force is 40 N [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use F = \u03bcN, so \u03bc = F/N (1 mark)",
+        "\u03bc = 8/40 = 0.2 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain using Newton's laws why a passenger in a car leans forward when the car brakes suddenly [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The car experiences a net force backward (friction/brakes) causing deceleration (1 mark)",
+        "The passenger's body tends to continue forward due to inertia (Newton's first law) (1 mark)",
+        "Friction force from seat is insufficient to decelerate the passenger at same rate, so body moves forward relative to car (1 mark)"
+      ]
+    },
+    {
+      "question": "A 2 kg mass is suspended by a string. Calculate the tension in the string when the mass is stationary [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Weight = mg = 2 \u00d7 10 = 20 N or 2 \u00d7 9.8 = 19.6 N (1 mark)",
+        "Tension = 20 N or 19.6 N (equal to weight at equilibrium) (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how you would measure the coefficient of friction between a block and a surface using simple equipment. Include the forces you would measure [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Place block on surface and pull with a force meter until just sliding or at constant velocity (1 mark)",
+        "Measure the friction force from the force meter (1 mark)",
+        "Measure the normal force/weight using a force meter or calculate from mass (1 mark)",
+        "Calculate \u03bc = Friction force / Normal force (1 mark)"
+      ]
+    }
+  ],
+  "P3 Electricity": [
+    {
+      "question": "Define 'electric current' and state the SI unit. Explain the difference between conventional current and electron flow [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Electric current is the flow of charge per unit time (1 mark)",
+        "SI unit is ampere (A) or coulombs per second (1 mark)",
+        "Conventional current flows from positive to negative terminal (1 mark)",
+        "Electron flow is from negative to positive terminal (opposite to conventional current) (1 mark)"
+      ]
+    },
+    {
+      "question": "Calculate the charge passed when a current of 2.5 A flows for 8 seconds [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use Q = It (1 mark)",
+        "Q = 2.5 \u00d7 8 = 20 C (coulombs) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by 'potential difference' and describe how you would measure it using a voltmeter [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Potential difference is the energy transferred per unit charge (1 mark)",
+        "Voltmeter connected in parallel across the component (1 mark)",
+        "Measured in volts (V), with positive terminal to higher potential, negative to lower potential (1 mark)"
+      ]
+    },
+    {
+      "question": "A resistor has a resistance of 200 \u03a9 and carries a current of 0.5 A. Calculate the potential difference across the resistor [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use V = IR (1 mark)",
+        "V = 0.5 \u00d7 200 = 100 V (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain Ohm's law and describe how to investigate the relationship between current and potential difference for a wire [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Ohm's law states that V = IR or current is proportional to potential difference at constant temperature (1 mark)",
+        "Set up circuit with power supply, ammeter in series, voltmeter in parallel across wire (1 mark)",
+        "Vary the potential difference using a variable power supply (1 mark)",
+        "Measure current and corresponding potential difference at each setting (1 mark)",
+        "Plot V against I; straight line through origin confirms Ohm's law if resistance is constant (1 mark)"
+      ]
+    },
+    {
+      "question": "Two resistors of 6 \u03a9 and 4 \u03a9 are connected in series across a 20 V supply. Calculate the total resistance and the current flowing through the circuit [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Total resistance = 6 + 4 = 10 \u03a9 (1 mark)",
+        "Use I = V/R (1 mark)",
+        "Current = 20 / 10 = 2 A (1 mark)"
+      ]
+    },
+    {
+      "question": "State the differences between series and parallel circuits in terms of current, potential difference, and total resistance [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Series: current is the same throughout; potential difference divided between components; total resistance is sum of individual resistances (1 mark)",
+        "Parallel: current is divided between branches; potential difference is the same across each component; total resistance is less than smallest individual resistance (1 mark)",
+        "Or use 1/R_total = 1/R1 + 1/R2 for parallel (1 mark)"
+      ]
+    },
+    {
+      "question": "A light bulb is rated at 60 W when operating at 230 V. Calculate the current through the bulb and its resistance [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Use P = IV, so I = P/V = 60/230 = 0.26 A (1 mark)",
+        "Use R = V/I = 230/0.26 = 885 \u03a9 or use P = V\u00b2/R so R = V\u00b2/P = 230\u00b2/60 = 883 \u03a9 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the resistance of a wire increases as its length increases and decreases as its cross-sectional area increases [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Longer wire: electrons collide with more ions/atoms, experiencing more resistance (1 mark)",
+        "Larger cross-sectional area: more charge carriers available per unit length, lower resistance per unit length (1 mark)",
+        "R = \u03c1L/A where L is length, A is area, \u03c1 is resistivity (1 mark)"
+      ]
+    },
+    {
+      "question": "A heating element draws a current of 8 A when connected to a 230 V supply. Calculate the energy dissipated in 2 hours [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Use P = VI = 230 \u00d7 8 = 1840 W (1 mark)",
+        "Convert time to seconds: 2 hours = 7200 s (1 mark)",
+        "Use E = Pt = 1840 \u00d7 7200 = 13,248,000 J or 13.25 MJ or 3.68 kWh (1 mark)"
+      ]
+    }
+  ],
+  "P4 Magnetism and magnetic fields": [
+    {
+      "question": "Define 'magnetic flux density' and state its SI unit. Describe the magnetic field around a bar magnet [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Magnetic flux density is the strength of the magnetic field (1 mark)",
+        "SI unit is tesla (T) (1 mark)",
+        "Strongest at the poles, field lines emerge from north pole and curve to south pole (1 mark)"
+      ]
+    },
+    {
+      "question": "Name two methods of producing a magnetic field and describe one method in detail [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Method 1: Permanent magnet (1 mark)",
+        "Method 2: Electromagnet - A current-carrying coil wound around a soft iron core produces a magnetic field; field strength depends on current and number of turns (1 mark)",
+        "Method 3: Current-carrying conductor (accept any two with one detailed) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how an electromagnet works and describe how its magnetic field strength can be increased [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Electromagnet works by passing current through coiled wire wound around soft iron core (1 mark)",
+        "Current creates magnetic field around each turn of wire; field is strengthened by soft iron core (1 mark)",
+        "Field strength increased by: increasing current through coil, increasing number of turns, using iron with higher permeability (1 mark)"
+      ]
+    },
+    {
+      "question": "Draw and label the magnetic field pattern around a straight current-carrying wire. Identify the direction of the field using the right-hand rule [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Field forms concentric circles around the wire (1 mark)",
+        "Direction determined by right-hand rule: thumb in direction of current, fingers curl in direction of field (1 mark)",
+        "Field strength decreases with distance from wire (1 mark)"
+      ]
+    },
+    {
+      "question": "A current-carrying conductor is placed perpendicular to a magnetic field. Explain what force acts on the conductor and how its direction is determined [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A Force (Lorentz force) acts on the conductor perpendicular to both current and field (1 mark)",
+        "Direction determined using Fleming's left-hand rule: thumb = Force, first finger = field, second finger = current (1 mark)",
+        "Force magnitude F = BIL where B is magnetic flux density, I is current, L is length (1 mark)"
+      ]
+    },
+    {
+      "question": "A wire of 0.5 m length carrying a current of 4 A is placed perpendicular to a magnetic field of 0.2 T. Calculate the force acting on the wire [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use F = BIL (1 mark)",
+        "F = 0.2 \u00d7 4 \u00d7 0.5 = 0.4 N (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the structure and operation of a simple electric motor. Explain how a commutator ensures continuous rotation [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Motor has rectangular coil rotating in magnetic field between permanent magnets (1 mark)",
+        "Current flows through coil creating forces on opposite sides in opposite directions (Fleming's left-hand rule) (1 mark)",
+        "These forces create a turning moment (torque) causing rotation (1 mark)",
+        "Commutator is split ring that reverses current direction every half rotation (1 mark)",
+        "This keeps forces in same direction relative to pole positions, maintaining continuous rotation (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what a magnetic field is and how it can be represented using field lines [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Magnetic field is the region where magnetic forces can be detected on magnetic materials or moving charges (1 mark)",
+        "Represented by field lines drawn from north to south pole (1 mark)",
+        "Field lines never cross; density of lines indicates field strength; tangent to line shows field direction at that point (1 mark)"
+      ]
+    },
+    {
+      "question": "A solenoid consists of 200 turns of wire wound around a cylinder. When carrying a current of 0.5 A, explain what happens to the magnetic field strength if you double the current and double the number of turns [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Doubling current increases field strength by factor of 2 (1 mark)",
+        "Doubling turns increases field strength by factor of 2 (1 mark)",
+        "Combined effect: field strength increases by factor of 4 (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe a method to determine the direction of a magnetic field using a compass at a specific point [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Place compass at the point (1 mark)",
+        "Compass needle aligns with field direction; north pole of compass points in direction of magnetic field (1 mark)"
+      ]
+    }
+  ],
+  "P5 Waves in matter": [
+    {
+      "question": "Define 'wave' and distinguish between transverse and longitudinal waves. Give examples of each [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Wave is a disturbance that propagates through space or a medium transferring energy (1 mark)",
+        "Transverse wave: oscillations perpendicular to direction of energy transfer; example: electromagnetic waves or water waves (1 mark)",
+        "Longitudinal wave: oscillations parallel to direction of energy transfer; example: sound waves or seismic P-waves (1 mark)",
+        "At least one example of each required (1 mark)"
+      ]
+    },
+    {
+      "question": "State and explain the relationship between wave speed, frequency, and wavelength [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Wave speed (v) = frequency (f) \u00d7 wavelength (\u03bb), written v = f\u03bb (1 mark)",
+        "For a given medium, if frequency increases, wavelength decreases proportionally (1 mark)",
+        "Speed depends only on the medium, not on frequency or wavelength (1 mark)"
+      ]
+    },
+    {
+      "question": "A sound wave has a frequency of 250 Hz and a wavelength of 1.4 m. Calculate the speed of sound [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use v = f\u03bb (1 mark)",
+        "v = 250 \u00d7 1.4 = 350 m/s (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe an experiment to investigate the relationship between frequency and wavelength for sound waves in air [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Use a signal generator connected to a loudspeaker to produce sound at different frequencies (1 mark)",
+        "Use a tube with one closed end and measure the length at which resonance occurs (stationary wave formed) (1 mark)",
+        "At resonance, tube length = \u03bb/4 for fundamental; calculate wavelength \u03bb = 4L (1 mark)",
+        "Calculate speed v = f\u03bb at each frequency; should remain constant (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the terms 'amplitude', 'frequency', 'wavelength', and 'period' using a wave diagram or description [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Amplitude: maximum displacement from equilibrium position (1 mark)",
+        "Frequency: number of complete waves per unit time in Hz (1 mark)",
+        "Wavelength: distance between adjacent crests or adjacent troughs (1 mark)",
+        "Period: time taken for one complete oscillation in seconds; T = 1/f (1 mark)"
+      ]
+    },
+    {
+      "question": "A loudspeaker is connected to a signal generator producing a frequency of 400 Hz. Calculate the wavelength of the sound wave if the speed of sound is 340 m/s [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use v = f\u03bb, so \u03bb = v/f (1 mark)",
+        "\u03bb = 340 / 400 = 0.85 m (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what is meant by a 'stationary wave' and explain how stationary waves are formed [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Stationary wave is formed when two waves of equal amplitude and frequency traveling in opposite directions superpose (1 mark)",
+        "Results in pattern of nodes (no motion) and antinodes (maximum motion) (1 mark)",
+        "Nodes occur where waves always cancel; antinodes where waves always reinforce (1 mark)",
+        "Examples: plucked string, resonating tube, microwave in kitchen (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why electromagnetic waves do not require a medium to propagate while sound waves do [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Sound waves are mechanical waves; require particles to oscillate to transfer energy through medium (1 mark)",
+        "Electromagnetic waves are oscillations of electric and magnetic fields; fields can exist in vacuum (1 mark)",
+        "No medium required for electromagnetic radiation to travel through space (1 mark)"
+      ]
+    },
+    {
+      "question": "The fundamental frequency of a vibrating string is 120 Hz. Calculate: (a) the second harmonic frequency, and (b) explain why higher harmonics have shorter wavelengths [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "(a) Second harmonic frequency = 2 \u00d7 120 = 240 Hz (1 mark)",
+        "(b) Higher harmonics have higher frequencies; since v = f\u03bb and wave speed is constant, higher frequency means shorter wavelength (1 mark)",
+        "For same string length: f\u2081\u03bb\u2081 = f\u2082\u03bb\u2082 (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe an experiment to measure the speed of sound in air using two loudspeakers or tuning forks and an oscilloscope [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Set up two loudspeakers emitting same frequency from a signal generator (1 mark)",
+        "Adjust spacing between speakers for constructive/destructive interference pattern (1 mark)",
+        "Measure distance between adjacent loud and quiet regions (1 mark)",
+        "This distance equals \u03bb/2; calculate wavelength \u03bb = 2 \u00d7 distance (1 mark)",
+        "Calculate v = f\u03bb where f is frequency from signal generator (1 mark)"
+      ]
+    }
+  ],
+  "P6 Radioactivity": [
+    {
+      "question": "Define 'radioactivity' and explain why some isotopes are radioactive while others are stable [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Radioactivity is the spontaneous emission of radiation from unstable nuclei (1 mark)",
+        "Some nuclei have unstable nucleus-nucleon ratios (1 mark)",
+        "These unstable nuclei emit particles/radiation to achieve stability (1 mark)"
+      ]
+    },
+    {
+      "question": "State the three types of radiation emitted by radioactive materials and identify their relative ionizing power and penetrating power [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Alpha (\u03b1) particles: helium nuclei; highly ionizing, weak penetration (stopped by paper) (1 mark)",
+        "Beta (\u03b2) particles: electrons; moderately ionizing, moderate penetration (stopped by thin metal) (1 mark)",
+        "Gamma (\u03b3) rays: electromagnetic radiation; weakly ionizing, strong penetration (requires thick lead/concrete) (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the nuclear equation for the alpha decay of uranium-238, showing the products formed [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "\u00b2\u00b3\u2078U\u2089\u2082 \u2192 \u00b2\u00b3\u2074Th\u2089\u2080 + \u2074He\u2082 (1 mark)",
+        "Or: \u00b2\u00b3\u2078U\u2089\u2082 \u2192 \u00b2\u00b3\u2074Th\u2089\u2080 + \u2074\u03b1\u2082 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by 'half-life' and describe how to determine the half-life of a radioactive sample using a graph or data [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Half-life is the time taken for the number of radioactive atoms to reduce to half its original value (1 mark)",
+        "Plot activity/count rate against time on a graph (1 mark)",
+        "Find the initial count rate, then identify the time when count rate becomes half (1 mark)",
+        "This time interval is the half-life; repeat for subsequent halving periods to verify (1 mark)"
+      ]
+    },
+    {
+      "question": "A radioactive isotope has a half-life of 8 days. If a sample initially contains 6400 atoms, how many atoms remain after 32 days? [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Number of half-lives = 32 / 8 = 4 (1 mark)",
+        "After 1 half-life: 3200 atoms; after 2: 1600; after 3: 800; after 4: 400 atoms (1 mark)",
+        "Or use N = N\u2080 \u00d7 (\u00bd)\u207f = 6400 \u00d7 (\u00bd)\u2074 = 400 atoms (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the difference between irradiation and contamination in the context of radioactivity [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Irradiation: exposure to radiation from external source; radiation stops when source removed (1 mark)",
+        "Contamination: radioactive material enters body or gets on skin; continues to emit radiation (1 mark)",
+        "Contamination is generally more dangerous as cells are exposed continuously to internal radiation (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the nuclear equation for beta-minus decay of carbon-14 and identify the product nucleus [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "\u00b9\u2074C\u2086 \u2192 \u00b9\u2074N\u2087 + \u2070e\u208b\u208b\u2081 + \u03bd\u0304\u2091 (antineutrino) (1 mark)",
+        "Or simplified: \u00b9\u2074C\u2086 \u2192 \u00b9\u2074N\u2087 + \u2070e\u208b\u208b\u2081 (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe a safe method to compare the activity of different radioactive sources in the laboratory [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Use a Geiger-M\u00fcller counter or gamma counter kept at constant distance from each source (1 mark)",
+        "Record count rate for each source over same time period (1 mark)",
+        "Subtract background radiation for each measurement (1 mark)",
+        "Compare net count rates; higher count rate indicates higher activity (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why radioactive materials should be stored in appropriate containers and handled with tongs or forceps [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Containers (lead-lined) reduce exposure to external radiation from the source (1 mark)",
+        "Tongs or forceps keep distance between hands and source, reducing exposure (1 mark)",
+        "Prevents contamination of hands and ingestion/inhalation of radioactive material (1 mark)"
+      ]
+    },
+    {
+      "question": "A sample of iodine-131 (half-life 8 days) is used in medical treatment. What fraction of the original sample remains after 24 days? [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Number of half-lives = 24 / 8 = 3 (1 mark)",
+        "Fraction remaining = (\u00bd)\u00b3 = 1/8 or 0.125 (1 mark)"
+      ]
+    }
+  ],
+  "P7 Energy": [
+    {
+      "question": "Define 'energy' and state its SI unit. Explain the principle of conservation of energy [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Energy is the capacity to do work (1 mark)",
+        "SI unit is joule (J) (1 mark)",
+        "Total energy in a closed system remains constant; energy can transform between forms but is not created or destroyed (1 mark)"
+      ]
+    },
+    {
+      "question": "Distinguish between 'work' and 'energy'. Calculate the work done when a force of 50 N moves an object 2 m in the direction of the force [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Work is energy transferred when a force causes displacement in direction of force (1 mark)",
+        "Energy is capacity to do work or cause change (1 mark)",
+        "W = F \u00d7 d = 50 \u00d7 2 = 100 J (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by 'power' and state the SI unit. Calculate the power required to do 600 J of work in 15 seconds [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Power is the rate of energy transfer or work done per unit time (1 mark)",
+        "SI unit is watt (W) or joule per second (1 mark)",
+        "P = W/t = 600 / 15 = 40 W (1 mark)"
+      ]
+    },
+    {
+      "question": "A ball of mass 2 kg is dropped from a height of 5 m. Calculate: (a) its potential energy at the top, and (b) its kinetic energy just before hitting the ground, ignoring air resistance [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "(a) Ep = mgh = 2 \u00d7 10 \u00d7 5 = 100 J (or use g = 9.8 to get 98 J) (1 mark)",
+        "(b) By conservation of energy, Ek = Ep = 100 J (1 mark)",
+        "Alternatively: calculate v from v\u00b2 = u\u00b2 + 2gh; then Ek = \u00bdmv\u00b2 (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the energy transformations that occur when a ball is thrown vertically upward and returns to the same height [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "At release: kinetic energy maximum, potential energy minimum (1 mark)",
+        "Rising: kinetic energy decreases, potential energy increases (1 mark)",
+        "At highest point: kinetic energy zero, potential energy maximum (1 mark)",
+        "Falling: potential energy decreases, kinetic energy increases (returns to initial state ignoring air resistance) (1 mark)"
+      ]
+    },
+    {
+      "question": "A motor with power rating 500 W operates for 2 hours. Calculate the energy consumed in joules and kilowatt-hours [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Time = 2 hours = 7200 seconds (1 mark)",
+        "E = Pt = 500 \u00d7 7200 = 3,600,000 J = 3.6 MJ (1 mark)",
+        "E = Pt = 0.5 kW \u00d7 2 h = 1 kWh (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by 'efficiency' and describe how to calculate the efficiency of an appliance or system [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Efficiency is the fraction of input energy converted to useful output energy (1 mark)",
+        "Calculated as: Efficiency = Useful energy output / Total energy input (1 mark)",
+        "Often expressed as percentage: (Useful output / Input) \u00d7 100% (1 mark)"
+      ]
+    },
+    {
+      "question": "A cyclist accelerates from rest to 8 m/s over 10 seconds. If the cyclist's mass (including bike) is 80 kg, calculate the kinetic energy gained [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Use Ek = \u00bdmv\u00b2 (1 mark)",
+        "Ek = \u00bd \u00d7 80 \u00d7 8\u00b2 = 2560 J (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe a method to measure the efficiency of an electric kettle by measuring specific energy input and energy used to heat water [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Measure mass of water using balance (1 mark)",
+        "Note initial temperature of water using thermometer (1 mark)",
+        "Record electrical energy input from meter or calculate from P\u00d7t (1 mark)",
+        "Measure final temperature; use E = mc\u0394T to find energy used to heat water (1 mark)",
+        "Efficiency = Energy used to heat / Electrical energy input \u00d7 100% (1 mark)"
+      ]
+    },
+    {
+      "question": "A light bulb converts 5% of electrical energy to light and 95% to heat. If the bulb is rated 60 W, calculate the power wasted as heat [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Power wasted as heat = 95% of 60 W (1 mark)",
+        "Power wasted = 0.95 \u00d7 60 = 57 W (1 mark)"
+      ]
+    }
+  ],
+  "P8 Global challenges": [
+    {
+      "question": "Define 'renewable' and 'non-renewable' energy sources. Give two examples of each [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Renewable: energy from natural sources continuously replenished; examples: solar, wind, hydroelectric, geothermal (any 2) (1 mark)",
+        "Non-renewable: energy from finite sources being depleted; examples: fossil fuels (coal, oil, gas), nuclear (uranium) (any 2) (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how a coal-powered power station converts chemical energy into electrical energy. State the main energy transformation steps [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Coal burned in furnace releasing chemical energy as heat (1 mark)",
+        "Heat boils water to produce steam under pressure (1 mark)",
+        "Steam forces turbines to rotate, converting heat energy to kinetic energy (1 mark)",
+        "Turbines connected to generator converting mechanical energy to electrical energy (1 mark)",
+        "Electrical energy transmitted via grid to consumers (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how a wind turbine generates electricity and explain one advantage and one disadvantage of wind power [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Wind forces rotor blades to spin; mechanical energy drives generator to produce electricity (1 mark)",
+        "Advantage: renewable, no emissions, low operating costs; or one specific advantage (1 mark)",
+        "Disadvantage: intermittent/weather dependent, noise, visual impact, or affects wildlife; or one specific disadvantage (1 mark)",
+        "A complete answer must include one explained advantage and one explained disadvantage of wind power (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the greenhouse effect and state how increased atmospheric CO\u2082 from burning fossil fuels contributes to global warming [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Greenhouse gases (CO\u2082, methane, water vapor) absorb infrared radiation from Earth's surface (1 mark)",
+        "Normally some heat escapes; increased greenhouse gases trap more heat (1 mark)",
+        "Burning fossil fuels releases CO\u2082 into atmosphere, increasing concentration (1 mark)",
+        "Enhanced greenhouse effect causes global temperature to rise leading to climate change (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare the advantages and disadvantages of using nuclear power versus fossil fuel power for electricity generation [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Nuclear advantages: no CO\u2082 emissions, high energy density, high power output; disadvantages: radioactive waste disposal, safety concerns, decommissioning costs (1 mark)",
+        "Fossil fuel advantages: established technology, reliable baseload power; disadvantages: CO\u2082 emissions cause climate change, air pollution, finite resources (1 mark)",
+        "Nuclear and fossil fuels both have high initial costs but different environmental impacts (1 mark)"
+      ]
+    },
+    {
+      "question": "A solar panel has an efficiency of 15%. If solar radiation provides 1000 W/m\u00b2 on a 2 m\u00b2 panel, calculate the electrical power output [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Input power = 1000 \u00d7 2 = 2000 W (1 mark)",
+        "Output = 15% \u00d7 2000 = 300 W (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how fossil fuel combustion relates to air pollution and describe two pollutants produced and their effects [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Fossil fuels contain carbon, hydrogen, sulfur compounds; combustion produces pollutants (1 mark)",
+        "Nitrogen oxides (NO\u2093) formed at high temperatures; cause photochemical smog and acid rain (1 mark)",
+        "Sulfur dioxide (SO\u2082) from sulfur in fuel; causes acid rain and respiratory problems (1 mark)",
+        "Carbon monoxide (CO) from incomplete combustion; toxic, reduces oxygen carrying capacity of blood (1 mark)",
+        "Any two pollutants with effects required (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how a hydroelectric power station generates electricity and identify one environmental concern associated with dam construction [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Water held in reservoir behind dam; gravity pulls water downward through pipes (1 mark)",
+        "Falling water spins turbines connected to generators producing electricity (1 mark)",
+        "Environmental concern: disruption to ecosystems, habitat loss, river flow changes, methane from reservoir, or displacement of populations (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why developing countries face challenges in transitioning from fossil fuels to renewable energy sources [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "High upfront capital costs for renewable infrastructure (solar panels, wind turbines) (1 mark)",
+        "Existing fossil fuel infrastructure already in place and cheaper short-term (1 mark)",
+        "Energy demand growing rapidly; renewable sources may not meet immediate needs without storage (1 mark)"
+      ]
+    },
+    {
+      "question": "A wind farm with 50 turbines operates at average power of 2 MW per turbine for 24 hours. Calculate the total electrical energy generated and determine the number of homes this supplies if each home uses 18 kWh per day [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Total power = 50 \u00d7 2 MW = 100 MW (1 mark)",
+        "Energy in 24 hours = 100 MW \u00d7 24 h = 2400 MWh = 2.4 GWh (1 mark)",
+        "Number of homes = 2400 MWh / 18 kWh = 133,333 homes (approximately 133,000) (1 mark)"
+      ]
+    }
+  ]
+}

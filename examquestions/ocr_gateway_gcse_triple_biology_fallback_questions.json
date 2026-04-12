@@ -1,0 +1,609 @@
+{
+  "B1 Cell level systems": [
+    {
+      "question": "Define osmosis. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The net movement of water molecules through a partially permeable membrane from a region of higher water concentration to a region of lower water concentration (1 mark)"
+      ]
+    },
+    {
+      "question": "Name two structures found in plant cells but not in animal cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Cell wall (1 mark)",
+        "Chloroplast or permanent vacuole (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how the shape of a red blood cell helps it carry out its function. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It has a biconcave shape which gives it a large surface area (1 mark)",
+        "A large surface area increases the rate of oxygen diffusion into and out of the cell (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe three differences between prokaryotic and eukaryotic cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Eukaryotic cells have a nucleus whereas prokaryotic cells do not (1 mark)",
+        "Eukaryotic cells contain membrane-bound organelles whereas prokaryotic cells do not (1 mark)",
+        "Prokaryotic cells are generally smaller than eukaryotic cells (1 mark)"
+      ]
+    },
+    {
+      "question": "A student uses iodine solution to test for starch in potato cells seen under a microscope. Describe how the student should prepare and observe the slide. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Place a thin sample of potato tissue on a microscope slide and add a drop of iodine solution (1 mark)",
+        "Lower a coverslip carefully to avoid trapping air bubbles (1 mark)",
+        "Start with the low-power objective lens and focus before moving to a higher magnification if needed (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why cells that are very small exchange substances more efficiently than cells that are very large. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Small cells have a larger surface area to volume ratio (1 mark)",
+        "This gives more membrane surface for diffusion relative to the amount of cytoplasm (1 mark)",
+        "The diffusion distance from the surface to the centre of the cell is shorter (1 mark)",
+        "Oxygen and nutrients enter quickly and waste products leave quickly enough for the cell's needs (1 mark)"
+      ]
+    },
+    {
+      "question": "A student places equal-sized potato cylinders into 0%, 5%, 10% and 15% salt solutions for one hour. Suggest two improvements to this osmosis method and explain why each would help. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Repeat each concentration several times (1 mark)",
+        "Repeats allow a mean to be calculated and make the results more reliable (1 mark)",
+        "Dry each potato cylinder in the same way before remeasuring mass (1 mark)",
+        "This removes excess surface solution so the final mass is more accurate (1 mark)"
+      ]
+    },
+    {
+      "question": "Evaluate the use of stem cells in medicine. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Stem cells can divide and differentiate into specialised cells (1 mark)",
+        "This means they could be used to replace damaged tissues such as nerve cells or bone marrow cells (1 mark)",
+        "Embryonic stem cells can form many cell types so they have high medical potential (1 mark)",
+        "There are ethical concerns about using embryos to obtain stem cells (1 mark)",
+        "There is also a risk of immune rejection or uncontrolled cell division if treatment is not carefully managed (1 mark)"
+      ]
+    },
+    {
+      "question": "Plan an investigation to find the concentration of sugar solution that is isotonic with potato tissue. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Prepare a range of sugar solutions of known concentration such as 0.0, 0.2, 0.4, 0.6 and 0.8 mol per dm3 (1 mark)",
+        "Cut potato cylinders of equal length and diameter using the same cork borer (1 mark)",
+        "Measure and record the initial mass of each cylinder before placing one in each solution for the same length of time (1 mark)",
+        "Remove the cylinders, blot them dry and measure the final mass (1 mark)",
+        "Calculate percentage change in mass and plot a graph of percentage change against concentration (1 mark)",
+        "The isotonic concentration is where the line crosses zero percentage change because there is no net movement of water (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how the structure of the cell membrane makes it selectively permeable. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The membrane is a phospholipid bilayer (1 mark)",
+        "Its hydrophobic interior makes it difficult for many dissolved or charged substances to pass directly (1 mark)",
+        "Specific channel and carrier proteins allow only particular substances to move across it (1 mark)"
+      ]
+    }
+  ],
+  "B2 Scaling up": [
+    {
+      "question": "State one function of amylase in digestion. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Amylase breaks down starch into maltose or smaller sugars (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two features of an alveolus that make gas exchange efficient. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It has a very large surface area (1 mark)",
+        "It has a thin wall or a good blood supply or a moist surface (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why arteries have thicker walls than veins. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Blood in arteries is under higher pressure as it leaves the heart (1 mark)",
+        "Thicker muscular and elastic walls help the arteries withstand and maintain this pressure (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how bile helps digestion in the small intestine. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Bile is alkaline so it neutralises the hydrochloric acid from the stomach (1 mark)",
+        "This provides the optimum pH for enzymes in the small intestine (1 mark)",
+        "Bile also emulsifies fat into small droplets, increasing the surface area for lipase (1 mark)"
+      ]
+    },
+    {
+      "question": "A student mixes amylase, starch and buffer solution at different pH values and uses iodine every 30 seconds to see when starch has disappeared. Explain how pH affects amylase activity. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Each enzyme has an optimum pH (1 mark)",
+        "Away from the optimum pH the active site changes shape (1 mark)",
+        "This means fewer enzyme-substrate complexes form so the reaction rate decreases or the enzyme may be denatured at extreme pH (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare the structure and function of xylem and phloem. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Xylem transports water and mineral ions from roots to leaves (1 mark)",
+        "Phloem transports dissolved sugars such as sucrose around the plant (1 mark)",
+        "Xylem vessels are dead and hollow with lignified walls (1 mark)",
+        "Phloem tissue is made of living cells such as sieve tubes and companion cells (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why mammals need a double circulatory system. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "One circuit carries blood from the heart to the lungs and back (1 mark)",
+        "The other circuit carries blood from the heart to the body and back (1 mark)",
+        "This keeps oxygenated and deoxygenated blood separate (1 mark)",
+        "It allows blood to be pumped to the body at high pressure, delivering oxygen and glucose rapidly to cells (1 mark)"
+      ]
+    },
+    {
+      "question": "A student investigates the effect of pH on amylase by timing how long it takes for starch to disappear at pH 4, 7 and 9. Evaluate this method and suggest improvements. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "A strength is that different pH values are compared using the same general method (1 mark)",
+        "A limitation is that only three pH values are tested so the optimum pH may not be identified precisely (1 mark)",
+        "Another limitation is that the student judges the iodine colour change by eye, which is subjective (1 mark)",
+        "Repeat each pH several times and calculate a mean (1 mark)",
+        "Use a water bath or keep enzyme and starch concentrations constant so pH is the only factor changing (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how transpiration pull moves water through a plant. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Water evaporates from mesophyll cells and diffuses out through the stomata (1 mark)",
+        "This creates a tension or pull in the xylem (1 mark)",
+        "Cohesion between water molecules allows a continuous column of water to be pulled up from the roots (1 mark)"
+      ]
+    },
+    {
+      "question": "Plan an investigation to measure the effect of light intensity on transpiration using a potometer. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Set up a bubble potometer with a leafy shoot cut under water to prevent air entering the xylem (1 mark)",
+        "Place a lamp at measured distances from the shoot to change light intensity (1 mark)",
+        "Measure the distance moved by the air bubble in a fixed time or the time taken to move a fixed distance (1 mark)",
+        "Repeat each distance several times and calculate a mean rate of water uptake (1 mark)",
+        "Control variables should include temperature, air movement, humidity and leaf area (1 mark)",
+        "Plot mean transpiration rate against light intensity or lamp distance and use the trend to draw a conclusion (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why villi are important in the small intestine. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Villi increase the surface area for absorption (1 mark)",
+        "This allows digested food molecules such as glucose and amino acids to enter the blood more quickly (1 mark)"
+      ]
+    }
+  ],
+  "B3 Organism level systems": [
+    {
+      "question": "Write the word equation for photosynthesis. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Carbon dioxide + water -> glucose + oxygen (1 mark)"
+      ]
+    },
+    {
+      "question": "State two factors that can limit the rate of photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Light intensity (1 mark)",
+        "Carbon dioxide concentration or temperature (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why temperature affects the rate of photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Photosynthesis is controlled by enzymes (1 mark)",
+        "As temperature rises the rate increases up to an optimum, but above the optimum enzymes denature and the rate falls (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how to test a leaf for starch. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Boil the leaf in water to kill it (1 mark)",
+        "Heat the leaf in ethanol in a water bath to remove chlorophyll (1 mark)",
+        "Rinse the leaf and add iodine solution; a blue-black colour shows starch is present (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare aerobic respiration and anaerobic respiration in animals. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Aerobic respiration uses oxygen whereas anaerobic respiration does not (1 mark)",
+        "Aerobic respiration releases much more energy than anaerobic respiration (1 mark)",
+        "Anaerobic respiration in animals produces lactic acid (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how mineral ion deficiency can affect plant growth. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Nitrate ions are needed to make amino acids and proteins (1 mark)",
+        "A lack of nitrate causes stunted growth (1 mark)",
+        "Magnesium ions are needed to make chlorophyll (1 mark)",
+        "A lack of magnesium causes chlorosis or yellow leaves because less photosynthesis can take place (1 mark)"
+      ]
+    },
+    {
+      "question": "A pondweed is placed 10 cm from a lamp and produces 24 oxygen bubbles per minute. When the lamp is moved to 20 cm away it produces 11 bubbles per minute. Explain this change. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Moving the lamp further away reduces light intensity (1 mark)",
+        "Light intensity is a limiting factor for photosynthesis (1 mark)",
+        "With less light energy, less photosynthesis takes place (1 mark)",
+        "So less oxygen is produced and fewer bubbles are counted each minute (1 mark)"
+      ]
+    },
+    {
+      "question": "A student uses pondweed, sodium hydrogencarbonate solution and a lamp to investigate the effect of light intensity on photosynthesis. Evaluate this method and suggest improvements. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "A strength is that sodium hydrogencarbonate provides carbon dioxide so light intensity can be tested fairly (1 mark)",
+        "Counting bubbles is a simple way to estimate oxygen production (1 mark)",
+        "A limitation is that bubbles may differ in size so bubble counts are not very accurate (1 mark)",
+        "Measure the volume of oxygen collected instead of just counting bubbles (1 mark)",
+        "Repeat each distance and calculate a mean while controlling temperature with a water bath or heat filter (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how the structure of a leaf is adapted for photosynthesis. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "The leaf is broad so it has a large surface area to absorb light (1 mark)",
+        "The upper epidermis is transparent so light can reach the palisade cells (1 mark)",
+        "Palisade cells contain many chloroplasts to absorb light energy (1 mark)",
+        "Stomata and air spaces allow carbon dioxide to diffuse through the leaf (1 mark)"
+      ]
+    },
+    {
+      "question": "Plan an investigation to find the effect of carbon dioxide concentration on the rate of photosynthesis in pondweed. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Use different concentrations of sodium hydrogencarbonate solution to provide different carbon dioxide concentrations (1 mark)",
+        "Place the same type and length of pondweed into each solution (1 mark)",
+        "Keep light intensity constant by keeping the lamp at the same distance (1 mark)",
+        "Measure the rate of photosynthesis by counting bubbles per minute or collecting oxygen volume in a fixed time (1 mark)",
+        "Repeat each concentration several times and calculate a mean (1 mark)",
+        "Control temperature and pondweed size, then plot rate of photosynthesis against carbon dioxide concentration (1 mark)"
+      ]
+    },
+    {
+      "question": "State the role of chlorophyll in photosynthesis. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Chlorophyll absorbs light energy for photosynthesis (1 mark)"
+      ]
+    }
+  ],
+  "B4 Community level systems": [
+    {
+      "question": "Define habitat. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The place where an organism lives (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two abiotic factors that could affect the distribution of plants on a grassland. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Light intensity, temperature, soil pH, soil moisture or mineral content (any two, 1 mark each)"
+      ]
+    },
+    {
+      "question": "Explain why random sampling is used when placing quadrats. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Random sampling reduces bias in where the sample is taken (1 mark)",
+        "This makes the sample more representative of the whole area (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how energy is lost between trophic levels in a food chain. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Energy is lost as heat during respiration (1 mark)",
+        "Energy is lost in movement (1 mark)",
+        "Energy is lost in waste products or because not all parts of an organism are eaten or digested (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how decomposers and detritivores help recycle materials in an ecosystem. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "They break down dead organisms and waste material (1 mark)",
+        "This releases mineral ions into the soil (1 mark)",
+        "Plants take up these mineral ions and use them to grow, so materials are recycled (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare using a quadrat with using a transect to study organisms in a habitat. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "A quadrat is used to sample organisms in a small, fixed area (1 mark)",
+        "A transect is used to study how distribution changes along a line or across an environmental gradient (1 mark)",
+        "Both methods can be used to estimate abundance or distribution (1 mark)",
+        "Both should be repeated to improve reliability or both require careful identification of organisms (1 mark)"
+      ]
+    },
+    {
+      "question": "A student places quadrats every 2 metres along a transect from a hedge into a field and counts the number of daisies in each quadrat. Explain how this method can show the effect of abiotic factors on distribution. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "The transect shows how daisy numbers change with distance from the hedge (1 mark)",
+        "Abiotic factors such as light intensity, soil moisture or wind exposure may change along this line (1 mark)",
+        "If the number of daisies changes in a pattern, this suggests distribution is affected by those changing factors (1 mark)",
+        "Measuring the abiotic factors at each quadrat allows the student to relate organism distribution to environmental conditions (1 mark)"
+      ]
+    },
+    {
+      "question": "Evaluate the use of biological indicators to assess pollution in a river. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Some organisms are sensitive to pollution whereas others are tolerant (1 mark)",
+        "A high number of sensitive species such as mayfly nymphs suggests the water is less polluted (1 mark)",
+        "A high number of tolerant species such as bloodworms suggests the water is more polluted (1 mark)",
+        "Using indicator species can be quicker and cheaper than carrying out many chemical tests (1 mark)",
+        "However, the results can be affected by factors other than pollution such as water flow, temperature or season (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how eutrophication can reduce biodiversity in a pond. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Fertilisers washed into the pond add nitrates or phosphates (1 mark)",
+        "This causes rapid algal growth or an algal bloom (1 mark)",
+        "The algae block light so underwater plants die and decomposers increase (1 mark)",
+        "Respiration by decomposers reduces oxygen concentration, causing animals to die and biodiversity to fall (1 mark)"
+      ]
+    },
+    {
+      "question": "Plan a field investigation to compare species richness in a mown grass area and an unmown grass area. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Use random sampling with quadrats in both the mown and unmown areas (1 mark)",
+        "Place the same size quadrat the same number of times in each area (1 mark)",
+        "Identify and record the number of different plant species in each quadrat (1 mark)",
+        "Calculate mean species richness for each area (1 mark)",
+        "Control factors such as time of year, quadrat size and sampling effort (1 mark)",
+        "Compare the mean values to decide which area has greater species richness (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by a trophic level. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The position an organism occupies in a food chain (1 mark)"
+      ]
+    }
+  ],
+  "B5 Genes, inheritance and selection": [
+    {
+      "question": "Define gene. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A section of DNA that codes for a protein or characteristic (1 mark)"
+      ]
+    },
+    {
+      "question": "State the difference between genotype and phenotype. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Genotype is the combination of alleles an organism has (1 mark)",
+        "Phenotype is the observable characteristic produced by the genotype and environment (1 mark)"
+      ]
+    },
+    {
+      "question": "A pea plant has the genotype Tt, where T is the dominant allele for tall stems. State the phenotype of this plant and explain why. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "The phenotype is tall (1 mark)",
+        "The dominant allele T is expressed when it is present, so the recessive allele t is masked (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how DNA controls the production of proteins. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The order of bases in DNA forms a genetic code (1 mark)",
+        "This code determines the order of amino acids in a protein (1 mark)",
+        "Different proteins produced lead to different structures or functions in cells (1 mark)"
+      ]
+    },
+    {
+      "question": "A man with genotype Bb and a woman with genotype bb have children. Use a genetic cross to determine the probability of a child having the recessive phenotype. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Correct parental cross shown as Bb x bb (1 mark)",
+        "Correct offspring genotypes shown as Bb, Bb, bb, bb or 1:1 Bb to bb (1 mark)",
+        "Probability of recessive phenotype is 1/2 or 50% (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how natural selection can lead to evolution. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "There is variation within a population caused by different alleles or mutations (1 mark)",
+        "Individuals with advantageous characteristics are more likely to survive and reproduce (1 mark)",
+        "They pass on the advantageous alleles to their offspring (1 mark)",
+        "Over many generations the frequency of these alleles increases, changing the population (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why bacteria can develop antibiotic resistance rapidly. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Mutations can produce resistant bacteria (1 mark)",
+        "Antibiotics kill non-resistant bacteria, leaving resistant ones to survive (1 mark)",
+        "Bacteria reproduce quickly by binary fission (1 mark)",
+        "The resistant allele spreads quickly through the population because resistant bacteria pass it on (1 mark)"
+      ]
+    },
+    {
+      "question": "Evaluate the use of genetic engineering in medicine and agriculture. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Genetic engineering can be used to make useful substances such as human insulin (1 mark)",
+        "It can also be used to produce crops with desirable traits such as pest resistance (1 mark)",
+        "This may improve yields or reduce pesticide use (1 mark)",
+        "There are concerns about long-term ecological effects such as genes spreading to wild plants (1 mark)",
+        "There are also ethical concerns about altering the genetic material of living organisms (1 mark)"
+      ]
+    },
+    {
+      "question": "Plan an investigation using fast-growing plants to test whether light intensity affects plant height, showing how you would obtain valid results. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Grow groups of the same species of plant under different light intensities (1 mark)",
+        "Use the same number of plants in each group (1 mark)",
+        "Measure plant height at regular intervals over a set time period (1 mark)",
+        "Control variables such as water supply, temperature, soil type and mineral supply (1 mark)",
+        "Repeat using several plants in each condition and calculate a mean height (1 mark)",
+        "Plot mean plant height against light intensity and use the graph to draw a conclusion (1 mark)"
+      ]
+    },
+    {
+      "question": "State one difference between a dominant allele and a recessive allele. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A dominant allele is expressed when only one copy is present, whereas a recessive allele is only expressed when two copies are present (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how selective breeding can produce animals with desired characteristics. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Humans choose parents that show the desired characteristic (1 mark)",
+        "These parents are bred together and the offspring with the best features are chosen again (1 mark)",
+        "Repeating this over many generations increases the frequency of alleles for the desired characteristic (1 mark)"
+      ]
+    }
+  ],
+  "B6 Global challenges": [
+    {
+      "question": "Define pathogen. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A microorganism that causes disease (1 mark)"
+      ]
+    },
+    {
+      "question": "Give two ways white blood cells defend the body against pathogens. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "They engulf pathogens by phagocytosis (1 mark)",
+        "They produce antibodies or antitoxins (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how vaccination protects individuals and populations. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A vaccine contains dead or inactive pathogens or their antigens (1 mark)",
+        "This stimulates white blood cells to produce antibodies and memory cells (1 mark)",
+        "If many people are vaccinated the spread of the disease is reduced because fewer people can be infected (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why antibiotics are not effective against viruses. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Antibiotics target structures or processes in bacteria such as cell walls or bacterial metabolism (1 mark)",
+        "Viruses reproduce inside host cells and do not have these bacterial structures, so antibiotics do not work on them (1 mark)"
+      ]
+    },
+    {
+      "question": "A student investigates the effect of antiseptic concentration on bacterial growth using agar plates and paper discs soaked in antiseptic. Describe a safe method for this investigation. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Spread a bacterial culture evenly across nutrient agar in a Petri dish (1 mark)",
+        "Place paper discs soaked in different antiseptic concentrations onto the agar (1 mark)",
+        "Seal the lid with tape and incubate at 25 degrees C, then measure the clear zone around each disc (1 mark)",
+        "Use aseptic technique and do not open the plates after incubation to reduce the risk of contamination or infection (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how intensive farming can increase food production. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Animals can be kept indoors in warm conditions so they use less energy keeping warm (1 mark)",
+        "This means more of the food energy is converted into biomass for growth (1 mark)",
+        "Selective breeding, efficient feeding and disease control can also increase yield (1 mark)"
+      ]
+    },
+    {
+      "question": "Evaluate the use of antibiotics in agriculture and medicine. [5 marks]",
+      "mark": 5,
+      "mark_scheme": [
+        "Antibiotics can treat bacterial infections effectively in humans and animals (1 mark)",
+        "Their use can reduce illness and improve welfare or survival (1 mark)",
+        "Overuse creates a selection pressure favouring resistant bacteria (1 mark)",
+        "These resistant strains can spread, making infections harder to treat (1 mark)",
+        "Therefore antibiotics should be used carefully and only when necessary (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why maintaining biodiversity is important. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Biodiversity helps keep ecosystems stable (1 mark)",
+        "Different species may provide sources of food, medicines or useful genes (1 mark)",
+        "High biodiversity makes ecosystems more resilient to environmental change (1 mark)",
+        "A loss of biodiversity can disrupt food webs and reduce ecosystem services humans rely on (1 mark)"
+      ]
+    },
+    {
+      "question": "Plan a field investigation to compare biodiversity in two habitats using an index of diversity. [6 marks]",
+      "mark": 6,
+      "mark_scheme": [
+        "Choose two habitats to compare and use the same sampling method in both (1 mark)",
+        "Use random quadrats or a transect with quadrats to record the number of each species present (1 mark)",
+        "Repeat the sampling many times in each habitat (1 mark)",
+        "Record the total number of organisms and the number of species in each habitat (1 mark)",
+        "Use the data to calculate an index of diversity for each habitat (1 mark)",
+        "Compare the values to decide which habitat has greater biodiversity (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how farmers can reduce the spread of plant diseases. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Remove and destroy infected plants (1 mark)",
+        "Use resistant crop varieties or crop rotation (1 mark)",
+        "Control insect vectors and clean equipment to prevent pathogens spreading between plants or fields (1 mark)"
+      ]
+    },
+    {
+      "question": "State the role of antibodies in the immune response. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Antibodies bind to specific antigens on pathogens to help destroy them (1 mark)"
+      ]
+    }
+  ]
+}

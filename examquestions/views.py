@@ -224,6 +224,107 @@ def question_text_from_item(question_item):
     return str(question_item.get("question", "")).strip()
 
 
+UNSEEN_RESOURCE_PATTERNS = [
+    re.compile(r"\b(?:figure|fig\.?|graph|table|chart|diagram|image)\b"),
+    re.compile(r"\b(?:data|results?|information)\s+(?:above|below|provided|shown|in)\b"),
+    re.compile(r"\bshown in\b"),
+    re.compile(r"\b(?:use|using|refer(?:ring)? to|from|based on)\s+(?:the\s+)?(?:information|data|results?|figure|fig\.?|graph|table|chart|diagram|image)\b"),
+    re.compile(r"\b(?:in|on)\s+the\s+(?:figure|fig\.?|graph|table|chart|diagram|image)\b"),
+    re.compile(r"\b(?:information|data|results?)\s+(?:provided|given|displayed)\b"),
+]
+
+METHOD_EVALUATION_PATTERNS = [
+    re.compile(r"\bevaluate the method(?: used)?\b"),
+    re.compile(r"\bevaluate (?:this|the|a student'?s) (?:method|investigation|experiment)\b"),
+    re.compile(r"\bsuggest improvements? (?:to|for) the method\b"),
+    re.compile(r"\bsuggest improvements? (?:to|for) (?:this|the|a student'?s) (?:investigation|experiment)\b"),
+    re.compile(r"\bhow could the method be improved\b"),
+    re.compile(r"\bhow could (?:this|the) (?:investigation|experiment) be improved\b"),
+]
+
+PROCEDURAL_DETAIL_PATTERNS = [
+    re.compile(r"\busing\b"),
+    re.compile(r"\bmeasure\w*\b"),
+    re.compile(r"\brecord\w*\b"),
+    re.compile(r"\bcount\w*\b"),
+    re.compile(r"\btim\w*\b"),
+    re.compile(r"\bcalculate\w*\b"),
+    re.compile(r"\bmix\w*\b"),
+    re.compile(r"\badd\w*\b"),
+    re.compile(r"\bplace\w*\b"),
+    re.compile(r"\bheat\w*\b"),
+    re.compile(r"\bcool\w*\b"),
+    re.compile(r"\biodine\b"),
+    re.compile(r"\bcolorimeter\b"),
+    re.compile(r"\bwater bath\b"),
+    re.compile(r"\btest tube\b"),
+    re.compile(r"\bbalance\b"),
+    re.compile(r"\bthermometer\b"),
+    re.compile(r"\bpipette\b"),
+    re.compile(r"\bburette\b"),
+    re.compile(r"\b\d+(?:\.\d+)?\s?(?:cm3|cm\^3|ml|dm3|g|mg|kg|mm|cm|m|s|seconds?|minutes?|hours?|°c|degrees c)\b"),
+]
+
+
+def is_self_contained_ai_question(question_item):
+    normalized_question = normalize_question_text(question_text_from_item(question_item))
+    if not normalized_question:
+        return False
+
+    if any(pattern.search(normalized_question) for pattern in UNSEEN_RESOURCE_PATTERNS):
+        return False
+
+    if any(pattern.search(normalized_question) for pattern in METHOD_EVALUATION_PATTERNS):
+        detail_matches = sum(bool(pattern.search(normalized_question)) for pattern in PROCEDURAL_DETAIL_PATTERNS)
+        if detail_matches < 2:
+            return False
+
+    return True
+
+
+def filter_self_contained_ai_questions(ai_questions):
+    valid_questions = []
+    for question_item in ai_questions or []:
+        if is_self_contained_ai_question(question_item):
+            valid_questions.append(question_item)
+            continue
+        logger.warning("Discarded AI-generated question without enough context: %s", question_text_from_item(question_item))
+    return valid_questions
+
+
+def get_fallback_pool(all_fallback_questions, scope_title, topic_title, allow_generic=False):
+    if not isinstance(all_fallback_questions, dict):
+        return []
+
+    scope_pool = all_fallback_questions.get(scope_title)
+    if isinstance(scope_pool, list) and scope_pool:
+        return scope_pool
+
+    topic_pool = all_fallback_questions.get(topic_title)
+    if isinstance(topic_pool, list) and topic_pool:
+        return topic_pool
+
+    if not allow_generic:
+        return []
+
+    lower_mark_questions = []
+    all_self_contained_questions = []
+    for question_group in all_fallback_questions.values():
+        if not isinstance(question_group, list):
+            continue
+        for question_item in question_group:
+            if not is_self_contained_ai_question(question_item):
+                continue
+            all_self_contained_questions.append(question_item)
+            total_marks = question_item.get("total_marks", question_item.get("mark", 0)) or 0
+            if total_marks <= 3:
+                lower_mark_questions.append(question_item)
+
+    if lower_mark_questions:
+        return lower_mark_questions
+    return all_self_contained_questions
+
+
 def build_gcse_scope_metadata(topic, subtopic=None, subcategory=None, tier=None):
     if subcategory:
         return subcategory.title, f"gcse-subcategory:{subcategory.id}:{tier}"
@@ -408,11 +509,7 @@ def generate_exam_questions(request):
             scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
             served_questions = get_user_served_question_set(request.user, board_key, scope_key)
 
-            fallback_pool = []
-            if scope_title in all_fallback_questions:
-                fallback_pool = all_fallback_questions[scope_title]
-            elif topic.topic in all_fallback_questions:
-                fallback_pool = all_fallback_questions[topic.topic]
+            fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, topic.topic)
 
             fallback_count = number // 2
             ai_count = number - fallback_count
@@ -430,7 +527,7 @@ def generate_exam_questions(request):
                 scope += f' (SubCategory: {subcategory.title})'
 
             ai_response = generate_questions(scope, board_key, ai_count)
-            ai_questions = ai_response.get("questions", [])
+            ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
 
             combined_questions = list(fallback_selected)
             current_batch_questions = {
@@ -487,8 +584,10 @@ def generate_exam_questions(request):
                     return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
                 gcse_subcategory = GCSEScienceSubCategory.objects.get(id=subcategory_id, subtopic_id=gcse_subtopic.id)
 
+            all_fallback_questions = load_fallback_bank_for_board(board_key)
             scope_title, scope_key = build_gcse_scope_metadata(gcse_topic, gcse_subtopic, gcse_subcategory, gcse_tier)
             served_questions = get_user_served_question_set(request.user, board_key, scope_key)
+            fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, gcse_topic.topic, allow_generic=True)
 
             scope = gcse_topic.topic
             if gcse_subtopic:
@@ -497,7 +596,7 @@ def generate_exam_questions(request):
                 scope += f' (SubCategory: {gcse_subcategory.title})'
 
             ai_response = generate_gcse_questions(scope, board_key, number, gcse_subject, gcse_tier)
-            ai_questions = ai_response.get("questions", [])
+            ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
 
             combined_questions = []
             current_batch_questions = set()
@@ -509,7 +608,15 @@ def generate_exam_questions(request):
                 combined_questions.append(ai_question)
 
             if len(combined_questions) < number:
-                raise ValueError("The AI did not return enough unique GCSE questions for this topic.")
+                combined_questions, served_questions = replace_duplicate_questions_from_fallback(
+                    user=request.user,
+                    exam_board=board_key,
+                    scope_key=scope_key,
+                    fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
+                    accepted_questions=combined_questions,
+                    requested_count=number,
+                    served_questions=served_questions,
+                )
 
             total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
             session_kwargs = {

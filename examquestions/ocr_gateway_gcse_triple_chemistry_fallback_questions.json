@@ -1,0 +1,499 @@
+{
+  "C1 Particles": [
+    {
+      "question": "Define the term relative atomic mass. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The average mass of atoms of an element compared to carbon-12 / compared to 1/12 of a carbon-12 atom"
+      ]
+    },
+    {
+      "question": "State the relative mass of a proton. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "1 / approximately 1"
+      ]
+    },
+    {
+      "question": "What is the charge on an electron? [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "-1 / negative"
+      ]
+    },
+    {
+      "question": "Name the subatomic particle with no charge. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Neutron"
+      ]
+    },
+    {
+      "question": "Calculate the number of neutrons in an atom of chlorine-35. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Atomic number of chlorine = 17 (1 mark)",
+        "35 - 17 = 18 neutrons (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why isotopes of the same element have similar chemical properties. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Isotopes have the same number of protons / electrons (1 mark)",
+        "Chemical properties are determined by the electron configuration / electrons in the outer shell (1 mark)"
+      ]
+    },
+    {
+      "question": "An atom of nitrogen-14 contains 7 protons and 7 neutrons. State the number of electrons in a neutral nitrogen atom and explain your answer. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "7 electrons (1 mark)",
+        "In a neutral atom, the number of electrons equals the number of protons / atomic number (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how the mass number and atomic number of an atom are related to its protons, neutrons and electrons. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Mass number = protons + neutrons (1 mark)",
+        "Atomic number = protons / number of protons only (1 mark)",
+        "Number of electrons in a neutral atom = atomic number / protons (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why the relative atomic mass of chlorine is 35.5, not a whole number. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Chlorine has two naturally occurring isotopes (1 mark)",
+        "Chlorine-35 and chlorine-37 (1 mark)",
+        "The relative atomic mass is the weighted average of the mass numbers of all naturally occurring isotopes (1 mark)"
+      ]
+    },
+    {
+      "question": "An ion X\u00b2\u207b has 18 electrons and 17 neutrons. Identify the element X and determine its mass number. Explain your reasoning. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "If X\u00b2\u207b has 18 electrons, then neutral X has 16 electrons (1 mark)",
+        "Therefore, atomic number = 16, so X is sulfur (1 mark)",
+        "Mass number = protons + neutrons = 16 + 17 = 33 (1 mark)",
+        "The ion is sulfur-33 / \u00b3\u00b3S\u00b2\u207b (1 mark)"
+      ]
+    }
+  ],
+  "C2 Elements, compounds and mixtures": [
+    {
+      "question": "Define what is meant by an element. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A substance made of only one type of atom / atoms of the same atomic number"
+      ]
+    },
+    {
+      "question": "State what a compound is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A substance made of two or more elements chemically combined in fixed proportions"
+      ]
+    },
+    {
+      "question": "Name an element that is a non-metal at room temperature. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Oxygen / nitrogen / chlorine / sulfur / carbon / phosphorus / iodine (or any other non-metal)"
+      ]
+    },
+    {
+      "question": "State one property of ionic compounds. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "High melting point / conduct electricity when molten / conduct electricity when dissolved / brittle / soluble in water"
+      ]
+    },
+    {
+      "question": "Explain the difference between a compound and a mixture. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A compound has elements chemically combined in fixed proportions while a mixture has substances physically combined in variable proportions (1 mark)",
+        "Compounds have fixed properties while mixtures can have variable properties / a new substance is formed in compounds but not in mixtures (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how you could separate a mixture of salt and water using evaporation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Heat the salt solution gently / warm (1 mark)",
+        "Water evaporates leaving salt crystals / the salt remains (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why oxygen is classified as an element and carbon dioxide is classified as a compound. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Oxygen consists of only one type of atom / has only one atomic number (1 mark)",
+        "Carbon dioxide consists of two different elements (carbon and oxygen) chemically bonded together (1 mark)"
+      ]
+    },
+    {
+      "question": "State the steps used to separate a mixture of sand, salt and water. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Filter to separate sand from the salt solution (1 mark)",
+        "Evaporate to separate salt from the water (1 mark)",
+        "Alternative: add water to dissolve salt, filter to remove sand, evaporate to recover salt (1 mark for clear method)"
+      ]
+    },
+    {
+      "question": "Explain why covalent compounds generally have lower melting points than ionic compounds. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Covalent compounds are molecular with molecules held together by weak intermolecular forces (1 mark)",
+        "Ionic compounds have strong ionic bonds between ions (1 mark)",
+        "Less energy is therefore required to break the weak forces in covalent compounds than the strong forces in ionic compounds (1 mark)"
+      ]
+    },
+    {
+      "question": "A sample contains sodium chloride, calcium carbonate and water. Describe a method to separate all three substances. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Filter the mixture to separate calcium carbonate (solid) from the solution (1 mark)",
+        "Heat the filtrate / solution to evaporate the water (1 mark)",
+        "This leaves sodium chloride crystals (1 mark)",
+        "The calcium carbonate can be washed and dried / all three substances are now separated (1 mark)"
+      ]
+    }
+  ],
+  "C3 Chemical reactions": [
+    {
+      "question": "State the definition of a chemical reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A process in which substances are changed into different substances with new properties"
+      ]
+    },
+    {
+      "question": "Name one sign that a chemical reaction has occurred. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Temperature change / colour change / gas produced / precipitate formed"
+      ]
+    },
+    {
+      "question": "What is meant by thermal decomposition? [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Breaking down a compound into simpler substances using heat"
+      ]
+    },
+    {
+      "question": "State what law is represented by the equation: reactants = products. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Law of conservation of mass"
+      ]
+    },
+    {
+      "question": "Write the word equation for the combustion of methane. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "methane + oxygen \u2192 (1 mark)",
+        "carbon dioxide + water (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why mass is conserved in a chemical reaction. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Atoms are not created or destroyed in a chemical reaction (1 mark)",
+        "The atoms are rearranged to form new substances / the same atoms that are present at the start must be present at the end (1 mark)"
+      ]
+    },
+    {
+      "question": "Balance the following equation: Fe + O\u2082 \u2192 Fe\u2082O\u2083 [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Identify the unbalanced atoms (1 mark)",
+        "4Fe + 3O\u2082 \u2192 2Fe\u2082O\u2083 (1 mark)"
+      ]
+    },
+    {
+      "question": "A student burns 2.0 g of carbon in 10 g of oxygen. The mass of carbon dioxide produced is 7.3 g. Use the law of conservation of mass to explain this result. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Total mass of reactants = 2.0 + 10 = 12.0 g (1 mark)",
+        "Not all oxygen reacted (1 mark)",
+        "Mass of unreacted oxygen = 12.0 - 7.3 = 4.7 g / more oxygen remained than needed (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens when copper is heated strongly in air and explain the observations in terms of a chemical reaction. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The copper turns black / a solid black product forms (1 mark)",
+        "Copper reacts with oxygen in the air / copper + oxygen \u2192 copper oxide (1 mark)",
+        "This is a chemical reaction because new substances are formed with different properties (1 mark)"
+      ]
+    },
+    {
+      "question": "The thermal decomposition of limestone occurs according to this equation: CaCO\u2083 \u2192 CaO + CO\u2082. Explain why this is a decomposition reaction and describe the practical procedures to detect the products. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "One compound (calcium carbonate) breaks down into two simpler substances (1 mark)",
+        "Heat is required to break the bonds / thermal decomposition means breaking down with heat (1 mark)",
+        "CO\u2082 is detected by passing gas through limewater which turns cloudy / milky (1 mark)",
+        "CaO remains as a white solid residue which when water is added reacts exothermically (1 mark)"
+      ]
+    }
+  ],
+  "C4 Predicting and identifying reactions and products": [
+    {
+      "question": "Define an oxidation reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A reaction in which a substance gains oxygen / loses electrons"
+      ]
+    },
+    {
+      "question": "State what type of reaction involves the formation of a precipitate. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Precipitation reaction"
+      ]
+    },
+    {
+      "question": "Name the salt produced when hydrochloric acid reacts with sodium hydroxide. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Sodium chloride"
+      ]
+    },
+    {
+      "question": "In a neutralisation reaction, state what is produced in addition to a salt. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Water"
+      ]
+    },
+    {
+      "question": "Write the word equation for the reaction between calcium and oxygen. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "calcium + oxygen \u2192 (1 mark)",
+        "calcium oxide (1 mark)"
+      ]
+    },
+    {
+      "question": "Predict the products of the reaction between magnesium carbonate and sulfuric acid. Write the word equation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "magnesium carbonate + sulfuric acid \u2192 (1 mark)",
+        "magnesium sulfate + water + carbon dioxide (1 mark)"
+      ]
+    },
+    {
+      "question": "A student adds solutions of sodium carbonate and calcium nitrate to observe a reaction. Describe what they would observe and write the word equation. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A white precipitate forms (1 mark)",
+        "sodium carbonate + calcium nitrate \u2192 (1 mark)",
+        "calcium carbonate + sodium nitrate (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why copper does not react with dilute hydrochloric acid but zinc does. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Zinc is more reactive than copper / zinc is higher in the reactivity series (1 mark)",
+        "Zinc is more easily oxidised / loses electrons more readily (1 mark)",
+        "Copper is not reactive enough to displace hydrogen from the acid (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the word equation and symbol equation for the reaction between sodium and water. Identify the type of reaction. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "sodium + water \u2192 sodium hydroxide + hydrogen (1 mark)",
+        "2Na + 2H\u2082O \u2192 2NaOH + H\u2082 (1 mark)",
+        "Oxidation reaction / displacement reaction / redox reaction (1 mark)"
+      ]
+    },
+    {
+      "question": "A metal X reacts with dilute sulfuric acid to produce hydrogen gas and a salt. A more reactive metal Y does not react with the salt solution of metal X. Explain what this tells you about the relative reactivity of metals X and Y, and predict what would happen if metal Y was added to a solution of metal X's salt. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Metal X is more reactive than metal Y / X is higher in the reactivity series (1 mark)",
+        "This is because Y cannot displace X from its salt solution (1 mark)",
+        "If Y is added to X's salt solution, no reaction would occur (1 mark)",
+        "Because X is more reactive than Y, so X cannot be displaced from its salt by Y (1 mark)"
+      ]
+    }
+  ],
+  "C5 Monitoring and controlling chemical reactions": [
+    {
+      "question": "Define the term rate of reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The speed at which reactants are converted into products / how much product is formed per unit time"
+      ]
+    },
+    {
+      "question": "State one factor that increases the rate of a reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Increasing temperature / increasing concentration / increasing pressure / using a catalyst / increasing surface area"
+      ]
+    },
+    {
+      "question": "What is meant by a catalyst? [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A substance that speeds up a reaction without being used up / without being chemically changed"
+      ]
+    },
+    {
+      "question": "Name one industrial process that uses a catalyst. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Haber process / contact process / cracking of hydrocarbons"
+      ]
+    },
+    {
+      "question": "Explain why increasing the temperature of a reaction increases the rate of reaction. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Particles move faster at higher temperatures (1 mark)",
+        "This causes more frequent collisions / collisions with greater energy, so more particles have sufficient energy to react (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why crushing a solid reactant into powder increases the rate of reaction. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Crushing increases the surface area of the solid (1 mark)",
+        "The increased surface area allows more collisions between reactant particles to occur per unit time (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe an experiment to investigate how the concentration of an acid affects the rate of reaction with a metal. Include how you would measure the rate of reaction. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Use the same mass/size of metal with hydrochloric acid of different concentrations (1 mark)",
+        "Keep temperature and volume constant (1 mark)",
+        "Measure the volume of hydrogen gas produced at regular time intervals / measure the time to produce a fixed volume of gas (1 mark)",
+        "Plot a graph of volume against time / compare the gradients of the curves (1 mark)"
+      ]
+    },
+    {
+      "question": "A reaction produces a gas. Describe how you could measure the average rate of reaction by collecting the gas. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Collect the gas in a gas syringe / measuring cylinder / graduated tube (1 mark)",
+        "Measure the total volume of gas produced (1 mark)",
+        "Record the time taken / calculate rate = volume \u00f7 time (1 mark)"
+      ]
+    },
+    {
+      "question": "Two identical pieces of zinc are added to two beakers containing hydrochloric acid at different temperatures. Beaker A is at 25\u00b0C and Beaker B is at 50\u00b0C. Explain why the reaction will be faster in Beaker B and predict what other safety considerations would be important. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "At higher temperature particles have more kinetic energy and move faster (1 mark)",
+        "This leads to more frequent and energetic collisions (1 mark)",
+        "Safety: heat source control / eye protection / fume hood if toxic gases / management of exothermic reaction (1 mark)"
+      ]
+    },
+    {
+      "question": "An enzyme is used as a catalyst in an industrial process. Explain why enzymes are particularly useful catalysts and describe one limitation of using an enzyme compared to a traditional chemical catalyst. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Enzymes are specific and only catalyse reactions they are designed for / highly efficient (1 mark)",
+        "They work at lower temperatures than traditional catalysts (1 mark)",
+        "Limitation: enzymes are denatured at high temperatures (1 mark)",
+        "Or: enzymes are expensive / difficult to produce (1 mark)"
+      ]
+    }
+  ],
+  "C6 Global challenges": [
+    {
+      "question": "Name one fossil fuel. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Coal / oil / natural gas"
+      ]
+    },
+    {
+      "question": "State one non-renewable energy resource. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Coal / oil / natural gas / uranium"
+      ]
+    },
+    {
+      "question": "Write the word equation for the combustion of coal. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "coal (carbon) + oxygen \u2192 carbon dioxide"
+      ]
+    },
+    {
+      "question": "Give one environmental problem caused by burning fossil fuels. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Produces carbon dioxide which causes global warming / increases greenhouse gases / produces sulfur dioxide which causes acid rain"
+      ]
+    },
+    {
+      "question": "Explain why scientists are concerned about rising carbon dioxide levels in the atmosphere. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Carbon dioxide is a greenhouse gas (1 mark)",
+        "It traps heat which leads to global warming / climate change (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how limestone can be used to reduce the effects of acid rain when sulfur dioxide is released into the atmosphere. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Limestone (calcium carbonate) is added to neutralise acidic gases / reacts with sulfur dioxide (1 mark)",
+        "The neutralisation reduces the acidity of the rain / prevents damage to ecosystems (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why sustainable agriculture using renewable resources is preferable to relying on traditional extraction of fossil fuels. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Fossil fuels are non-renewable and will eventually run out (1 mark)",
+        "Burning fossil fuels produces greenhouse gases that contribute to climate change (1 mark)",
+        "Renewable resources can be replenished / sustainable methods do not deplete resources (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the steps in the nitrogen cycle and explain why nitrogen compounds are important for agriculture. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Nitrogen from atmosphere is converted to nitrogen compounds by nitrogen-fixing bacteria / lightning (1 mark)",
+        "These are used by plants for protein synthesis and growth (1 mark)",
+        "Without sufficient nitrogen, crops cannot grow efficiently / nitrogen fertilisers are essential for food production (1 mark)"
+      ]
+    },
+    {
+      "question": "The Haber process converts nitrogen and hydrogen into ammonia under specific conditions. Explain why ammonia is important globally and describe the environmental challenges of producing a large-scale supply. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Ammonia is used to produce nitrogen fertilisers required for global food production (1 mark)",
+        "Without ammonia fertilisers, crop yields would be significantly reduced (1 mark)",
+        "Producing ammonia requires high temperature, high pressure and uses fossil fuels which produce carbon dioxide (1 mark)",
+        "Finding sustainable methods and renewable energy sources for the Haber process is a global challenge (1 mark)"
+      ]
+    },
+    {
+      "question": "Evaluate the use of synthetic fertilisers compared to organic farming methods in terms of environmental impact, food production efficiency and sustainability. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Synthetic fertilisers increase crop yields efficiently / feed a growing population (1 mark)",
+        "However, excess fertilisers runoff into waterways causing eutrophication (1 mark)",
+        "Organic farming is more sustainable and avoids chemical pollution (1 mark)",
+        "But organic farming produces lower yields so requires more land / is less efficient to feed the global population (1 mark)"
+      ]
+    }
+  ]
+}

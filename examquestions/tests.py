@@ -1,10 +1,23 @@
-from unittest.mock import patch
+import json
+from unittest.mock import Mock, patch
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage
 from accounts.models import CustomUser
 from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
+from .services import ai, aiGCSE
+from .views import is_self_contained_ai_question
+
+
+def _mock_openai_json_response(payload):
+	response = Mock()
+	message = Mock()
+	message.content = json.dumps(payload)
+	choice = Mock()
+	choice.message = message
+	response.choices = [choice]
+	return response
 
 
 class GenerateExamQuestionsLimitTests(APITestCase):
@@ -300,6 +313,49 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 
 	@patch('examquestions.views.load_fallback_bank_for_board')
 	@patch('examquestions.views.generate_questions')
+	def test_ai_questions_missing_method_context_are_replaced_from_fallback(self, mock_generate_questions, mock_load_fallback_bank):
+		mock_load_fallback_bank.return_value = {
+			'Test Topic': [
+				{
+					'question': 'Describe one limitation of using a single pH value when testing enzyme activity. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Only one pH value means no valid comparison across a range (1 mark)'],
+				},
+			],
+		}
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'A student investigates the effect of pH on enzyme activity. Evaluate the method used and suggest improvements. [6 marks]',
+					'total_marks': 6,
+					'mark_scheme': ['Repeat the experiment (1 mark)'],
+				},
+			],
+		}
+
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(
+			response.data['questions'][0]['question'],
+			'Describe one limitation of using a single pH value when testing enzyme activity. [1 mark]',
+		)
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
 	def test_exhausted_fallback_history_resets_for_user_and_reuses_pool(self, mock_generate_questions, mock_load_fallback_bank):
 		mock_load_fallback_bank.return_value = {
 			'Test Topic': [
@@ -348,6 +404,50 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 			ServedQuestion.objects.filter(user=self.user, exam_board='OCR', scope_key=f'topic:{self.topic.id}').count(),
 			1,
 		)
+
+
+class QuestionPromptContractTests(APITestCase):
+	@patch('examquestions.services.ai._create_json_chat_completion')
+	def test_alevel_generation_prompt_requires_self_contained_question_context(self, mock_create_completion):
+		mock_create_completion.return_value = _mock_openai_json_response({'questions': []})
+
+		ai.generate_questions('Module 1 (SubTopic: Evaluate methods)', 'OCR', 1)
+
+		messages = mock_create_completion.call_args.kwargs['messages']
+		prompt = messages[1]['content']
+
+		self.assertIn('Make each question fully answerable from the text you return.', prompt)
+		self.assertIn('Do not refer to any unseen method, figure, graph, table, practical setup, results, or source material.', prompt)
+		self.assertIn('include a concise stem describing that method or data directly in the `question` text', prompt)
+
+
+class AIQuestionValidationTests(APITestCase):
+	def test_validator_rejects_unseen_graph_reference(self):
+		self.assertFalse(
+			is_self_contained_ai_question({
+				'question': 'Use the information provided in the graph to explain why the reaction rate decreases after 2 minutes. [3 marks]',
+			})
+		)
+
+	def test_validator_accepts_method_question_with_embedded_context(self):
+		self.assertTrue(
+			is_self_contained_ai_question({
+				'question': 'A student adds amylase to starch solution, samples the mixture every 30 seconds, and uses iodine to check when starch is no longer present. Evaluate the method and suggest one improvement. [4 marks]',
+			})
+		)
+
+	@patch('examquestions.services.aiGCSE._create_json_chat_completion')
+	def test_gcse_generation_prompt_requires_self_contained_question_context(self, mock_create_completion):
+		mock_create_completion.return_value = _mock_openai_json_response({'questions': []})
+
+		aiGCSE.generate_questions('Enzymes', 'OCR', 1, 'BIOLOGY', 'FOUNDATION')
+
+		messages = mock_create_completion.call_args.kwargs['messages']
+		prompt = messages[1]['content']
+
+		self.assertIn('Make each question fully answerable from the text you return.', prompt)
+		self.assertIn('Do not refer to any unseen method, figure, graph, table, practical setup, results, or source material.', prompt)
+		self.assertIn('include a concise stem describing that method or data directly in the `question` text', prompt)
 
 
 class MarkingFlowTests(APITestCase):
@@ -528,6 +628,52 @@ class GCSEFlowTests(APITestCase):
 		self.assertEqual(session.gcse_subcategory, self.subcategory)
 		self.assertEqual(session.gcse_subject, 'CHEMISTRY')
 		self.assertEqual(session.gcse_tier, 'HIGHER')
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_gcse_questions')
+	def test_gcse_generation_uses_json_bank_fallback_for_missing_context(self, mock_generate_gcse_questions, mock_load_fallback_bank):
+		mock_load_fallback_bank.return_value = {
+			'Generic GCSE fallback': [
+				{
+					'question': 'State the relative charge of a proton. [1 mark]',
+					'mark': 1,
+					'mark_scheme': ['+1 (1 mark)'],
+				},
+			],
+		}
+		mock_generate_gcse_questions.return_value = {
+			'questions': [
+				{
+					'question': 'A student investigates the effect of pH on enzyme activity. Evaluate the method used and suggest improvements. [6 marks]',
+					'total_marks': 6,
+					'mark_scheme': ['Repeat the experiment (1 mark)'],
+				},
+			],
+		}
+
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+
+		response = self.client.post(
+			self.generate_url,
+			{
+				'qualification': 'GCSE_SCIENCE',
+				'topic_id': self.topic.id,
+				'subtopic_id': self.subtopic.id,
+				'subcategory_id': self.subcategory.id,
+				'exam_board': 'AQA',
+				'subject': 'CHEMISTRY',
+				'tier': 'HIGHER',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(
+			response.data['questions'][0]['question'],
+			'State the relative charge of a proton. [1 mark]',
+		)
 
 	@patch('examquestions.views.evaluate_gcse_batch_responses_with_openai')
 	def test_mark_user_answer_routes_to_gcse_marking_service(self, mock_gcse_mark):

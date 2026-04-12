@@ -58,6 +58,8 @@ Create {number_of_questions} exam-style questions on the topic: "{topic}" for th
 
 For each question:
 - Write the question clearly, and include the total number of marks at the end of the question in brackets like this: [3 marks]
+- Make each question fully answerable from the text you return. Do not refer to any unseen method, figure, graph, table, practical setup, results, or source material.
+- If the question depends on a method, experiment, or data, include a concise stem describing that method or data directly in the `question` text before asking the student to analyse, interpret, or evaluate it.
 - Provide a detailed mark scheme that clearly states what the correct answer is, and how each mark is awarded.
   - For example: "They lower activation energy of reactions (1 mark)"
   - Avoid vague labels like "Point 1" or "Point 2" — instead write what a correct student answer might say and how many marks it's worth.
@@ -69,12 +71,12 @@ Format:
 {{
     "questions": [
         {{
-            "question": "Explain how enzymes function. [3 marks]",
+            "question": "A student adds amylase to starch solution and times how long it takes for iodine to stay brown. Evaluate the method and suggest one improvement. [3 marks]",
             "total_marks": 3,
             "mark_scheme": [
-                "They lower activation energy of reactions (1 mark)",
-                "They are not used up during the reaction (1 mark)",
-                "They have a specific active site for substrates (1 mark)"
+                "Only one condition / limited range tested (1 mark)",
+                "Repeat and calculate a mean for reliability (1 mark)",
+                "Control variables such as temperature or concentration (1 mark)"
             ]
         }}
     ]
