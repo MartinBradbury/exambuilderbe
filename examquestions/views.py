@@ -63,10 +63,15 @@ AQA_GCSE_SEPARATE_FALLBACK_PATHS = {
     GCSESubject.CHEMISTRY: FALLBACK_QUESTIONS_DIR / "aqa_triple_chemistry_compact_exam_style.json",
     GCSESubject.PHYSICS: FALLBACK_QUESTIONS_DIR / "aqa_triple_physics_compact_exam_style.json",
 }
+GCSE_FALLBACK_PATHS_BY_BOARD = {
+    "OCR": OCR_GCSE_SEPARATE_FALLBACK_PATHS,
+    "AQA": AQA_GCSE_SEPARATE_FALLBACK_PATHS,
+}
 ALLOWED_BOARDS = {"OCR", "AQA"}
 ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
 ALLOWED_GCSE_SUBJECTS = {choice for choice, _ in GCSESubject.choices}
 ALLOWED_GCSE_TIERS = {choice for choice, _ in GCSETier.choices}
+GCSE_SUBJECT_ERROR_MESSAGE = "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', 'PHYSICS', or 'COMBINED'."
 
 
 class DailyQuestionLimitExceeded(Exception):
@@ -369,18 +374,24 @@ def load_fallback_bank_for_board(exam_board: str) -> dict:
     return load_fallback_bank_from_path(str(path))
 
 
-def resolve_gcse_fallback_bank_path(exam_board: str, gcse_subject: str) -> Path:
+def resolve_gcse_fallback_bank_path(exam_board: str, gcse_subject: str) -> Path | None:
     board_key = (exam_board or "").strip().upper()
     normalized_subject = _normalize_gcse_subject(gcse_subject)
-    if board_key == "OCR":
-        return OCR_GCSE_SEPARATE_FALLBACK_PATHS.get(normalized_subject, FALLBACK_QUESTION_PATHS["OCR"])
-    if board_key == "AQA":
-        return AQA_GCSE_SEPARATE_FALLBACK_PATHS.get(normalized_subject, FALLBACK_QUESTION_PATHS["AQA"])
-    return FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
+    fallback_paths = GCSE_FALLBACK_PATHS_BY_BOARD.get(board_key)
+    if fallback_paths is None:
+        return None
+    return fallback_paths.get(normalized_subject)
 
 
 def load_fallback_bank_for_gcse(exam_board: str, gcse_subject: str) -> dict:
     path = resolve_gcse_fallback_bank_path(exam_board, gcse_subject)
+    if path is None:
+        logger.info(
+            "GCSE fallback routing | board=%s | subject=%s | file=<none configured>",
+            (exam_board or "").strip().upper(),
+            gcse_subject,
+        )
+        return {}
     logger.info(
         "GCSE fallback routing | board=%s | subject=%s | file=%s",
         (exam_board or "").strip().upper(),
@@ -577,6 +588,8 @@ def prepare_gcse_generation(user, board_key, topic_id, subtopic_id, subcategory_
     combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
 
     if len(combined_questions) < number:
+        if not fallback_pool:
+            raise ValueError(f"No GCSE fallback question bank configured for {board_key} {gcse_subject}.")
         combined_questions, served_questions = replace_duplicate_questions_from_fallback(
             user=user,
             exam_board=board_key,
@@ -670,7 +683,7 @@ def generate_exam_questions(request):
             gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
             gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
             if gcse_subject not in ALLOWED_GCSE_SUBJECTS:
-                return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+                return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
             if gcse_tier not in ALLOWED_GCSE_TIERS:
                 return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
 
@@ -772,7 +785,7 @@ def mark_user_answer(request):
     gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
     if qualification == QualificationPath.GCSE_SCIENCE:
         if gcse_subject not in ALLOWED_GCSE_SUBJECTS:
-            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+            return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
         if gcse_tier not in ALLOWED_GCSE_TIERS:
             return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
 
@@ -945,7 +958,7 @@ def get_gcse_topics(request):
         qs = qs.filter(exam_board=board)
     if subject:
         if subject not in ALLOWED_GCSE_SUBJECTS:
-            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+            return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
         qs = qs.filter(subject=subject)
     if tier:
         if tier not in ALLOWED_GCSE_TIERS:
@@ -970,7 +983,7 @@ def get_gcse_subtopics(request):
         qs = qs.filter(topic__exam_board=board)
     if subject:
         if subject not in ALLOWED_GCSE_SUBJECTS:
-            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+            return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
         qs = qs.filter(topic__subject=subject)
     if tier:
         if tier not in ALLOWED_GCSE_TIERS:
@@ -995,7 +1008,7 @@ def get_gcse_subcategories(request):
         qs = qs.filter(subtopic__topic__exam_board=board)
     if subject:
         if subject not in ALLOWED_GCSE_SUBJECTS:
-            return Response({"error": "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', or 'PHYSICS'."}, status=400)
+            return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
         qs = qs.filter(subtopic__topic__subject=subject)
     if tier:
         if tier not in ALLOWED_GCSE_TIERS:

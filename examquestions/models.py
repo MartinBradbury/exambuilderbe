@@ -18,6 +18,7 @@ class GCSESubject(models.TextChoices):
     BIOLOGY = "BIOLOGY", "Biology"
     CHEMISTRY = "CHEMISTRY", "Chemistry"
     PHYSICS = "PHYSICS", "Physics"
+    COMBINED = "COMBINED", "Combined Science"
 
 
 class GCSETier(models.TextChoices):

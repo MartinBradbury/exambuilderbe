@@ -7,7 +7,7 @@ from accounts.models import QuestionUsage
 from accounts.models import CustomUser
 from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
 from .services import ai, aiGCSE
-from .views import is_self_contained_ai_question, resolve_gcse_fallback_bank_path
+from .views import GCSE_SUBJECT_ERROR_MESSAGE, is_self_contained_ai_question, resolve_gcse_fallback_bank_path
 
 
 def _mock_openai_json_response(payload):
@@ -969,6 +969,46 @@ class GCSEFallbackRoutingTests(APITestCase):
 	def test_aqa_gcse_physics_routes_to_physics_fallback_bank(self):
 		path = resolve_gcse_fallback_bank_path('AQA', 'PHYSICS')
 		self.assertEqual(path.name, 'aqa_triple_physics_compact_exam_style.json')
+
+	def test_ocr_gcse_combined_has_no_dedicated_fallback_bank(self):
+		self.assertIsNone(resolve_gcse_fallback_bank_path('OCR', 'COMBINED'))
+
+	def test_aqa_gcse_combined_has_no_dedicated_fallback_bank(self):
+		self.assertIsNone(resolve_gcse_fallback_bank_path('AQA', 'COMBINED'))
+
+
+class GCSECombinedSubjectValidationTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='combined@example.com',
+			username='combined-user',
+			password='testpass123',
+		)
+		self.client.force_authenticate(user=self.user)
+		self.topics_url = reverse('gcse-topics')
+
+	def test_get_gcse_topics_accepts_combined_subject_filter(self):
+		response = self.client.get(
+			self.topics_url,
+			{
+				'exam_board': 'OCR',
+				'subject': 'COMBINED',
+			},
+		)
+
+		self.assertEqual(response.status_code, 200)
+
+	def test_invalid_gcse_subject_message_includes_combined(self):
+		response = self.client.get(
+			self.topics_url,
+			{
+				'exam_board': 'OCR',
+				'subject': 'NOT_A_SUBJECT',
+			},
+		)
+
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data['error'], GCSE_SUBJECT_ERROR_MESSAGE)
 
 
 class UserSessionsSerializerTests(APITestCase):

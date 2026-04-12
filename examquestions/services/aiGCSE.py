@@ -3,6 +3,8 @@ from django.conf import settings
 from functools import lru_cache
 import json
 
+from examquestions.models import GCSESubject
+
 
 MODEL_NAME = "gpt-4.1-mini"
 
@@ -41,7 +43,14 @@ def _create_json_chat_completion(messages, temperature, max_tokens):
 
 
 def _format_gcse_subject(subject):
-    return str(subject or "Science").strip().replace("_", " ").title()
+    normalized_subject = str(subject or "").strip().upper()
+    if not normalized_subject:
+        return "Science"
+
+    try:
+        return GCSESubject(normalized_subject).label
+    except ValueError:
+        return normalized_subject.replace("_", " ").title()
 
 
 def _format_gcse_tier(tier):
