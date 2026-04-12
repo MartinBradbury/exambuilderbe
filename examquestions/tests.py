@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage
 from accounts.models import CustomUser
-from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
+from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, GCSEScienceRoute, QuestionSession, QualificationPath, ServedQuestion
 from .services import ai, aiGCSE
 from .views import GCSE_SUBJECT_ERROR_MESSAGE, is_self_contained_ai_question, resolve_gcse_fallback_bank_path
 
@@ -869,6 +869,7 @@ class GCSEFlowTests(APITestCase):
 		self.assertEqual(session.gcse_subtopic, self.subtopic)
 		self.assertEqual(session.gcse_subcategory, self.subcategory)
 		self.assertEqual(session.gcse_subject, 'CHEMISTRY')
+		self.assertEqual(session.science_route, GCSEScienceRoute.SEPARATE)
 		self.assertEqual(session.gcse_tier, 'HIGHER')
 
 	@patch('examquestions.views.load_fallback_bank_for_gcse')
@@ -1121,6 +1122,7 @@ class UserSessionsSerializerTests(APITestCase):
 			gcse_subtopic=subtopic,
 			gcse_subcategory=subcategory,
 			gcse_subject='CHEMISTRY',
+			science_route=GCSEScienceRoute.SEPARATE,
 			gcse_tier='HIGHER',
 			exam_board='AQA',
 			number_of_questions=1,
@@ -1138,6 +1140,34 @@ class UserSessionsSerializerTests(APITestCase):
 		self.assertEqual(response.data[0]['topic_name'], 'Atomic structure')
 		self.assertEqual(response.data[0]['subtopic_name'], 'Atomic models')
 		self.assertEqual(response.data[0]['subcategory_name'], 'Electronic structure')
+		self.assertEqual(response.data[0]['science_route'], GCSEScienceRoute.SEPARATE)
+
+	def test_get_user_sessions_returns_combined_gcse_science_route(self):
+		topic = GCSEScienceTopic.objects.create(
+			topic='Energy changes',
+			exam_board='OCR',
+			subject='COMBINED',
+			tier='FOUNDATION',
+		)
+		QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.GCSE_SCIENCE,
+			gcse_topic=topic,
+			gcse_subject='COMBINED',
+			science_route=GCSEScienceRoute.COMBINED,
+			gcse_tier='FOUNDATION',
+			exam_board='OCR',
+			number_of_questions=1,
+			total_score=1,
+			total_available=1,
+		)
+
+		response = self.client.get(self.url)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data), 1)
+		self.assertEqual(response.data[0]['qualification'], QualificationPath.GCSE_SCIENCE)
+		self.assertEqual(response.data[0]['science_route'], GCSEScienceRoute.COMBINED)
 
 	def test_get_user_sessions_still_returns_history_after_soft_reset(self):
 		topic = BiologyTopic.objects.create(topic='Inheritance', exam_board='AQA')

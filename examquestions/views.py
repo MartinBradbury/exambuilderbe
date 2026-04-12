@@ -18,6 +18,7 @@ from .models import (
     ServedQuestion,
     QualificationPath,
     GCSESubject,
+    GCSEScienceRoute,
     GCSETier,
 )
 from accounts.models import CustomUser, QuestionUsage, UserEntitlement
@@ -567,6 +568,11 @@ def prepare_alevel_generation(user, board_key, topic_id, subtopic_id, subcategor
 
 def prepare_gcse_generation(user, board_key, topic_id, subtopic_id, subcategory_id, gcse_subject, gcse_tier, number):
     gcse_topic = GCSEScienceTopic.objects.get(id=topic_id, exam_board=board_key, subject=gcse_subject)
+    science_route = (
+        GCSEScienceRoute.COMBINED
+        if gcse_subject == GCSESubject.COMBINED
+        else GCSEScienceRoute.SEPARATE
+    )
 
     gcse_subtopic = None
     if subtopic_id:
@@ -611,6 +617,7 @@ def prepare_gcse_generation(user, board_key, topic_id, subtopic_id, subcategory_
             "gcse_subtopic": gcse_subtopic,
             "gcse_subcategory": gcse_subcategory,
             "gcse_subject": gcse_subject,
+            "science_route": science_route,
             "gcse_tier": gcse_tier,
             "exam_board": board_key,
             "number_of_questions": number,

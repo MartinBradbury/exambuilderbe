@@ -21,6 +21,11 @@ class GCSESubject(models.TextChoices):
     COMBINED = "COMBINED", "Combined Science"
 
 
+class GCSEScienceRoute(models.TextChoices):
+    COMBINED = "combined", "Combined"
+    SEPARATE = "separate", "Separate"
+
+
 class GCSETier(models.TextChoices):
     FOUNDATION = "FOUNDATION", "Foundation"
     HIGHER = "HIGHER", "Higher"
@@ -181,6 +186,7 @@ class QuestionSession(models.Model):
     )
     exam_board = models.CharField(max_length=50)
     gcse_subject = models.CharField(max_length=16, choices=GCSESubject.choices, blank=True)
+    science_route = models.CharField(max_length=16, choices=GCSEScienceRoute.choices, blank=True)
     gcse_tier = models.CharField(max_length=16, choices=GCSETier.choices, blank=True)
     number_of_questions = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     total_score = models.PositiveIntegerField(default=0)
@@ -208,7 +214,7 @@ class QuestionSession(models.Model):
         if self.qualification == QualificationPath.ALEVEL_BIOLOGY:
             if not self.topic_id:
                 raise ValidationError("A-level Biology sessions require a topic.")
-            if self.gcse_topic_id or self.gcse_subject or self.gcse_tier:
+            if self.gcse_topic_id or self.gcse_subject or self.gcse_tier or self.science_route:
                 raise ValidationError("A-level Biology sessions cannot include GCSE fields.")
             if self.subtopic and self.subtopic.topic_id != self.topic_id:
                 raise ValidationError("Selected subtopic doesn’t belong to the chosen topic.")
@@ -217,14 +223,17 @@ class QuestionSession(models.Model):
         elif self.qualification == QualificationPath.GCSE_SCIENCE:
             if not self.gcse_topic_id:
                 raise ValidationError("GCSE Science sessions require a GCSE topic.")
-            if not self.gcse_subject or not self.gcse_tier:
-                raise ValidationError("GCSE Science sessions require subject and tier.")
+            if not self.gcse_subject or not self.gcse_tier or not self.science_route:
+                raise ValidationError("GCSE Science sessions require subject, tier, and science route.")
             if self.topic_id or self.subtopic_id or self.subcategory_id:
                 raise ValidationError("GCSE Science sessions cannot include A-level Biology topic fields.")
             if self.gcse_topic and self.gcse_topic.subject != self.gcse_subject:
                 raise ValidationError("Selected GCSE topic does not match the GCSE subject.")
             if self.gcse_topic and self.gcse_topic.tier != self.gcse_tier:
                 raise ValidationError("Selected GCSE topic does not match the GCSE tier.")
+            expected_route = GCSEScienceRoute.COMBINED if self.gcse_subject == GCSESubject.COMBINED else GCSEScienceRoute.SEPARATE
+            if self.science_route != expected_route:
+                raise ValidationError("GCSE science route does not match the selected GCSE subject.")
             if self.gcse_subtopic and self.gcse_subtopic.topic_id != self.gcse_topic_id:
                 raise ValidationError("Selected GCSE subtopic does not belong to the chosen GCSE topic.")
             if self.gcse_subcategory and self.gcse_subcategory.subtopic.topic_id != self.gcse_topic_id:

@@ -47,6 +47,7 @@ class GCSESubCategoryListSerializer(serializers.ModelSerializer):
 
 class QuestionSessionSerializer(serializers.ModelSerializer):
     level = serializers.SerializerMethodField()
+    science_route = serializers.SerializerMethodField()
     topic = serializers.SerializerMethodField()
     subtopic = serializers.StringRelatedField(read_only=True)
     subcategory = serializers.StringRelatedField(read_only=True)
@@ -68,6 +69,9 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
         if obj.gcse_topic:
             return str(obj.gcse_topic)
         return None
+
+    def get_science_route(self, obj):
+        return obj.science_route or None
 
     def get_topic_name(self, obj):
         if obj.topic:
@@ -95,6 +99,7 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "level",
+            "science_route",
             "qualification",
             "topic",
             "subtopic",
