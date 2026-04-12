@@ -1,0 +1,669 @@
+{
+  "C1 Atomic Structure and the Periodic Table": [
+    {
+      "question": "State the three subatomic particles found in an atom. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Proton (1 mark)",
+        "Neutron (1 mark)",
+        "Electron (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the charge of a proton and an electron. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Proton has a positive charge (1 mark)",
+        "Electron has a negative charge (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what an isotope is. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Atoms of the same element (1 mark)",
+        "With different numbers of neutrons (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the difference between an element and a compound. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "An element contains only one type of atom (1 mark)",
+        "A compound contains two or more elements chemically bonded together (1 mark)"
+      ]
+    },
+    {
+      "question": "State what a mixture is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Two or more substances not chemically bonded together (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how filtration separates a mixture. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "An insoluble solid is trapped by the filter paper (1 mark)",
+        "The liquid / filtrate passes through (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how simple distillation works. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The solution is heated (1 mark)",
+        "The solvent evaporates / boils first (1 mark)",
+        "The vapour is condensed and collected (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how paper chromatography can separate inks. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Different substances have different solubilities in the solvent (1 mark)",
+        "They move at different speeds (1 mark)",
+        "So they travel different distances up the paper (1 mark)",
+        "This produces separate spots (1 mark)"
+      ]
+    }
+  ],
+  "C2 Bonding, Structure, and the Properties of Matter": [
+    {
+      "question": "Explain how an ionic bond forms. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Electrons are transferred between atoms (1 mark)",
+        "This forms oppositely charged ions (1 mark)",
+        "These ions are held together by strong electrostatic attraction (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how a covalent bond forms. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Atoms share pairs of electrons (1 mark)",
+        "So each atom gains a full outer shell (1 mark)"
+      ]
+    },
+    {
+      "question": "State one property of ionic compounds. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Any one from high melting point / conduct electricity when molten or in solution / brittle (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why graphite conducts electricity. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Graphite has delocalised electrons (1 mark)",
+        "These electrons can move through the structure and carry charge (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one difference between diamond and graphite. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Diamond has each carbon atom bonded to four others whereas graphite has each carbon atom bonded to three others (1 mark)",
+        "Diamond is hard and does not conduct electricity whereas graphite is soft and conducts (1 mark)"
+      ]
+    },
+    {
+      "question": "State what an alloy is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A mixture of a metal with one or more other elements (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why alloys are harder than pure metals. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Atoms in an alloy are different sizes (1 mark)",
+        "This distorts the layers (1 mark)",
+        "So the layers cannot slide over each other as easily (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the structure and one use of graphene. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Single layer of carbon atoms (1 mark)",
+        "Atoms arranged in hexagons (1 mark)",
+        "Strong / conducts electricity (1 mark)",
+        "Used in electronics / composites / sensors (1 mark)"
+      ]
+    }
+  ],
+  "C3 Quantitative Chemistry": [
+    {
+      "question": "State why chemical equations must be balanced. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "To show the same number of each type of atom on both sides (1 mark)"
+      ]
+    },
+    {
+      "question": "Calculate the relative formula mass of H2O. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "2 × 1 for hydrogen (1 mark)",
+        "16 for oxygen giving 18 (1 mark)"
+      ]
+    },
+    {
+      "question": "State what one mole of a substance means. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The amount of substance containing 6.02 × 10^23 particles (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what percentage yield measures. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Compares the actual amount of product made with the theoretical amount (1 mark)",
+        "Shows how much product was obtained from the reaction (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by atom economy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A measure of how much of the reactants become useful products (1 mark)",
+        "Shown as a percentage (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what is meant by concentration. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The amount of solute dissolved in a given volume of solution (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why atom economy is important in industry. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A higher atom economy means more of the reactants become useful product (1 mark)",
+        "Less waste is produced (1 mark)",
+        "This reduces costs / environmental impact (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how a titration is used to find the volume of acid needed to neutralise an alkali. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Measure a fixed volume of alkali into a flask (1 mark)",
+        "Add indicator (1 mark)",
+        "Add acid from a burette until the end point is reached (1 mark)",
+        "Record the volume of acid used (1 mark)"
+      ]
+    }
+  ],
+  "C4 Chemical Changes": [
+    {
+      "question": "State what happens in an oxidation reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Gain of oxygen / loss of electrons (1 mark)"
+      ]
+    },
+    {
+      "question": "State what happens in a reduction reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Loss of oxygen / gain of electrons (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens when an acid reacts with an alkali. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Neutralisation occurs (1 mark)",
+        "A salt and water are produced (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why magnesium reacts more vigorously with acid than copper. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Magnesium is higher in the reactivity series (1 mark)",
+        "So it loses electrons / reacts more easily (1 mark)"
+      ]
+    },
+    {
+      "question": "State the products formed when copper chloride solution is electrolysed using inert electrodes. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Copper (1 mark)",
+        "Chlorine (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens at the negative electrode during electrolysis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Positive ions gain electrons (1 mark)",
+        "Reduction occurs (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how displacement reactions show the reactivity of metals. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A more reactive metal displaces a less reactive metal from its compound (1 mark)",
+        "A less reactive metal cannot displace a more reactive metal (1 mark)",
+        "So the reaction shows which metal is more reactive (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how to make a pure dry salt from an acid and an insoluble base. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Add excess insoluble base to the acid until no more reacts (1 mark)",
+        "Filter to remove excess solid (1 mark)",
+        "Heat the filtrate to evaporate some water (1 mark)",
+        "Allow crystals to form and dry them (1 mark)"
+      ]
+    }
+  ],
+  "C5 Energy Changes": [
+    {
+      "question": "State what is meant by an exothermic reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A reaction that transfers energy to the surroundings (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by an endothermic reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A reaction that takes in energy from the surroundings (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one energy change in an exothermic reaction. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Energy is released to the surroundings (1 mark)",
+        "Temperature of the surroundings increases (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one energy change in an endothermic reaction. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Energy is taken in from the surroundings (1 mark)",
+        "Temperature of the surroundings decreases (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is shown in a reaction profile diagram. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "The energy changes during a reaction (1 mark)",
+        "The activation energy / overall energy change can be shown (1 mark)"
+      ]
+    },
+    {
+      "question": "State what activation energy is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The minimum amount of energy particles must have to react (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why hand warmers are useful examples of exothermic reactions. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "They release energy to the surroundings (1 mark)",
+        "This increases temperature (1 mark)",
+        "So they warm the hands (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why sports injury packs often use endothermic reactions. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "The reaction takes in energy from the surroundings (1 mark)",
+        "Energy is taken from the injured area (1 mark)",
+        "This lowers the temperature (1 mark)",
+        "Cooling can reduce pain / swelling (1 mark)"
+      ]
+    }
+  ],
+  "C6 The Rate and Extent of Chemical Change": [
+    {
+      "question": "State what is meant by the rate of reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "How fast reactants are changed into products (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain collision theory. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Particles must collide to react (1 mark)",
+        "Only collisions with enough energy lead to a reaction (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how increasing temperature affects the rate of reaction. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Particles gain kinetic energy (1 mark)",
+        "They move faster and collide more often (1 mark)",
+        "More collisions have energy greater than the activation energy (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why a catalyst speeds up a reaction. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It provides an alternative reaction pathway (1 mark)",
+        "With a lower activation energy (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by a reversible reaction. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A reaction in which the products can react to form the original reactants (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe dynamic equilibrium. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Forward and reverse reactions continue (1 mark)",
+        "At the same rate (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the difference between exothermic and endothermic reactions. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Exothermic reactions transfer energy to the surroundings (1 mark)",
+        "Endothermic reactions take in energy from the surroundings (1 mark)",
+        "Temperature increases in exothermic / decreases in endothermic reactions (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how increasing concentration can speed up a reaction between a solution and a solid. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "There are more reacting particles in a given volume (1 mark)",
+        "So collisions happen more often (1 mark)",
+        "This increases the frequency of successful collisions (1 mark)",
+        "So the rate of reaction increases (1 mark)"
+      ]
+    }
+  ],
+  "C7 Organic Chemistry": [
+    {
+      "question": "State what crude oil is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A mixture of hydrocarbons (1 mark)"
+      ]
+    },
+    {
+      "question": "State what a hydrocarbon is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A compound made of hydrogen and carbon only (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how fractional distillation separates crude oil. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Crude oil is heated so that most of it vaporises (1 mark)",
+        "The vapours rise through the fractionating column (1 mark)",
+        "Different fractions condense at different temperatures / boiling points (1 mark)"
+      ]
+    },
+    {
+      "question": "State the general formula for alkanes. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "CnH2n+2 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why alkanes are described as saturated. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "They contain only single carbon-carbon bonds (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens during cracking. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Long-chain hydrocarbons are broken down (1 mark)",
+        "Into smaller alkanes and alkenes (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why cracking is useful. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Produces more useful smaller molecules (1 mark)",
+        "Produces alkenes used to make polymers (1 mark)",
+        "Produces fuels in greater demand such as petrol (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one disadvantage of burning hydrocarbon fuels. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Carbon dioxide is produced (1 mark)",
+        "This contributes to climate change (1 mark)",
+        "If combustion is incomplete carbon monoxide may be produced (1 mark)",
+        "This is toxic / harmful to health (1 mark)"
+      ]
+    }
+  ],
+  "C8 Chemical Analysis": [
+    {
+      "question": "State what pH tells you about a solution. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "How acidic or alkaline the solution is (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the colour of universal indicator in a strong acid. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Red (1 mark)"
+      ]
+    },
+    {
+      "question": "State the test result for carbonate ions. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Add dilute acid / effervescence observed (1 mark)",
+        "Carbon dioxide turns limewater milky (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the flame test result for sodium ions. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Yellow / orange-yellow flame (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why pure substances have a sharp melting point. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A pure substance has a fixed composition (1 mark)",
+        "So it melts at one specific temperature (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how chromatography can be used to test if a sample is pure. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A pure substance produces one spot (1 mark)",
+        "A mixture produces more than one spot (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why solvent fronts are marked immediately in chromatography. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Because the solvent evaporates (1 mark)",
+        "So the solvent front would no longer be visible (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how gas tests identify oxygen and hydrogen. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Oxygen relights a glowing splint (1 mark)",
+        "Hydrogen burns with a squeaky pop (1 mark)",
+        "The tests are carried out by holding a lit / glowing splint near the gas (1 mark)",
+        "The observations identify the gases (1 mark)"
+      ]
+    }
+  ],
+  "C9 Chemistry of the Atmosphere": [
+    {
+      "question": "State the approximate percentage of nitrogen in the Earth's atmosphere. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "About 78% (1 mark)"
+      ]
+    },
+    {
+      "question": "State the approximate percentage of oxygen in the Earth's atmosphere. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "About 21% (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how carbon dioxide is removed from the atmosphere. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Taken in by plants during photosynthesis (1 mark)",
+        "Dissolves in the oceans / forms carbonate rocks (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how human activity has increased the amount of carbon dioxide in the atmosphere. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Burning fossil fuels releases carbon dioxide (1 mark)",
+        "Deforestation reduces the amount removed by photosynthesis (1 mark)"
+      ]
+    },
+    {
+      "question": "State one greenhouse gas. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Any one from carbon dioxide / methane / water vapour (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how greenhouse gases cause global warming. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "They absorb infrared radiation emitted from the Earth's surface (1 mark)",
+        "This traps energy in the atmosphere (1 mark)",
+        "So the average temperature of the Earth increases (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one effect of global climate change. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Rising sea levels / changes in rainfall / loss of habitats / changes in distribution of species (1 mark)",
+        "Linked consequence (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain one way scientists think the early atmosphere changed over time. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Early atmosphere had a high concentration of carbon dioxide (1 mark)",
+        "Volcanoes released gases into the atmosphere (1 mark)",
+        "Carbon dioxide decreased as oceans formed / photosynthetic organisms evolved (1 mark)",
+        "Oxygen increased due to photosynthesis by algae / plants (1 mark)"
+      ]
+    }
+  ],
+  "C10 Using Resources": [
+    {
+      "question": "State what is meant by a finite resource. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A resource that is being used up faster than it is replaced / will run out (1 mark)"
+      ]
+    },
+    {
+      "question": "State one reason why potable water is important. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "It is safe for drinking (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one method used to produce potable water from fresh water. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Filtration removes solids (1 mark)",
+        "Sterilisation kills microorganisms (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why desalination is used in some places. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Fresh water is limited / there is a shortage of fresh water (1 mark)",
+        "Desalination removes salt from sea water to make it safe to drink (1 mark)"
+      ]
+    },
+    {
+      "question": "State what corrosion is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The destruction of materials by chemical reactions with the environment (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what is needed for iron to rust. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Oxygen (1 mark)",
+        "Water (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how galvanising prevents rusting. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The iron is coated with zinc (1 mark)",
+        "This acts as a barrier to oxygen and water (1 mark)",
+        "Zinc is more reactive so it provides sacrificial protection if the coating is damaged (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one benefit of recycling metals. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Less energy is needed than extracting metals from ores (1 mark)",
+        "Conserves finite resources (1 mark)",
+        "Reduces landfill waste (1 mark)",
+        "Reduces environmental damage from mining (1 mark)"
+      ]
+    }
+  ]
+}

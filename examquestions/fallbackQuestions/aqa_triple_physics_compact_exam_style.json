@@ -1,0 +1,467 @@
+{
+  "P1 Energy": [
+    {
+      "question": "State the equation linking energy transferred, power and time. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Energy transferred = power × time (1 mark)"
+      ]
+    },
+    {
+      "question": "Define kinetic energy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Energy of movement (1 mark)",
+        "Depends on mass and speed (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the principle of conservation of energy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Energy cannot be created or destroyed (1 mark)",
+        "It can only be transferred between stores (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what is meant by efficiency. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Useful energy output divided by total energy input (1 mark)",
+        "Can be multiplied by 100 to give a percentage (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how insulation reduces energy transfer in a house. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "It reduces heat transfer to the surroundings (1 mark)",
+        "Less energy is wasted (1 mark)",
+        "So the house is more energy efficient (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one advantage of a renewable energy resource. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It is replaced naturally (1 mark)",
+        "It will not run out / less polluting (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain one disadvantage of a non-renewable energy resource. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It is finite (1 mark)",
+        "It will eventually run out / may produce greenhouse gases (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare renewable and non-renewable energy resources. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Renewable resources will be replenished whereas non-renewable resources are finite (1 mark)",
+        "Burning fossil fuels produces greenhouse gases (1 mark)",
+        "Some renewables are less reliable because output can vary (1 mark)",
+        "Cost / reliability / environmental impact must be considered (1 mark)"
+      ]
+    }
+  ],
+  "P2 Electricity": [
+    {
+      "question": "State what current is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The rate of flow of charge (1 mark)"
+      ]
+    },
+    {
+      "question": "State the unit of potential difference. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Volt / V (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the equation linking charge, current and time. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Charge = current × time (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the difference between a series circuit and a parallel circuit. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A series circuit has one loop whereas a parallel circuit has branches (1 mark)",
+        "In a parallel circuit components are on separate branches (1 mark)"
+      ]
+    },
+    {
+      "question": "State one rule for current in a series circuit. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The current is the same at every point (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what happens to resistance when the temperature of a metal conductor increases. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Resistance increases (1 mark)",
+        "Because ions vibrate more and oppose the flow of electrons (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how an ammeter and a voltmeter are connected in a circuit. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "An ammeter is connected in series (1 mark)",
+        "A voltmeter is connected in parallel (1 mark)",
+        "The voltmeter is placed across the component being measured (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why adding bulbs in series makes them dimmer. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Total resistance increases (1 mark)",
+        "Current in the circuit decreases (1 mark)",
+        "Less energy is transferred by each bulb each second (1 mark)",
+        "So each bulb is less bright (1 mark)"
+      ]
+    }
+  ],
+  "P3 Particle Model of Matter": [
+    {
+      "question": "State the equation for density. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Density = mass ÷ volume (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the arrangement of particles in a solid. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Particles are close together (1 mark)",
+        "Particles vibrate about fixed positions (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one difference between particles in a liquid and particles in a gas. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Gas particles are further apart (1 mark)",
+        "Gas particles move more freely / faster (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by internal energy. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "The total energy stored in the particles of a system (1 mark)",
+        "Includes both kinetic and potential energy of the particles (1 mark)"
+      ]
+    },
+    {
+      "question": "State what happens to temperature during a change of state. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Temperature stays constant while the substance changes state (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why heating a gas in a sealed container increases the pressure. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Gas particles gain kinetic energy (1 mark)",
+        "They move faster (1 mark)",
+        "They collide with the walls of the container more often / with greater force (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe specific heat capacity. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Energy needed to raise the temperature of 1 kg of a substance by 1°C (1 mark)",
+        "Units are J/kg°C / J kg^-1 °C^-1 (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why a substance needs energy to melt. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Energy is transferred to the substance (1 mark)",
+        "This increases the internal energy (1 mark)",
+        "For melting the energy is used to overcome forces between particles (1 mark)",
+        "So the particles can move past each other as a liquid (1 mark)"
+      ]
+    }
+  ],
+  "P4 Atomic Structure": [
+    {
+      "question": "State what is meant by a radioactive substance. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A substance with unstable nuclei that emit radiation (1 mark)"
+      ]
+    },
+    {
+      "question": "Name the three main types of nuclear radiation. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Alpha (1 mark)",
+        "Beta (1 mark)",
+        "Gamma (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one property of alpha radiation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "It is strongly ionising (1 mark)",
+        "It has a short range / is stopped by paper (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the difference between contamination and irradiation. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Contamination is when radioactive material gets onto or into an object (1 mark)",
+        "Irradiation is exposure to radiation without the object becoming radioactive (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by half-life. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The time taken for the count rate or amount of a radioactive substance to fall to half its original value (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one use of radiation in medicine. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Gamma rays can kill cancer cells / radioactive tracers can be used in diagnosis (1 mark)",
+        "Linked medical purpose (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why radioactive decay is described as random. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "You cannot predict exactly when a particular nucleus will decay (1 mark)",
+        "But you can predict the overall pattern for a large number of nuclei (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how shielding can reduce the count rate from a radioactive source. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Different materials absorb radiation (1 mark)",
+        "Alpha is stopped by paper / beta by aluminium / gamma by thick lead or concrete (1 mark)",
+        "As more shielding is added less radiation reaches the detector (1 mark)",
+        "So the count rate falls (1 mark)"
+      ]
+    }
+  ],
+  "P5 Forces": [
+    {
+      "question": "State the unit of force. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Newton / N (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the equation linking force, mass and acceleration. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Force = mass × acceleration (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the difference between mass and weight. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Mass is the amount of matter in an object (1 mark)",
+        "Weight is the force acting on an object due to gravity (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by resultant force. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The overall force acting on an object after all forces are combined (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens when the resultant force on an object is zero. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "The object remains at rest or continues at constant velocity (1 mark)",
+        "There is no acceleration (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what causes thinking distance to increase. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Driver tiredness / alcohol / drugs / distractions (1 mark)",
+        "The driver takes longer to react (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what is meant by momentum. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Momentum = mass × velocity (1 mark)",
+        "It is a measure of the motion of an object (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how a seat belt reduces injury in a crash. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "It increases the time taken for the passenger to stop (1 mark)",
+        "This reduces the rate of change of momentum (1 mark)",
+        "So the force acting on the passenger is reduced (1 mark)",
+        "This reduces the chance of serious injury (1 mark)"
+      ]
+    }
+  ],
+  "P6 Waves": [
+    {
+      "question": "State what is meant by wavelength. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The distance between two corresponding points on adjacent waves (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by frequency. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The number of complete waves passing a point each second (1 mark)"
+      ]
+    },
+    {
+      "question": "Write the equation linking wave speed, frequency and wavelength. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Wave speed = frequency × wavelength (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the difference between a transverse wave and a longitudinal wave. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "In a transverse wave the oscillations are perpendicular to the direction of travel (1 mark)",
+        "In a longitudinal wave the oscillations are parallel to the direction of travel (1 mark)"
+      ]
+    },
+    {
+      "question": "State one part of the electromagnetic spectrum used for cooking food. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Microwaves (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why infra-red radiation is useful in heaters. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Infra-red radiation transfers energy by radiation (1 mark)",
+        "It is absorbed by surfaces and warms them (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens when a wave is refracted. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The wave changes direction (1 mark)",
+        "Because it changes speed when it enters a different medium (1 mark)",
+        "Its wavelength also changes (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why ultrasound can be used for medical scans. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Ultrasound waves reflect at boundaries between different tissues (1 mark)",
+        "The reflected waves are detected (1 mark)",
+        "A computer uses the echoes to build up an image (1 mark)",
+        "Ultrasound is non-ionising so it is safer than X-rays for some uses (1 mark)"
+      ]
+    }
+  ],
+  "P7 Magnetism and Electromagnetism": [
+    {
+      "question": "State one property of a permanent magnet. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Produces its own magnetic field / remains magnetic without an external field (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the shape of a magnetic field around a bar magnet. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Field lines go from the north pole to the south pole (1 mark)",
+        "The field is strongest near the poles / field lines curve around the magnet (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what an induced magnet is. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A material that becomes magnetic when placed in a magnetic field (1 mark)",
+        "It loses most or all magnetism when removed from the field (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how an electromagnet is made. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A wire is wrapped into a coil / solenoid (1 mark)",
+        "Current passes through the coil (1 mark)"
+      ]
+    },
+    {
+      "question": "State two ways to increase the strength of an electromagnet. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Increase the current (1 mark)",
+        "Add more turns to the coil / use an iron core (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the motor effect. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A force acts on a current-carrying conductor in a magnetic field (1 mark)",
+        "The magnetic field around the wire interacts with the external magnetic field (1 mark)",
+        "This causes the wire / conductor to move (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one use of an electromagnet. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Used in scrapyard cranes / relays / electric bells / loudspeakers (1 mark)",
+        "Linked explanation of how magnetism helps the device work (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why an iron core makes an electromagnet stronger. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Iron is a magnetic material (1 mark)",
+        "The iron becomes magnetised when current flows in the coil (1 mark)",
+        "This adds to the magnetic field produced by the coil (1 mark)",
+        "So the overall electromagnet is stronger (1 mark)"
+      ]
+    }
+  ]
+}

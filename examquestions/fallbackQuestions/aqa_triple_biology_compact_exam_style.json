@@ -1,0 +1,482 @@
+{
+  "B1 Cell Biology": [
+    {
+      "question": "State two sub-cellular structures found in an animal cell. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Nucleus (1 mark)",
+        "Cell membrane (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the function of mitochondria. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Site of aerobic respiration (1 mark)",
+        "Releases energy for the cell (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain one difference between prokaryotic and eukaryotic cells. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Prokaryotic cells do not have a nucleus (1 mark)",
+        "Their DNA is free in the cytoplasm / may have plasmids (1 mark)"
+      ]
+    },
+    {
+      "question": "State the equation used to calculate magnification. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Magnification = image size ÷ real size (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe diffusion. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Net movement of particles from an area of high concentration to an area of low concentration (1 mark)",
+        "Down a concentration gradient (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by osmosis. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Net movement of water molecules (1 mark)",
+        "Through a partially permeable membrane (1 mark)",
+        "From a dilute solution to a more concentrated solution (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why active transport is needed to absorb mineral ions by root hair cells. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "The concentration of mineral ions in the soil can be lower than in the root hair cell (1 mark)",
+        "Mineral ions move against the concentration gradient (1 mark)",
+        "Energy from respiration is required (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what happens during mitosis. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "The DNA is copied before division (1 mark)",
+        "One set of chromosomes is pulled to each end of the cell (1 mark)",
+        "The nucleus divides (1 mark)",
+        "Two genetically identical daughter cells are produced (1 mark)"
+      ]
+    }
+  ],
+  "B2 Organisation": [
+    {
+      "question": "State the role of enzymes in the body. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Biological catalysts (1 mark)",
+        "Speed up chemical reactions (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how protease helps in digestion. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Protease breaks down proteins (1 mark)",
+        "Into amino acids (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the role of bile in digestion. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Bile neutralises stomach acid (1 mark)",
+        "Produces alkaline conditions in the small intestine (1 mark)",
+        "Emulsifies lipids / increases the surface area for lipase (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the function of the heart. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Pumps blood (1 mark)",
+        "Around the body / to the lungs (1 mark)"
+      ]
+    },
+    {
+      "question": "Compare arteries and veins. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Arteries carry blood away from the heart whereas veins carry blood towards the heart (1 mark)",
+        "Arteries have thicker muscular walls (1 mark)",
+        "Veins have valves / a larger lumen (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how xylem tissue is adapted to its function. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Xylem transports water and mineral ions (1 mark)",
+        "Cells are dead and hollow / form a continuous tube (1 mark)",
+        "Walls are strengthened with lignin (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe transpiration. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Water evaporates from the surface of mesophyll cells (1 mark)",
+        "Water vapour diffuses out through stomata (1 mark)",
+        "More water is pulled up through the xylem (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe translocation in plants. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Movement of dissolved sugars (1 mark)",
+        "In the phloem (1 mark)",
+        "From leaves to areas where needed or stored (1 mark)",
+        "Can occur in both directions (1 mark)"
+      ]
+    }
+  ],
+  "B3 Infection and Response": [
+    {
+      "question": "State what is meant by a pathogen. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A microorganism that causes disease (1 mark)"
+      ]
+    },
+    {
+      "question": "Name two types of pathogen. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Any two from bacteria / viruses / fungi / protists (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how bacterial diseases can make people ill. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Bacteria reproduce rapidly inside the body (1 mark)",
+        "Some release toxins that damage tissues / make people feel ill (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how viruses cause disease. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Viruses enter living cells (1 mark)",
+        "They reproduce inside cells and damage / burst them (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how white blood cells defend the body against pathogens. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "They can engulf pathogens by phagocytosis (1 mark)",
+        "They can produce antibodies (1 mark)",
+        "They can produce antitoxins (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how vaccination protects people from disease. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A vaccine contains dead / inactive pathogens or their antigens (1 mark)",
+        "This stimulates white blood cells to produce antibodies / memory cells (1 mark)",
+        "The body responds more quickly if the real pathogen enters (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why antibiotics do not work against viruses. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Antibiotics target bacterial processes / structures (1 mark)",
+        "Viruses reproduce inside body cells and do not have these targets (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how new medicines are tested before use. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "They are first tested in the laboratory (1 mark)",
+        "Then tested on tissues / live animals (1 mark)",
+        "Clinical trials are carried out on humans (1 mark)",
+        "They are checked for toxicity, efficacy and correct dosage (1 mark)"
+      ]
+    }
+  ],
+  "B4 Bioenergetics": [
+    {
+      "question": "Write the word equation for photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Carbon dioxide + water (1 mark)",
+        "Glucose + oxygen (1 mark)"
+      ]
+    },
+    {
+      "question": "State where photosynthesis takes place in a plant cell. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "Chloroplasts (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why light intensity can affect the rate of photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Light provides the energy for photosynthesis (1 mark)",
+        "At low light intensity light can be the limiting factor (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one use of glucose made in photosynthesis. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Used in respiration to release energy (1 mark)",
+        "Or converted to starch / cellulose / lipids / amino acids (1 mark)"
+      ]
+    },
+    {
+      "question": "State the word equation for aerobic respiration. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Glucose + oxygen (1 mark)",
+        "Carbon dioxide + water (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain one difference between aerobic and anaerobic respiration in animals. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Aerobic respiration uses oxygen whereas anaerobic respiration does not (1 mark)",
+        "Anaerobic respiration releases less energy / produces lactic acid (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how transpiration occurs. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Water evaporates from mesophyll cells (1 mark)",
+        "Water vapour diffuses out through stomata (1 mark)",
+        "More water is drawn up through the xylem (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how increasing temperature can affect the rate of transpiration. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Water molecules gain kinetic energy (1 mark)",
+        "Evaporation from the leaf cells happens faster (1 mark)",
+        "Diffusion of water vapour out of the leaf increases (1 mark)",
+        "So the rate of transpiration increases (1 mark)"
+      ]
+    }
+  ],
+  "B5 Homeostasis and Response": [
+    {
+      "question": "State what is meant by homeostasis. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "The regulation of the internal conditions of a cell or organism to maintain optimum conditions for function (1 mark)"
+      ]
+    },
+    {
+      "question": "State the three parts of a control system. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Receptors (1 mark)",
+        "Coordination centre (1 mark)",
+        "Effectors (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the role of receptors in the nervous system. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Detect stimuli / changes in the environment (1 mark)",
+        "Send information as electrical impulses (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what a reflex action is. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A rapid automatic response to a stimulus (1 mark)",
+        "It helps protect the body from harm (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how the eye focuses on a near object. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Ciliary muscles contract (1 mark)",
+        "Suspensory ligaments slacken (1 mark)",
+        "Lens becomes thicker / more curved (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how insulin lowers blood glucose concentration. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Causes glucose to move from the blood into body cells (1 mark)",
+        "Causes glucose to be converted into glycogen (1 mark)",
+        "This happens in the liver / muscles (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe two ways the body responds when body temperature is too high. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Sweating increases (1 mark)",
+        "Skin blood vessels dilate (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the role of hormones in the menstrual cycle. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "FSH causes an egg to mature (1 mark)",
+        "Oestrogen rebuilds the uterus lining (1 mark)",
+        "LH triggers ovulation (1 mark)",
+        "Progesterone maintains the uterus lining (1 mark)"
+      ]
+    }
+  ],
+  "B6 Inheritance, Variation and Evolution": [
+    {
+      "question": "State where chromosomes are found in a cell. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "In the nucleus (1 mark)"
+      ]
+    },
+    {
+      "question": "State what a gene is. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A short section of DNA that codes for a protein / characteristic (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe what is meant by an allele. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "A different version of a gene (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain the difference between genotype and phenotype. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Genotype is the combination of alleles an organism has (1 mark)",
+        "Phenotype is the characteristics shown by the organism (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by a dominant allele. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "An allele expressed when only one copy is present (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe natural selection. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Individuals with advantageous characteristics are more likely to survive (1 mark)",
+        "They are more likely to reproduce (1 mark)",
+        "So advantageous alleles become more common in the population (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain how antibiotic resistance can develop in bacteria. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Mutations produce variation in the bacterial population (1 mark)",
+        "Some bacteria are resistant to the antibiotic (1 mark)",
+        "Non-resistant bacteria are killed (1 mark)",
+        "Resistant bacteria survive and reproduce / pass on the resistance allele (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one risk of selective breeding. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Reduces genetic variation (1 mark)",
+        "The population may be more vulnerable to disease / inherited defects / environmental change (1 mark)"
+      ]
+    }
+  ],
+  "B7 Ecology": [
+    {
+      "question": "State what is meant by a population. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "All the organisms of one species in an area (1 mark)"
+      ]
+    },
+    {
+      "question": "State what is meant by a community. [1 mark]",
+      "mark": 1,
+      "mark_scheme": [
+        "All the populations of different species in an area / ecosystem (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe one abiotic factor that can affect the distribution of organisms. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Any one from temperature / light intensity / moisture / soil pH / wind intensity / carbon dioxide level (1 mark)",
+        "Linked effect on the organism or its distribution (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain what is meant by a trophic level. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "A feeding level in a food chain or food web (1 mark)",
+        "Shows the position of an organism in the transfer of biomass / energy (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe the role of decomposers in an ecosystem. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "Break down dead plants / animals and waste materials (1 mark)",
+        "Release mineral ions back into the soil (1 mark)",
+        "Recycle materials through the ecosystem (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why quadrats are used in ecological sampling. [2 marks]",
+      "mark": 2,
+      "mark_scheme": [
+        "Used to sample the distribution / abundance of organisms in an area (1 mark)",
+        "Useful when it is not practical to count every organism (1 mark)"
+      ]
+    },
+    {
+      "question": "Describe how a transect can be used to investigate distribution. [3 marks]",
+      "mark": 3,
+      "mark_scheme": [
+        "A line is laid across the area (1 mark)",
+        "Quadrats are placed at regular intervals along the line (1 mark)",
+        "This shows how distribution changes across the habitat (1 mark)"
+      ]
+    },
+    {
+      "question": "Explain why maintaining biodiversity is important. [4 marks]",
+      "mark": 4,
+      "mark_scheme": [
+        "Maintains stable ecosystems (1 mark)",
+        "Species may be useful in the future for food / medicine (1 mark)",
+        "Reduces the risk of extinction (1 mark)",
+        "Helps preserve habitats and genetic variation for future generations (1 mark)"
+      ]
+    }
+  ]
+}

@@ -43,12 +43,25 @@ import random
 import re
 
 
+EXAMQUESTIONS_DIR = Path(__file__).resolve().parent.parent / "examquestions"
+FALLBACK_QUESTIONS_DIR = EXAMQUESTIONS_DIR / "fallbackQuestions"
+
 # ------------------------------------------------------------
 # Exam board → local fallback question banks (same JSON schema)
 # ------------------------------------------------------------
 FALLBACK_QUESTION_PATHS = {
-    "OCR": Path(__file__).resolve().parent.parent / "examquestions/ocr_questions.json",
-    "AQA": Path(__file__).resolve().parent.parent / "examquestions/aqa_questions.json",
+    "OCR": FALLBACK_QUESTIONS_DIR / "ocr_questions.json",
+    "AQA": FALLBACK_QUESTIONS_DIR / "aqa_questions.json",
+}
+OCR_GCSE_SEPARATE_FALLBACK_PATHS = {
+    GCSESubject.BIOLOGY: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_biology_fallback_questions.json",
+    GCSESubject.CHEMISTRY: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_chemistry_fallback_questions.json",
+    GCSESubject.PHYSICS: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_physics_fallback_questions.json",
+}
+AQA_GCSE_SEPARATE_FALLBACK_PATHS = {
+    GCSESubject.BIOLOGY: FALLBACK_QUESTIONS_DIR / "aqa_triple_biology_compact_exam_style.json",
+    GCSESubject.CHEMISTRY: FALLBACK_QUESTIONS_DIR / "aqa_triple_chemistry_compact_exam_style.json",
+    GCSESubject.PHYSICS: FALLBACK_QUESTIONS_DIR / "aqa_triple_physics_compact_exam_style.json",
 }
 ALLOWED_BOARDS = {"OCR", "AQA"}
 ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
@@ -334,20 +347,47 @@ def build_gcse_scope_metadata(topic, subtopic=None, subcategory=None, tier=None)
 
 
 @lru_cache(maxsize=None)
-def load_fallback_bank_for_board(exam_board: str) -> dict:
-    board_key = (exam_board or "").strip().upper()
-    path = FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
+def load_fallback_bank_from_path(path_value: str) -> dict:
+    path = Path(path_value)
 
-    logger.info("Exam board: %s | Using fallback file: %s | Exists: %s",
-                board_key, path, path.exists())
+    logger.info("Using fallback file: %s | Exists: %s", path, path.exists())
 
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
-        logger.warning("Fallback file NOT FOUND for %s at %s", board_key, path)
+        logger.warning("Fallback file NOT FOUND at %s", path)
         return {}
     # Let JSONDecodeError bubble up so the caller's except block handles it.
+
+
+def load_fallback_bank_for_board(exam_board: str) -> dict:
+    board_key = (exam_board or "").strip().upper()
+    path = FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
+
+    logger.info("Exam board: %s | Using fallback file: %s", board_key, path)
+    return load_fallback_bank_from_path(str(path))
+
+
+def resolve_gcse_fallback_bank_path(exam_board: str, gcse_subject: str) -> Path:
+    board_key = (exam_board or "").strip().upper()
+    normalized_subject = _normalize_gcse_subject(gcse_subject)
+    if board_key == "OCR":
+        return OCR_GCSE_SEPARATE_FALLBACK_PATHS.get(normalized_subject, FALLBACK_QUESTION_PATHS["OCR"])
+    if board_key == "AQA":
+        return AQA_GCSE_SEPARATE_FALLBACK_PATHS.get(normalized_subject, FALLBACK_QUESTION_PATHS["AQA"])
+    return FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
+
+
+def load_fallback_bank_for_gcse(exam_board: str, gcse_subject: str) -> dict:
+    path = resolve_gcse_fallback_bank_path(exam_board, gcse_subject)
+    logger.info(
+        "GCSE fallback routing | board=%s | subject=%s | file=%s",
+        (exam_board or "").strip().upper(),
+        gcse_subject,
+        path,
+    )
+    return load_fallback_bank_from_path(str(path))
 
 
 def get_or_create_entitlement(user):
@@ -584,7 +624,7 @@ def generate_exam_questions(request):
                     return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
                 gcse_subcategory = GCSEScienceSubCategory.objects.get(id=subcategory_id, subtopic_id=gcse_subtopic.id)
 
-            all_fallback_questions = load_fallback_bank_for_board(board_key)
+            all_fallback_questions = load_fallback_bank_for_gcse(board_key, gcse_subject)
             scope_title, scope_key = build_gcse_scope_metadata(gcse_topic, gcse_subtopic, gcse_subcategory, gcse_tier)
             served_questions = get_user_served_question_set(request.user, board_key, scope_key)
             fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, gcse_topic.topic, allow_generic=True)

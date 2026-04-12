@@ -7,7 +7,7 @@ from accounts.models import QuestionUsage
 from accounts.models import CustomUser
 from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, QuestionSession, QualificationPath, ServedQuestion
 from .services import ai, aiGCSE
-from .views import is_self_contained_ai_question
+from .views import is_self_contained_ai_question, resolve_gcse_fallback_bank_path
 
 
 def _mock_openai_json_response(payload):
@@ -587,6 +587,100 @@ class GCSEFlowTests(APITestCase):
 		self.mark_url = reverse('mark-user-answer')
 		self.client.force_authenticate(user=self.user)
 
+	def _assert_aqa_subject_fallback_response(self, subject, question_text, mark_scheme):
+		topic = GCSEScienceTopic.objects.create(
+			topic=f'{subject.title()} fallback topic',
+			exam_board='AQA',
+			subject=subject,
+			tier='HIGHER',
+		)
+
+		with patch('examquestions.views.load_fallback_bank_for_gcse') as mock_load_fallback_bank_for_gcse, patch('examquestions.views.generate_gcse_questions') as mock_generate_gcse_questions:
+			mock_load_fallback_bank_for_gcse.return_value = {
+				'Generic GCSE fallback': [
+					{
+						'question': question_text,
+						'mark': 1,
+						'mark_scheme': [mark_scheme],
+					},
+				],
+			}
+			mock_generate_gcse_questions.return_value = {
+				'questions': [
+					{
+						'question': 'A student investigates the effect of pH on enzyme activity. Evaluate the method used and suggest improvements. [6 marks]',
+						'total_marks': 6,
+						'mark_scheme': ['Repeat the experiment (1 mark)'],
+					},
+				],
+			}
+
+			self.user.has_gcse_paid_access = True
+			self.user.save(update_fields=['has_gcse_paid_access'])
+
+			response = self.client.post(
+				self.generate_url,
+				{
+					'qualification': 'GCSE_SCIENCE',
+					'topic_id': topic.id,
+					'exam_board': 'AQA',
+					'subject': subject,
+					'tier': 'HIGHER',
+					'number_of_questions': 1,
+				},
+				format='json',
+			)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['questions'][0]['question'], question_text)
+
+	def _assert_ocr_subject_fallback_response(self, subject, question_text, mark_scheme):
+		topic = GCSEScienceTopic.objects.create(
+			topic=f'{subject.title()} OCR fallback topic',
+			exam_board='OCR',
+			subject=subject,
+			tier='HIGHER',
+		)
+
+		with patch('examquestions.views.load_fallback_bank_for_gcse') as mock_load_fallback_bank_for_gcse, patch('examquestions.views.generate_gcse_questions') as mock_generate_gcse_questions:
+			mock_load_fallback_bank_for_gcse.return_value = {
+				'Generic GCSE fallback': [
+					{
+						'question': question_text,
+						'mark': 1,
+						'mark_scheme': [mark_scheme],
+					},
+				],
+			}
+			mock_generate_gcse_questions.return_value = {
+				'questions': [
+					{
+						'question': 'Refer to the graph and evaluate the method used. [6 marks]',
+						'total_marks': 6,
+						'mark_scheme': ['Repeat the investigation (1 mark)'],
+					},
+				],
+			}
+
+			self.user.has_gcse_paid_access = True
+			self.user.save(update_fields=['has_gcse_paid_access'])
+
+			response = self.client.post(
+				self.generate_url,
+				{
+					'qualification': 'GCSE_SCIENCE',
+					'topic_id': topic.id,
+					'exam_board': 'OCR',
+					'subject': subject,
+					'tier': 'HIGHER',
+					'number_of_questions': 1,
+				},
+				format='json',
+			)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['questions'][0]['question'], question_text)
+
 	@patch('examquestions.views.generate_gcse_questions')
 	def test_generate_exam_questions_routes_to_gcse_service(self, mock_generate_gcse_questions):
 		mock_generate_gcse_questions.return_value = {
@@ -629,10 +723,10 @@ class GCSEFlowTests(APITestCase):
 		self.assertEqual(session.gcse_subject, 'CHEMISTRY')
 		self.assertEqual(session.gcse_tier, 'HIGHER')
 
-	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.load_fallback_bank_for_gcse')
 	@patch('examquestions.views.generate_gcse_questions')
-	def test_gcse_generation_uses_json_bank_fallback_for_missing_context(self, mock_generate_gcse_questions, mock_load_fallback_bank):
-		mock_load_fallback_bank.return_value = {
+	def test_gcse_generation_uses_json_bank_fallback_for_missing_context(self, mock_generate_gcse_questions, mock_load_fallback_bank_for_gcse):
+		mock_load_fallback_bank_for_gcse.return_value = {
 			'Generic GCSE fallback': [
 				{
 					'question': 'State the relative charge of a proton. [1 mark]',
@@ -675,6 +769,48 @@ class GCSEFlowTests(APITestCase):
 			'State the relative charge of a proton. [1 mark]',
 		)
 
+	def test_aqa_biology_generation_uses_fallback_when_ai_output_is_invalid(self):
+		self._assert_aqa_subject_fallback_response(
+			'BIOLOGY',
+			'State one function of the cell membrane. [1 mark]',
+			'Controls movement of substances into and out of the cell (1 mark)',
+		)
+
+	def test_aqa_chemistry_generation_uses_fallback_when_ai_output_is_invalid(self):
+		self._assert_aqa_subject_fallback_response(
+			'CHEMISTRY',
+			'State the relative charge of an electron. [1 mark]',
+			'-1 (1 mark)',
+		)
+
+	def test_aqa_physics_generation_uses_fallback_when_ai_output_is_invalid(self):
+		self._assert_aqa_subject_fallback_response(
+			'PHYSICS',
+			'State the unit of force. [1 mark]',
+			'newton / N (1 mark)',
+		)
+
+	def test_ocr_biology_generation_uses_fallback_when_ai_output_is_invalid(self):
+		self._assert_ocr_subject_fallback_response(
+			'BIOLOGY',
+			'State one function of the nucleus. [1 mark]',
+			'Contains genetic material / controls the activities of the cell (1 mark)',
+		)
+
+	def test_ocr_chemistry_generation_uses_fallback_when_ai_output_is_invalid(self):
+		self._assert_ocr_subject_fallback_response(
+			'CHEMISTRY',
+			'State the formula for density. [1 mark]',
+			'density = mass / volume (1 mark)',
+		)
+
+	def test_ocr_physics_generation_uses_fallback_when_ai_output_is_invalid(self):
+		self._assert_ocr_subject_fallback_response(
+			'PHYSICS',
+			'State the unit of power. [1 mark]',
+			'watt / W (1 mark)',
+		)
+
 	@patch('examquestions.views.evaluate_gcse_batch_responses_with_openai')
 	def test_mark_user_answer_routes_to_gcse_marking_service(self, mock_gcse_mark):
 		mock_gcse_mark.return_value = {
@@ -706,6 +842,32 @@ class GCSEFlowTests(APITestCase):
 
 		self.assertEqual(response.status_code, 200)
 		mock_gcse_mark.assert_called_once_with(payload['answers'], 'AQA', 'CHEMISTRY', 'FOUNDATION')
+
+
+class GCSEFallbackRoutingTests(APITestCase):
+	def test_ocr_gcse_biology_routes_to_biology_fallback_bank(self):
+		path = resolve_gcse_fallback_bank_path('OCR', 'BIOLOGY')
+		self.assertEqual(path.name, 'ocr_gateway_gcse_triple_biology_fallback_questions.json')
+
+	def test_ocr_gcse_chemistry_routes_to_chemistry_fallback_bank(self):
+		path = resolve_gcse_fallback_bank_path('OCR', 'CHEMISTRY')
+		self.assertEqual(path.name, 'ocr_gateway_gcse_triple_chemistry_fallback_questions.json')
+
+	def test_ocr_gcse_physics_routes_to_physics_fallback_bank(self):
+		path = resolve_gcse_fallback_bank_path('OCR', 'PHYSICS')
+		self.assertEqual(path.name, 'ocr_gateway_gcse_triple_physics_fallback_questions.json')
+
+	def test_aqa_gcse_biology_routes_to_biology_fallback_bank(self):
+		path = resolve_gcse_fallback_bank_path('AQA', 'BIOLOGY')
+		self.assertEqual(path.name, 'aqa_triple_biology_compact_exam_style.json')
+
+	def test_aqa_gcse_chemistry_routes_to_chemistry_fallback_bank(self):
+		path = resolve_gcse_fallback_bank_path('AQA', 'CHEMISTRY')
+		self.assertEqual(path.name, 'aqa_triple_chemistry_compact_exam_style.json')
+
+	def test_aqa_gcse_physics_routes_to_physics_fallback_bank(self):
+		path = resolve_gcse_fallback_bank_path('AQA', 'PHYSICS')
+		self.assertEqual(path.name, 'aqa_triple_physics_compact_exam_style.json')
 
 
 class UserSessionsSerializerTests(APITestCase):
