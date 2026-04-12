@@ -480,6 +480,131 @@ def record_served_questions(user, exam_board, scope_key, questions):
         ServedQuestion.objects.bulk_create(records, ignore_conflicts=True)
 
 
+def build_question_scope(topic_title, subtopic=None, subcategory=None):
+    scope = topic_title
+    if subtopic:
+        scope += f' (SubTopic: {subtopic.title})'
+    if subcategory:
+        scope += f' (SubCategory: {subcategory.title})'
+    return scope
+
+
+def collect_valid_ai_questions(ai_questions, served_questions):
+    accepted_questions = []
+    current_batch_questions = set()
+
+    for ai_question in ai_questions:
+        normalized = normalize_question_text(question_text_from_item(ai_question))
+        if not normalized or normalized in served_questions or normalized in current_batch_questions:
+            continue
+        current_batch_questions.add(normalized)
+        accepted_questions.append(ai_question)
+
+    return accepted_questions
+
+
+def prepare_alevel_generation(user, board_key, topic_id, subtopic_id, subcategory_id, number):
+    topic = BiologyTopic.objects.get(id=topic_id, exam_board=board_key)
+
+    subtopic = None
+    if subtopic_id:
+        subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
+
+    subcategory = None
+    if subcategory_id:
+        if not subtopic_id:
+            raise ValueError("subcategory_id provided without subtopic_id")
+        subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
+
+    all_fallback_questions = load_fallback_bank_for_board(board_key)
+    scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
+    served_questions = get_user_served_question_set(user, board_key, scope_key)
+    fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, topic.topic)
+
+    scope = build_question_scope(topic.topic, subtopic, subcategory)
+    ai_response = generate_questions(scope, board_key, number)
+    ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
+    combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
+
+    if len(combined_questions) < number:
+        combined_questions, served_questions = replace_duplicate_questions_from_fallback(
+            user=user,
+            exam_board=board_key,
+            scope_key=scope_key,
+            fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
+            accepted_questions=combined_questions,
+            requested_count=number,
+            served_questions=served_questions,
+        )
+
+    total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+    return {
+        "scope_key": scope_key,
+        "combined_questions": combined_questions,
+        "session_kwargs": {
+            "topic": topic,
+            "subtopic": subtopic,
+            "subcategory": subcategory,
+            "qualification": QualificationPath.ALEVEL_BIOLOGY,
+            "exam_board": board_key,
+            "number_of_questions": number,
+            "total_available": total_available,
+        },
+    }
+
+
+def prepare_gcse_generation(user, board_key, topic_id, subtopic_id, subcategory_id, gcse_subject, gcse_tier, number):
+    gcse_topic = GCSEScienceTopic.objects.get(id=topic_id, exam_board=board_key, subject=gcse_subject)
+
+    gcse_subtopic = None
+    if subtopic_id:
+        gcse_subtopic = GCSEScienceSubTopic.objects.get(id=subtopic_id, topic_id=gcse_topic.id)
+
+    gcse_subcategory = None
+    if subcategory_id:
+        if not subtopic_id:
+            raise ValueError("subcategory_id provided without subtopic_id")
+        gcse_subcategory = GCSEScienceSubCategory.objects.get(id=subcategory_id, subtopic_id=gcse_subtopic.id)
+
+    all_fallback_questions = load_fallback_bank_for_gcse(board_key, gcse_subject)
+    scope_title, scope_key = build_gcse_scope_metadata(gcse_topic, gcse_subtopic, gcse_subcategory, gcse_tier)
+    served_questions = get_user_served_question_set(user, board_key, scope_key)
+    fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, gcse_topic.topic, allow_generic=True)
+
+    scope = build_question_scope(gcse_topic.topic, gcse_subtopic, gcse_subcategory)
+    ai_response = generate_gcse_questions(scope, board_key, number, gcse_subject, gcse_tier)
+    ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
+    combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
+
+    if len(combined_questions) < number:
+        combined_questions, served_questions = replace_duplicate_questions_from_fallback(
+            user=user,
+            exam_board=board_key,
+            scope_key=scope_key,
+            fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
+            accepted_questions=combined_questions,
+            requested_count=number,
+            served_questions=served_questions,
+        )
+
+    total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+    return {
+        "scope_key": scope_key,
+        "combined_questions": combined_questions,
+        "session_kwargs": {
+            "qualification": QualificationPath.GCSE_SCIENCE,
+            "gcse_topic": gcse_topic,
+            "gcse_subtopic": gcse_subtopic,
+            "gcse_subcategory": gcse_subcategory,
+            "gcse_subject": gcse_subject,
+            "gcse_tier": gcse_tier,
+            "exam_board": board_key,
+            "number_of_questions": number,
+            "total_available": total_available,
+        },
+    }
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_exam_questions(request):
@@ -533,64 +658,14 @@ def generate_exam_questions(request):
 
     try:
         if qualification == QualificationPath.ALEVEL_BIOLOGY:
-            topic = BiologyTopic.objects.get(id=topic_id, exam_board=board_key)
-
-            subtopic = None
-            if subtopic_id:
-                subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
-
-            subcategory = None
-            if subcategory_id:
-                if not subtopic_id:
-                    return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
-                subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
-
-            all_fallback_questions = load_fallback_bank_for_board(board_key)
-            scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
-            served_questions = get_user_served_question_set(request.user, board_key, scope_key)
-
-            fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, topic.topic)
-
-            scope = topic.topic
-            if subtopic:
-                scope += f' (SubTopic: {subtopic.title})'
-            if subcategory:
-                scope += f' (SubCategory: {subcategory.title})'
-
-            ai_response = generate_questions(scope, board_key, number)
-            ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
-
-            combined_questions = []
-            current_batch_questions = set()
-
-            for ai_question in ai_questions:
-                normalized = normalize_question_text(question_text_from_item(ai_question))
-                if not normalized or normalized in served_questions or normalized in current_batch_questions:
-                    continue
-                current_batch_questions.add(normalized)
-                combined_questions.append(ai_question)
-
-            if len(combined_questions) < number:
-                combined_questions, served_questions = replace_duplicate_questions_from_fallback(
-                    user=request.user,
-                    exam_board=board_key,
-                    scope_key=scope_key,
-                    fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
-                    accepted_questions=combined_questions,
-                    requested_count=number,
-                    served_questions=served_questions,
-                )
-
-            total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
-            session_kwargs = {
-                "topic": topic,
-                "subtopic": subtopic,
-                "subcategory": subcategory,
-                "qualification": qualification,
-                "exam_board": board_key,
-                "number_of_questions": number,
-                "total_available": total_available,
-            }
+            generation_result = prepare_alevel_generation(
+                user=request.user,
+                board_key=board_key,
+                topic_id=topic_id,
+                subtopic_id=subtopic_id,
+                subcategory_id=subcategory_id,
+                number=number,
+            )
         else:
             gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
             gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
@@ -599,63 +674,20 @@ def generate_exam_questions(request):
             if gcse_tier not in ALLOWED_GCSE_TIERS:
                 return Response({"error": "Invalid GCSE tier. Use 'FOUNDATION' or 'HIGHER'."}, status=400)
 
-            gcse_topic = GCSEScienceTopic.objects.get(id=topic_id, exam_board=board_key, subject=gcse_subject)
-            gcse_subtopic = None
-            if subtopic_id:
-                gcse_subtopic = GCSEScienceSubTopic.objects.get(id=subtopic_id, topic_id=gcse_topic.id)
+            generation_result = prepare_gcse_generation(
+                user=request.user,
+                board_key=board_key,
+                topic_id=topic_id,
+                subtopic_id=subtopic_id,
+                subcategory_id=subcategory_id,
+                gcse_subject=gcse_subject,
+                gcse_tier=gcse_tier,
+                number=number,
+            )
 
-            gcse_subcategory = None
-            if subcategory_id:
-                if not subtopic_id:
-                    return Response({"error": "subcategory_id provided without subtopic_id"}, status=400)
-                gcse_subcategory = GCSEScienceSubCategory.objects.get(id=subcategory_id, subtopic_id=gcse_subtopic.id)
-
-            all_fallback_questions = load_fallback_bank_for_gcse(board_key, gcse_subject)
-            scope_title, scope_key = build_gcse_scope_metadata(gcse_topic, gcse_subtopic, gcse_subcategory, gcse_tier)
-            served_questions = get_user_served_question_set(request.user, board_key, scope_key)
-            fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, gcse_topic.topic, allow_generic=True)
-
-            scope = gcse_topic.topic
-            if gcse_subtopic:
-                scope += f' (SubTopic: {gcse_subtopic.title})'
-            if gcse_subcategory:
-                scope += f' (SubCategory: {gcse_subcategory.title})'
-
-            ai_response = generate_gcse_questions(scope, board_key, number, gcse_subject, gcse_tier)
-            ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
-
-            combined_questions = []
-            current_batch_questions = set()
-            for ai_question in ai_questions:
-                normalized = normalize_question_text(question_text_from_item(ai_question))
-                if not normalized or normalized in served_questions or normalized in current_batch_questions:
-                    continue
-                current_batch_questions.add(normalized)
-                combined_questions.append(ai_question)
-
-            if len(combined_questions) < number:
-                combined_questions, served_questions = replace_duplicate_questions_from_fallback(
-                    user=request.user,
-                    exam_board=board_key,
-                    scope_key=scope_key,
-                    fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
-                    accepted_questions=combined_questions,
-                    requested_count=number,
-                    served_questions=served_questions,
-                )
-
-            total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
-            session_kwargs = {
-                "qualification": qualification,
-                "gcse_topic": gcse_topic,
-                "gcse_subtopic": gcse_subtopic,
-                "gcse_subcategory": gcse_subcategory,
-                "gcse_subject": gcse_subject,
-                "gcse_tier": gcse_tier,
-                "exam_board": board_key,
-                "number_of_questions": number,
-                "total_available": total_available,
-            }
+        scope_key = generation_result["scope_key"]
+        combined_questions = generation_result["combined_questions"]
+        session_kwargs = generation_result["session_kwargs"]
 
         with transaction.atomic():
             if not has_paid_access_for_request:
@@ -714,6 +746,10 @@ def generate_exam_questions(request):
         return Response({"error": "Invalid GCSE subtopic for the selected GCSE topic"}, status=400)
     except GCSEScienceSubCategory.DoesNotExist:
         return Response({"error": "Invalid GCSE subcategory for the selected GCSE subtopic"}, status=400)
+    except ValueError as exc:
+        if str(exc) == "subcategory_id provided without subtopic_id":
+            return Response({"error": str(exc)}, status=400)
+        raise
     except json.JSONDecodeError:
         return Response({"error": "Invalid JSON format in fallback question bank"}, status=500)
     except Exception as e:
