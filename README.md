@@ -250,10 +250,23 @@ Required Stripe config vars:
 - `STRIPE_SECRET_KEY`
 - `STRIPE_PUBLISHABLE_KEY`
 - `STRIPE_WEBHOOK_SECRET`
-- `STRIPE_PRICE_ID`
+- `STRIPE_PRICE_ID_GCSE`
+- `STRIPE_PRICE_ID_ALEVEL`
+- `STRIPE_PRICE_ID_BOTH`
 - `STRIPE_CHECKOUT_MODE`
 - `STRIPE_SUCCESS_URL`
 - `STRIPE_CANCEL_URL`
+
+Optional legacy fallback:
+
+- `STRIPE_PRICE_ID`
+
+Price selection is now qualification-based in the backend checkout service:
+
+- GCSE checkout uses `STRIPE_PRICE_ID_GCSE`
+- A-level checkout uses `STRIPE_PRICE_ID_ALEVEL`
+- Combined checkout uses `STRIPE_PRICE_ID_BOTH`
+- if a qualification-specific price id is missing, the backend falls back to `STRIPE_PRICE_ID`
 
 Suggested defaults:
 

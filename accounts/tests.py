@@ -7,6 +7,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import CustomUser, UserEntitlement
+from .services.stripe import create_stripe_checkout_session
 
 
 @override_settings(
@@ -159,6 +160,9 @@ class EmailVerificationFlowTests(APITestCase):
 	STRIPE_SECRET_KEY='sk_test_123',
 	STRIPE_PUBLISHABLE_KEY='pk_test_123',
 	STRIPE_PRICE_ID='price_123',
+	STRIPE_PRICE_ID_GCSE='price_gcse_123',
+	STRIPE_PRICE_ID_ALEVEL='price_alevel_123',
+	STRIPE_PRICE_ID_BOTH='price_both_123',
 	STRIPE_WEBHOOK_SECRET='whsec_123',
 	STRIPE_SUCCESS_URL='http://localhost:3000/billing?checkout=success',
 	STRIPE_CANCEL_URL='http://localhost:3000/billing?checkout=cancelled',
@@ -174,6 +178,39 @@ class StripeBillingTests(APITestCase):
 		)
 		self.checkout_url = reverse('stripe-checkout-session')
 		self.webhook_url = reverse('stripe-webhook')
+
+	@patch('accounts.services.stripe.stripe.checkout.Session.create')
+	def test_create_checkout_session_uses_gcse_price_id(self, mock_session_create):
+		mock_session_create.return_value = SimpleNamespace(id='cs_gcse', url='https://checkout.stripe.com/c/pay/cs_gcse')
+
+		create_stripe_checkout_session(self.user, 'GCSE_SCIENCE')
+
+		self.assertEqual(
+			mock_session_create.call_args.kwargs['line_items'],
+			[{'price': 'price_gcse_123', 'quantity': 1}],
+		)
+
+	@patch('accounts.services.stripe.stripe.checkout.Session.create')
+	def test_create_checkout_session_uses_alevel_price_id(self, mock_session_create):
+		mock_session_create.return_value = SimpleNamespace(id='cs_alevel', url='https://checkout.stripe.com/c/pay/cs_alevel')
+
+		create_stripe_checkout_session(self.user, 'ALEVEL_BIOLOGY')
+
+		self.assertEqual(
+			mock_session_create.call_args.kwargs['line_items'],
+			[{'price': 'price_alevel_123', 'quantity': 1}],
+		)
+
+	@patch('accounts.services.stripe.stripe.checkout.Session.create')
+	def test_create_checkout_session_uses_both_price_id(self, mock_session_create):
+		mock_session_create.return_value = SimpleNamespace(id='cs_both', url='https://checkout.stripe.com/c/pay/cs_both')
+
+		create_stripe_checkout_session(self.user, 'BOTH')
+
+		self.assertEqual(
+			mock_session_create.call_args.kwargs['line_items'],
+			[{'price': 'price_both_123', 'quantity': 1}],
+		)
 
 	@patch('accounts.views.create_stripe_checkout_session')
 	def test_create_checkout_session_returns_hosted_checkout_data(self, mock_create_session):
