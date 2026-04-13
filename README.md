@@ -25,6 +25,60 @@ python manage.py runserver
 
 Only point at the live database when you are ready to run production migrations.
 
+## Curriculum backup
+
+If you want to back up only your curriculum hierarchy from Django admin, use the custom export command below. It includes only these models:
+
+- `BiologyTopic`
+- `BiologySubTopic`
+- `BiologySubCategory`
+- `GCSEScienceTopic`
+- `GCSEScienceSubTopic`
+- `GCSEScienceSubCategory`
+
+It does not include user accounts, question sessions, usage history, or other runtime data.
+
+Create a backup file:
+
+```powershell
+python manage.py export_curriculum
+```
+
+That writes a timestamped fixture into `backups/`.
+
+You can also choose the file path yourself:
+
+```powershell
+python manage.py export_curriculum --output backups/curriculum-manual.json
+```
+
+This command is read-only. It does not delete, update, or rewrite any database rows. It only reads the curriculum tables and serializes them.
+
+### Backing up the Heroku or Supabase database
+
+On Heroku, the app runs with `DYNO` set, so this project uses the `DATABASE_URL` database instead of local SQLite. That means a one-off Heroku dyno will run this command against your live Supabase-backed production database.
+
+Because Heroku dyno storage is temporary, the safest way to export the remote backup is to stream the JSON to your local machine:
+
+```powershell
+heroku run python manage.py export_curriculum --to-stdout -a exambuilder > curriculum-production.json
+```
+
+That command:
+
+- connects through Heroku to the remote database
+- reads only the curriculum models
+- saves the resulting JSON on your local machine as `curriculum-production.json`
+
+To restore that hierarchy into a rebuilt database:
+
+```powershell
+python manage.py migrate
+python manage.py loaddata backups/curriculum-manual.json
+```
+
+Because the export uses Django's fixture format, `loaddata` can restore it directly.
+
 ## Password reset
 
 API endpoints:

@@ -1,5 +1,9 @@
 import json
+import tempfile
 from unittest.mock import Mock, patch
+from pathlib import Path
+from io import StringIO
+from django.core.management import call_command
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -8,6 +12,70 @@ from accounts.models import CustomUser
 from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, GCSEScienceRoute, QuestionSession, QualificationPath, ServedQuestion
 from .services import ai, aiGCSE
 from .views import GCSE_SUBJECT_ERROR_MESSAGE, is_self_contained_ai_question, resolve_gcse_fallback_bank_path
+
+
+class ExportCurriculumCommandTests(APITestCase):
+	def test_export_curriculum_only_includes_curriculum_models(self):
+		topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+		subtopic = BiologySubTopic.objects.create(topic=topic, title='Cell membrane')
+		BiologySubCategory.objects.create(subtopic=subtopic, title='Transport proteins')
+
+		gcse_topic = GCSEScienceTopic.objects.create(
+			topic='Atomic structure',
+			exam_board='AQA',
+			subject='CHEMISTRY',
+			tier='HIGHER',
+		)
+		gcse_subtopic = GCSEScienceSubTopic.objects.create(topic=gcse_topic, title='Atoms and isotopes')
+		GCSEScienceSubCategory.objects.create(subtopic=gcse_subtopic, title='Relative atomic mass')
+
+		user = CustomUser.objects.create_user(
+			email='backup@example.com',
+			username='backup-user',
+			password='testpass123',
+		)
+		QuestionSession.objects.create(
+			user=user,
+			topic=topic,
+			exam_board='OCR',
+			number_of_questions=1,
+		)
+		ServedQuestion.objects.create(
+			user=user,
+			exam_board='OCR',
+			scope_key='topic:1',
+			normalized_question='what is osmosis?',
+		)
+
+		with tempfile.TemporaryDirectory() as temp_dir:
+			output_path = Path(temp_dir) / 'curriculum.json'
+			call_command('export_curriculum', output=str(output_path))
+
+			payload = json.loads(output_path.read_text(encoding='utf-8'))
+
+		models = {item['model'] for item in payload}
+		self.assertEqual(
+			models,
+			{
+				'examquestions.biologytopic',
+				'examquestions.biologysubtopic',
+				'examquestions.biologysubcategory',
+				'examquestions.gcsesciencetopic',
+				'examquestions.gcsesciencesubtopic',
+				'examquestions.gcsesciencesubcategory',
+			},
+		)
+
+	def test_export_curriculum_can_write_to_stdout(self):
+		BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+
+		stdout_buffer = StringIO()
+		call_command('export_curriculum', to_stdout=True, stdout=stdout_buffer)
+
+		payload = json.loads(stdout_buffer.getvalue())
+
+		self.assertEqual(len(payload), 1)
+		self.assertEqual(payload[0]['model'], 'examquestions.biologytopic')
 
 
 def _mock_openai_json_response(payload):
