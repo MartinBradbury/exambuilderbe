@@ -72,7 +72,7 @@ class UserEntitlement(models.Model):
         PAID = 'paid', 'Paid'
         LIFETIME = 'lifetime', 'Lifetime'
 
-    FREE_DAILY_QUESTION_LIMIT = 1
+    FREE_DAILY_QUESTION_LIMIT = 2
 
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='entitlement')
     # Legacy billing summary kept for compatibility with existing Stripe and frontend flows.
