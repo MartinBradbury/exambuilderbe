@@ -554,7 +554,7 @@ def prepare_alevel_generation(user, board_key, specification, topic_id, subtopic
     fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, topic.topic)
 
     scope = build_question_scope(topic.topic, subtopic, subcategory)
-    ai_response = generate_questions(scope, board_key, number)
+    ai_response = generate_questions(scope, board_key, number, specification=specification)
     ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
     combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
 
@@ -814,10 +814,15 @@ def mark_user_answer(request):
     qualification = _normalize_qualification(request.data.get("qualification"))
     answers = request.data.get("answers")
     exam_board = (request.data.get("exam_board", "AQA") or "AQA").strip().upper()
+    specification = _normalize_specification(request.data.get("specification"))
     if exam_board not in ALLOWED_BOARDS:
         return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
     if qualification not in ALLOWED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
+    if qualification == QualificationPath.ALEVEL_BIOLOGY:
+        specification_error = _validate_specification_for_board(exam_board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
 
     gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
     gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
@@ -839,7 +844,7 @@ def mark_user_answer(request):
             if qualification == QualificationPath.GCSE_SCIENCE:
                 result = evaluate_gcse_batch_responses_with_openai(answers, exam_board, gcse_subject, gcse_tier)
             else:
-                result = evaluate_batch_responses_with_openai(answers, exam_board)
+                result = evaluate_batch_responses_with_openai(answers, exam_board, specification=specification)
             return Response(result, status=200)
         except json.JSONDecodeError as e:
             logger.error("Invalid JSON from OpenAI batch marking: %s", e)
@@ -866,7 +871,7 @@ def mark_user_answer(request):
         if qualification == QualificationPath.GCSE_SCIENCE:
             result = evaluate_gcse_response_with_openai(question, mark_scheme, user_answer, exam_board, gcse_subject, gcse_tier)
         else:
-            result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board)
+            result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board, specification=specification)
         return Response(result, status=200)
     except json.JSONDecodeError as e:
         logger.error("Invalid JSON from OpenAI: %s", e)

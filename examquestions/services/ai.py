@@ -40,11 +40,19 @@ def _create_json_chat_completion(messages, temperature, max_tokens):
     )
 
 
-def generate_questions(topic, exam_board, number_of_questions):
+def _build_specification_reference(exam_board, specification=None):
+    specification = str(specification or "").strip()
+    if specification:
+        return f"the {exam_board} {specification} specification"
+    return f"the {exam_board} specification"
+
+
+def generate_questions(topic, exam_board, number_of_questions, specification=None):
+    specification_reference = _build_specification_reference(exam_board, specification)
     prompt = f"""
 You are a qualified teacher creating exam questions for the {exam_board} exam board.
 
-Create {number_of_questions} exam-style questions on the topic: "{topic}" for the {exam_board} specification.
+Create {number_of_questions} exam-style questions on the topic: "{topic}" for {specification_reference}.
 
 For each question:
 - Write the question clearly, and include the total number of marks at the end of the question in brackets like this: [3 marks]
@@ -54,7 +62,7 @@ For each question:
   - For example: "They lower activation energy of reactions (1 mark)"
   - Avoid vague labels like "Point 1" or "Point 2" — instead write what a correct student answer might say and how many marks it's worth.
 - Ensure the difficulty and format align with real {exam_board} exam questions.
-- Use only content from the official {exam_board} A-level Biology specification.
+- Use only content from the official {specification_reference} for A-level Biology.
 - Return only valid JSON with no commentary or extra explanation.
 
 Format:
@@ -90,13 +98,14 @@ Format:
         raise e
 
 
-def evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board):
+def evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board, specification=None):
     mark_scheme_with_marks = _format_mark_scheme_points(mark_scheme)
+    specification_reference = _build_specification_reference(exam_board, specification)
 
     prompt = f"""
 You are a qualified {exam_board} A-level Biology examiner.
 
-Mark the student's answer using the official {exam_board} style and the provided mark scheme.
+Mark the student's answer using the official style and standards from {specification_reference} and the provided mark scheme.
 
 QUESTION:
 "{question}"
@@ -114,7 +123,7 @@ Marking guidance:
 - Award partial marks for partially correct statements if appropriate.
 - Be fair but do not invent marks outside the scheme.
 - If a key point is missing or incorrect, explain that in feedback.
-- Keep to the {exam_board} A-level style of marking.
+- Keep to the A-level marking style for {specification_reference}.
 
 Respond ONLY with strict valid JSON, no extra text:
 {{
@@ -141,7 +150,7 @@ Respond ONLY with strict valid JSON, no extra text:
         raise e
 
 
-def evaluate_batch_responses_with_openai(answer_payloads, exam_board):
+def evaluate_batch_responses_with_openai(answer_payloads, exam_board, specification=None):
     normalized_answers = []
     for index, answer in enumerate(answer_payloads, start=1):
         normalized_answers.append(
@@ -153,10 +162,12 @@ def evaluate_batch_responses_with_openai(answer_payloads, exam_board):
             }
         )
 
+    specification_reference = _build_specification_reference(exam_board, specification)
+
     prompt = f"""
 You are a qualified {exam_board} A-level Biology examiner.
 
-Mark every student answer using the provided mark scheme.
+Mark every student answer using the provided mark scheme and the standards from {specification_reference}.
 Return the results in the same order as the input.
 
 Input answers:
@@ -166,6 +177,7 @@ Marking guidance:
 - Award marks wherever there is reasonable evidence of understanding, even if wording is imperfect.
 - Accept correct synonyms, equivalent terminology, or alternative valid phrasing.
 - Be fair and slightly lenient, but do not invent marks outside the scheme.
+- Keep to the A-level marking style for {specification_reference}.
 - Keep `score` numeric and `out_of` as the total marks available for that answer.
 - `feedback` should be concise and specific to that answer.
 - `strengths` and `improvements` must each contain exactly 3 short strings covering the whole submission.
@@ -203,13 +215,14 @@ Respond ONLY with strict valid JSON in this exact format:
     return parsed
 
 
-def get_feedback_from_openai(prompt):
+def get_feedback_from_openai(prompt, exam_board=None, specification=None):
+    specification_reference = _build_specification_reference(exam_board, specification) if exam_board else "the relevant specification"
     response = _create_json_chat_completion(
         messages=[
             {
                 "role": "system",
                 "content": (
-                    "You are a helpful A-level biology examiner. "
+                    f"You are a helpful A-level biology examiner working to {specification_reference}. "
                     'Respond ONLY in valid JSON with this exact structure:\n'
                     '{\n'
                     '  "strengths": ["point1", "point2", "point3"],\n'

@@ -422,7 +422,7 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		)
 
 		self.assertEqual(response.status_code, 200)
-		mock_generate_questions.assert_called_once_with('Test Topic', 'OCR', 2)
+		mock_generate_questions.assert_called_once_with('Test Topic', 'OCR', 2, specification='')
 
 	@patch('examquestions.views.load_fallback_bank_for_board')
 	@patch('examquestions.views.generate_questions')
@@ -588,6 +588,61 @@ class QuestionPromptContractTests(APITestCase):
 		self.assertIn('Make each question fully answerable from the text you return.', prompt)
 		self.assertIn('Do not refer to any unseen method, figure, graph, table, practical setup, results, or source material.', prompt)
 		self.assertIn('include a concise stem describing that method or data directly in the `question` text', prompt)
+
+	@patch('examquestions.services.ai._create_json_chat_completion')
+	def test_alevel_generation_prompt_includes_specification_when_provided(self, mock_create_completion):
+		mock_create_completion.return_value = _mock_openai_json_response({'questions': []})
+
+		ai.generate_questions('Cells', 'EDEXCEL', 1, specification='Spec B')
+
+		messages = mock_create_completion.call_args.kwargs['messages']
+		prompt = messages[1]['content']
+
+		self.assertIn('the EDEXCEL Spec B specification', prompt)
+
+	@patch('examquestions.services.ai._create_json_chat_completion')
+	def test_alevel_single_marking_prompt_includes_specification_when_provided(self, mock_create_completion):
+		mock_create_completion.return_value = _mock_openai_json_response({'score': 1, 'out_of': 1, 'feedback': 'ok'})
+
+		ai.evaluate_response_with_openai(
+			'Explain one function of the cell membrane. [1 mark]',
+			['Controls movement of substances into and out of the cell'],
+			'It controls what enters and leaves the cell.',
+			'EDEXCEL',
+			specification='Spec B',
+		)
+
+		messages = mock_create_completion.call_args.kwargs['messages']
+		prompt = messages[1]['content']
+
+		self.assertIn('the EDEXCEL Spec B specification', prompt)
+
+	@patch('examquestions.services.ai._create_json_chat_completion')
+	def test_alevel_batch_marking_prompt_includes_specification_when_provided(self, mock_create_completion):
+		mock_create_completion.return_value = _mock_openai_json_response(
+			{
+				'results': [{'index': 1, 'score': 1, 'out_of': 1, 'feedback': 'ok'}],
+				'strengths': ['a', 'b', 'c'],
+				'improvements': ['d', 'e', 'f'],
+			}
+		)
+
+		ai.evaluate_batch_responses_with_openai(
+			[
+				{
+					'question': 'Explain one function of the cell membrane. [1 mark]',
+					'mark_scheme': ['Controls movement of substances into and out of the cell'],
+					'user_answer': 'It controls what enters and leaves the cell.',
+				}
+			],
+			'EDEXCEL',
+			specification='Spec B',
+		)
+
+		messages = mock_create_completion.call_args.kwargs['messages']
+		prompt = messages[1]['content']
+
+		self.assertIn('the EDEXCEL Spec B specification', prompt)
 
 
 class AIQuestionValidationTests(APITestCase):
