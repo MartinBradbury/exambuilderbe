@@ -1323,3 +1323,84 @@ class UserSessionsSerializerTests(APITestCase):
 
 		self.assertEqual(response.status_code, 400)
 		self.assertEqual(response.data['error'], "Soft reset moved to POST /accounts/reset-performance-tracking/. Use mode='hard' for permanent deletion here.")
+
+
+class EdexcelSpecificationFlowTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='edexcel@example.com',
+			username='edexcel-user',
+			password='testpass123',
+		)
+		self.client.force_authenticate(user=self.user)
+		self.topics_url = reverse('biology-topics')
+		self.generate_url = reverse('generate-exam-questions')
+
+	def test_biology_topics_requires_specification_for_edexcel(self):
+		response = self.client.get(
+			self.topics_url,
+			{'exam_board': 'EDEXCEL'},
+		)
+
+		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.data['error'], "specification is required when exam_board is 'EDEXCEL'.")
+
+	def test_biology_topics_filters_by_edexcel_specification(self):
+		BiologyTopic.objects.create(topic='Topic A', exam_board='EDEXCEL', specification='Spec A')
+		BiologyTopic.objects.create(topic='Topic A', exam_board='EDEXCEL', specification='Spec B')
+
+		response = self.client.get(
+			self.topics_url,
+			{'exam_board': 'EDEXCEL', 'specification': 'Spec A'},
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data), 1)
+		self.assertEqual(response.data[0]['specification'], 'Spec A')
+
+	@patch('examquestions.views.generate_questions')
+	def test_generate_exam_questions_requires_specification_for_edexcel(self, mock_generate_questions):
+		topic = BiologyTopic.objects.create(topic='Cells', exam_board='EDEXCEL', specification='Spec A')
+		mock_generate_questions.return_value = {
+			'questions': [
+				{
+					'question': 'Explain one role of the cell membrane. [1 mark]',
+					'total_marks': 1,
+					'mark_scheme': ['Controls movement of substances (1 mark)'],
+				}
+			]
+		}
+
+		missing_spec_response = self.client.post(
+			self.generate_url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': topic.id,
+				'exam_board': 'EDEXCEL',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(missing_spec_response.status_code, 400)
+		self.assertEqual(missing_spec_response.data['error'], "specification is required when exam_board is 'EDEXCEL'.")
+
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
+
+		response = self.client.post(
+			self.generate_url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': topic.id,
+				'exam_board': 'EDEXCEL',
+				'specification': 'Spec A',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		session = QuestionSession.objects.get(user=self.user)
+		self.assertEqual(session.specification, 'Spec A')
+		self.assertEqual(session.exam_board, 'EDEXCEL')

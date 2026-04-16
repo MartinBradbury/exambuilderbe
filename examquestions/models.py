@@ -7,6 +7,7 @@ from accounts.models import CustomUser
 class ExamBoard(models.TextChoices):
     OCR = "OCR", "OCR"
     AQA = "AQA", "AQA"
+    EDEXCEL = "EDEXCEL", "Edexcel"
 
 
 class QualificationPath(models.TextChoices):
@@ -39,18 +40,26 @@ class BiologyTopic(models.Model):
         default=ExamBoard.OCR,
         db_index=True,
     )
+    specification = models.CharField(max_length=100, blank=True, default="", db_index=True)
 
     class Meta:
-        ordering = ["exam_board", "topic"]
+        ordering = ["exam_board", "specification", "topic"]
         constraints = [
             models.UniqueConstraint(
-                fields=["topic", "exam_board"],
+                fields=["topic", "exam_board", "specification"],
                 name="uniq_topic_per_exam_board",
             )
         ]
 
     def __str__(self):
+        if self.specification:
+            return f"{self.topic} ({self.exam_board} - {self.specification})"
         return f"{self.topic} ({self.exam_board})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.exam_board == ExamBoard.EDEXCEL and not self.specification:
+            raise ValidationError("Edexcel topics require a specification.")
 
 
 class GCSEScienceTopic(models.Model):
@@ -72,18 +81,29 @@ class GCSEScienceTopic(models.Model):
         default=GCSETier.HIGHER,
         db_index=True,
     )
+    specification = models.CharField(max_length=100, blank=True, default="", db_index=True)
 
     class Meta:
-        ordering = ["exam_board", "subject", "tier", "topic"]
+        ordering = ["exam_board", "specification", "subject", "tier", "topic"]
         constraints = [
             models.UniqueConstraint(
-                fields=["topic", "exam_board", "subject", "tier"],
+                fields=["topic", "exam_board", "specification", "subject", "tier"],
                 name="uniq_gcse_topic_per_board_subject",
             )
         ]
 
     def __str__(self):
+        if self.specification:
+            return (
+                f"{self.get_subject_display()} | {self.get_tier_display()} | "
+                f"{self.topic} ({self.exam_board} - {self.specification})"
+            )
         return f"{self.get_subject_display()} | {self.get_tier_display()} | {self.topic} ({self.exam_board})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.exam_board == ExamBoard.EDEXCEL and not self.specification:
+            raise ValidationError("Edexcel GCSE topics require a specification.")
 
 
 class GCSEScienceSubTopic(models.Model):
@@ -185,6 +205,7 @@ class QuestionSession(models.Model):
         default=QualificationPath.ALEVEL_BIOLOGY,
     )
     exam_board = models.CharField(max_length=50)
+    specification = models.CharField(max_length=100, blank=True, default="")
     gcse_subject = models.CharField(max_length=16, choices=GCSESubject.choices, blank=True)
     science_route = models.CharField(max_length=16, choices=GCSEScienceRoute.choices, blank=True)
     gcse_tier = models.CharField(max_length=16, choices=GCSETier.choices, blank=True)
@@ -211,6 +232,8 @@ class QuestionSession(models.Model):
         from django.core.exceptions import ValidationError
         if self.total_score > self.total_available:
             raise ValidationError("Total score cannot exceed total available.")
+        if self.exam_board == ExamBoard.EDEXCEL and not self.specification:
+            raise ValidationError("Edexcel sessions require a specification.")
         if self.qualification == QualificationPath.ALEVEL_BIOLOGY:
             if not self.topic_id:
                 raise ValidationError("A-level Biology sessions require a topic.")

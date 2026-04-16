@@ -12,7 +12,7 @@ from .models import (
 class BiologyTopicListSerializer(serializers.ModelSerializer):
     class Meta:
         model = BiologyTopic
-        fields = ["id", "topic"]
+        fields = ["id", "topic", "exam_board", "specification"]
 
 
 class BiologySubTopicListSerializer(serializers.ModelSerializer):
@@ -30,7 +30,7 @@ class BiologySubCategoryListSerializer(serializers.ModelSerializer):
 class GCSETopicListSerializer(serializers.ModelSerializer):
     class Meta:
         model = GCSEScienceTopic
-        fields = ["id", "topic", "subject", "tier", "exam_board"]
+        fields = ["id", "topic", "subject", "tier", "exam_board", "specification"]
 
 
 class GCSESubTopicListSerializer(serializers.ModelSerializer):
@@ -111,6 +111,7 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
             "subtopic_name",
             "subcategory_name",
             "exam_board",
+            "specification",
             "gcse_subject",
             "gcse_tier",
             "number_of_questions",

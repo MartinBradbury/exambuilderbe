@@ -16,6 +16,7 @@ from .models import (
     GCSEScienceSubTopic,
     GCSEScienceSubCategory,
     ServedQuestion,
+    ExamBoard,
     QualificationPath,
     GCSESubject,
     GCSEScienceRoute,
@@ -69,7 +70,8 @@ GCSE_FALLBACK_PATHS_BY_BOARD = {
     "OCR": OCR_GCSE_SEPARATE_FALLBACK_PATHS,
     "AQA": AQA_GCSE_SEPARATE_FALLBACK_PATHS,
 }
-ALLOWED_BOARDS = {"OCR", "AQA"}
+ALLOWED_BOARDS = {choice for choice, _ in ExamBoard.choices}
+EXAM_BOARD_ERROR_MESSAGE = "Invalid exam_board. Use 'OCR', 'AQA', or 'EDEXCEL'."
 ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
 ALLOWED_GCSE_SUBJECTS = {choice for choice, _ in GCSESubject.choices}
 ALLOWED_GCSE_TIERS = {choice for choice, _ in GCSETier.choices}
@@ -107,6 +109,16 @@ def _normalize_gcse_subject(raw_value):
 
 def _normalize_gcse_tier(raw_value):
     return _normalize_choice(raw_value)
+
+
+def _normalize_specification(raw_value):
+    return str(raw_value or "").strip()
+
+
+def _validate_specification_for_board(board_key, specification):
+    if board_key == ExamBoard.EDEXCEL and not specification:
+        return "specification is required when exam_board is 'EDEXCEL'."
+    return None
 
 
 def _coerce_numeric_score(value):
@@ -370,7 +382,11 @@ def load_fallback_bank_from_path(path_value: str) -> dict:
 
 def load_fallback_bank_for_board(exam_board: str) -> dict:
     board_key = (exam_board or "").strip().upper()
-    path = FALLBACK_QUESTION_PATHS.get(board_key, FALLBACK_QUESTION_PATHS["OCR"])
+    path = FALLBACK_QUESTION_PATHS.get(board_key)
+
+    if path is None:
+        logger.info("Exam board: %s | Using fallback file: <none configured>", board_key)
+        return {}
 
     logger.info("Exam board: %s | Using fallback file: %s", board_key, path)
     return load_fallback_bank_from_path(str(path))
@@ -516,8 +532,11 @@ def collect_valid_ai_questions(ai_questions, served_questions):
     return accepted_questions
 
 
-def prepare_alevel_generation(user, board_key, topic_id, subtopic_id, subcategory_id, number):
-    topic = BiologyTopic.objects.get(id=topic_id, exam_board=board_key)
+def prepare_alevel_generation(user, board_key, specification, topic_id, subtopic_id, subcategory_id, number):
+    topic_filters = {"id": topic_id, "exam_board": board_key}
+    if board_key == ExamBoard.EDEXCEL:
+        topic_filters["specification"] = specification
+    topic = BiologyTopic.objects.get(**topic_filters)
 
     subtopic = None
     if subtopic_id:
@@ -560,14 +579,18 @@ def prepare_alevel_generation(user, board_key, topic_id, subtopic_id, subcategor
             "subcategory": subcategory,
             "qualification": QualificationPath.ALEVEL_BIOLOGY,
             "exam_board": board_key,
+            "specification": specification,
             "number_of_questions": number,
             "total_available": total_available,
         },
     }
 
 
-def prepare_gcse_generation(user, board_key, topic_id, subtopic_id, subcategory_id, gcse_subject, gcse_tier, number):
-    gcse_topic = GCSEScienceTopic.objects.get(id=topic_id, exam_board=board_key, subject=gcse_subject)
+def prepare_gcse_generation(user, board_key, specification, topic_id, subtopic_id, subcategory_id, gcse_subject, gcse_tier, number):
+    topic_filters = {"id": topic_id, "exam_board": board_key, "subject": gcse_subject}
+    if board_key == ExamBoard.EDEXCEL:
+        topic_filters["specification"] = specification
+    gcse_topic = GCSEScienceTopic.objects.get(**topic_filters)
     science_route = (
         GCSEScienceRoute.COMBINED
         if gcse_subject == GCSESubject.COMBINED
@@ -620,6 +643,7 @@ def prepare_gcse_generation(user, board_key, topic_id, subtopic_id, subcategory_
             "science_route": science_route,
             "gcse_tier": gcse_tier,
             "exam_board": board_key,
+            "specification": specification,
             "number_of_questions": number,
             "total_available": total_available,
         },
@@ -645,8 +669,12 @@ def generate_exam_questions(request):
         return Response({"error": "qualification is required. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'."}, status=400)
 
     board_key = (exam_board or "").strip().upper()
+    specification = _normalize_specification(request.data.get("specification"))
     if board_key not in ALLOWED_BOARDS:
-        return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+    specification_error = _validate_specification_for_board(board_key, specification)
+    if specification_error:
+        return Response({"error": specification_error}, status=400)
     if qualification not in ALLOWED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
 
@@ -682,6 +710,7 @@ def generate_exam_questions(request):
             generation_result = prepare_alevel_generation(
                 user=request.user,
                 board_key=board_key,
+                specification=specification,
                 topic_id=topic_id,
                 subtopic_id=subtopic_id,
                 subcategory_id=subcategory_id,
@@ -698,6 +727,7 @@ def generate_exam_questions(request):
             generation_result = prepare_gcse_generation(
                 user=request.user,
                 board_key=board_key,
+                specification=specification,
                 topic_id=topic_id,
                 subtopic_id=subtopic_id,
                 subcategory_id=subcategory_id,
@@ -785,7 +815,7 @@ def mark_user_answer(request):
     answers = request.data.get("answers")
     exam_board = (request.data.get("exam_board", "AQA") or "AQA").strip().upper()
     if exam_board not in ALLOWED_BOARDS:
-        return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+        return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
     if qualification not in ALLOWED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
 
@@ -917,39 +947,57 @@ def delete_user_results(request):
 @permission_classes([IsAuthenticated])
 def get_biology_topics(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
+    specification = _normalize_specification(request.query_params.get("specification"))
     qs = BiologyTopic.objects.all().order_by("topic")
     if board:
         if board not in ALLOWED_BOARDS:
-            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+            return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+        specification_error = _validate_specification_for_board(board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
         qs = qs.filter(exam_board=board)
+        if specification:
+            qs = qs.filter(specification=specification)
     return Response(BiologyTopicListSerializer(qs, many=True).data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_biology_subtopics(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
+    specification = _normalize_specification(request.query_params.get("specification"))
     qs = BiologySubTopic.objects.select_related("topic").all().order_by("title")
     topic_id = request.query_params.get("topic_id")
     if topic_id:
         qs = qs.filter(topic_id=topic_id)
     if board:
         if board not in ALLOWED_BOARDS:
-            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+            return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+        specification_error = _validate_specification_for_board(board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
         qs = qs.filter(topic__exam_board=board)
+        if specification:
+            qs = qs.filter(topic__specification=specification)
     return Response(BiologySubTopicListSerializer(qs, many=True).data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_biology_subcategories(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
+    specification = _normalize_specification(request.query_params.get("specification"))
     qs = BiologySubCategory.objects.select_related("subtopic", "subtopic__topic").all().order_by("title")
     subtopic_id = request.query_params.get("subtopic_id")
     if subtopic_id:
         qs = qs.filter(subtopic_id=subtopic_id)
     if board:
         if board not in ALLOWED_BOARDS:
-            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+            return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+        specification_error = _validate_specification_for_board(board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
         qs = qs.filter(subtopic__topic__exam_board=board)
+        if specification:
+            qs = qs.filter(subtopic__topic__specification=specification)
     return Response(BiologySubCategoryListSerializer(qs, many=True).data)
 
 
@@ -957,13 +1005,19 @@ def get_biology_subcategories(request):
 @permission_classes([IsAuthenticated])
 def get_gcse_topics(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
+    specification = _normalize_specification(request.query_params.get("specification"))
     subject = _normalize_gcse_subject(request.query_params.get("subject"))
     tier = _normalize_gcse_tier(request.query_params.get("tier"))
     qs = GCSEScienceTopic.objects.all().order_by("topic")
     if board:
         if board not in ALLOWED_BOARDS:
-            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+            return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+        specification_error = _validate_specification_for_board(board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
         qs = qs.filter(exam_board=board)
+        if specification:
+            qs = qs.filter(specification=specification)
     if subject:
         if subject not in ALLOWED_GCSE_SUBJECTS:
             return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
@@ -979,6 +1033,7 @@ def get_gcse_topics(request):
 @permission_classes([IsAuthenticated])
 def get_gcse_subtopics(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
+    specification = _normalize_specification(request.query_params.get("specification"))
     subject = _normalize_gcse_subject(request.query_params.get("subject"))
     tier = _normalize_gcse_tier(request.query_params.get("tier"))
     topic_id = request.query_params.get("topic_id")
@@ -987,8 +1042,13 @@ def get_gcse_subtopics(request):
         qs = qs.filter(topic_id=topic_id)
     if board:
         if board not in ALLOWED_BOARDS:
-            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+            return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+        specification_error = _validate_specification_for_board(board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
         qs = qs.filter(topic__exam_board=board)
+        if specification:
+            qs = qs.filter(topic__specification=specification)
     if subject:
         if subject not in ALLOWED_GCSE_SUBJECTS:
             return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
@@ -1004,6 +1064,7 @@ def get_gcse_subtopics(request):
 @permission_classes([IsAuthenticated])
 def get_gcse_subcategories(request):
     board = (request.query_params.get("exam_board") or "").strip().upper()
+    specification = _normalize_specification(request.query_params.get("specification"))
     subject = _normalize_gcse_subject(request.query_params.get("subject"))
     tier = _normalize_gcse_tier(request.query_params.get("tier"))
     subtopic_id = request.query_params.get("subtopic_id")
@@ -1012,8 +1073,13 @@ def get_gcse_subcategories(request):
         qs = qs.filter(subtopic_id=subtopic_id)
     if board:
         if board not in ALLOWED_BOARDS:
-            return Response({"error": "Invalid exam_board. Use 'OCR' or 'AQA'."}, status=400)
+            return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+        specification_error = _validate_specification_for_board(board, specification)
+        if specification_error:
+            return Response({"error": specification_error}, status=400)
         qs = qs.filter(subtopic__topic__exam_board=board)
+        if specification:
+            qs = qs.filter(subtopic__topic__specification=specification)
     if subject:
         if subject not in ALLOWED_GCSE_SUBJECTS:
             return Response({"error": GCSE_SUBJECT_ERROR_MESSAGE}, status=400)
