@@ -222,6 +222,39 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		self.assertEqual(session.number_of_questions, 1)
 		self.assertEqual(session.total_available, 25)
 
+	@patch('examquestions.views.generate_essay_questions')
+	def test_aqa_essay_generation_allows_missing_topic_and_exam_board_fields(self, mock_generate_essay_questions):
+		mock_generate_essay_questions.return_value = {
+			'questions': [
+				{
+					'question': 'The importance of genetic diversity in populations. [25 marks]',
+					'total_marks': 25,
+					'mark_scheme': ['Reward breadth, relevance, and synoptic links.'],
+				}
+			]
+		}
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'number_of_questions': 1,
+				'question_type': 'ESSAY_25_MARK',
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['qualification'], QualificationPath.ALEVEL_BIOLOGY)
+		self.assertEqual(response.data['question_type'], 'ESSAY_25_MARK')
+		self.assertEqual(len(response.data['questions']), 1)
+		mock_generate_essay_questions.assert_called_once_with('', 1, specification='')
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+		session = QuestionSession.objects.get(user=self.user)
+		self.assertEqual(session.exam_board, 'AQA')
+		self.assertEqual(session.qualification, QualificationPath.ALEVEL_BIOLOGY)
+		self.assertIsNone(session.topic)
+
 	@patch('examquestions.views.generate_gcse_questions')
 	@patch('examquestions.views.generate_questions')
 	def test_free_daily_limit_is_shared_across_gcse_and_alevel(self, mock_generate_questions, mock_generate_gcse_questions):

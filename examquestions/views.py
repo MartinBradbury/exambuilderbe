@@ -605,25 +605,31 @@ def prepare_alevel_generation(user, board_key, specification, topic_id, subtopic
 
 
 def prepare_essay_generation(user, board_key, specification, topic_id, subtopic_id, subcategory_id):
-    topic_filters = {"id": topic_id, "exam_board": board_key}
-    if board_key == ExamBoard.EDEXCEL:
-        topic_filters["specification"] = specification
-    topic = BiologyTopic.objects.get(**topic_filters)
-
+    topic = None
     subtopic = None
-    if subtopic_id:
-        subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
-
     subcategory = None
-    if subcategory_id:
-        if not subtopic_id:
-            raise ValueError("subcategory_id provided without subtopic_id")
-        subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
 
-    scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
+    if topic_id:
+        topic_filters = {"id": topic_id, "exam_board": board_key}
+        if board_key == ExamBoard.EDEXCEL:
+            topic_filters["specification"] = specification
+        topic = BiologyTopic.objects.get(**topic_filters)
+
+        if subtopic_id:
+            subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
+
+        if subcategory_id:
+            if not subtopic_id:
+                raise ValueError("subcategory_id provided without subtopic_id")
+            subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
+
+        _, scope_key = build_scope_metadata(topic, subtopic, subcategory)
+    else:
+        scope_key = "essay_25_mark_aqa_alevel"
+
     served_questions = get_user_served_question_set(user, board_key, scope_key)
 
-    scope = build_question_scope(topic.topic, subtopic, subcategory)
+    scope = build_question_scope(topic.topic, subtopic, subcategory) if topic else ""
     ai_response = generate_essay_questions(scope, 1, specification=specification)
     ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
     combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
@@ -727,9 +733,14 @@ def generate_exam_questions(request):
     except (TypeError, ValueError):
         number = 0
 
-    if not all([topic_id, exam_board, number]):
+    if question_type == QUESTION_TYPE_ESSAY_25_MARK:
+        exam_board = exam_board or ExamBoard.AQA
+        qualification = qualification or QualificationPath.ALEVEL_BIOLOGY
+        number = 1
+
+    if question_type != QUESTION_TYPE_ESSAY_25_MARK and not all([topic_id, exam_board, number]):
         return Response({"error": "Missing required fields"}, status=400)
-    if request.data.get('qualification') in {None, ''}:
+    if request.data.get('qualification') in {None, ''} and question_type != QUESTION_TYPE_ESSAY_25_MARK:
         return Response({"error": "qualification is required. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'."}, status=400)
 
     board_key = (exam_board or "").strip().upper()
@@ -748,7 +759,6 @@ def generate_exam_questions(request):
             return Response({"error": "Essay questions are only available for A-level Biology."}, status=400)
         if board_key != ExamBoard.AQA:
             return Response({"error": "Essay questions are only available for AQA."}, status=400)
-        number = 1
 
     entitlement = get_or_create_entitlement(request.user)
     current_plan_type = _current_plan_type(request.user, entitlement)
