@@ -58,7 +58,11 @@ For each question:
 - Write the question clearly, and include the total number of marks at the end of the question exactly like this: [{ESSAY_TOTAL_MARKS} marks]
 - The question must be suitable for an extended-response AQA A-level Biology essay, not a short-answer or structured question.
 - Choose a title from any topic area across the whole AQA A-level Biology specification, not from a user-selected topic.
+- Base the title closely on the style, wording patterns, and breadth of real previously asked AQA A-level Biology {ESSAY_TOTAL_MARKS}-mark essay questions.
+- Generate a question that feels very similar to past AQA essay titles, but do not copy a known title verbatim.
+- Vary the biological focus across the full specification and do not default repeatedly to enzyme-focused essays.
 - Make the question broad enough to allow students to select and link relevant knowledge from across the AQA A-level Biology specification.
+- Prefer classic AQA essay title patterns such as "The importance of...", "The role of...", or broad synoptic themes that connect multiple parts of the course.
 - Focus on the style of real AQA Biology essays, rewarding breadth, depth, relevance, and clear biological links.
 - Do not refer to any unseen figure, graph, table, practical setup, source extract, or prior context.
 - Provide an indicative mark scheme with concise bullet-point content that a high-quality essay could include.

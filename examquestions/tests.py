@@ -673,6 +673,8 @@ class QuestionPromptContractTests(APITestCase):
 		self.assertIn('Return exactly 1 question in the JSON response.', prompt)
 		self.assertIn('Every question must be a full 25-mark AQA essay question.', prompt)
 		self.assertIn('Choose a title from any topic area across the whole AQA A-level Biology specification', prompt)
+		self.assertIn('Base the title closely on the style, wording patterns, and breadth of real previously asked AQA A-level Biology 25-mark essay questions.', prompt)
+		self.assertIn('do not default repeatedly to enzyme-focused essays', prompt)
 		self.assertIn('exactly like this: [25 marks]', prompt)
 		self.assertIn('Use only content from the official the AQA specification for A-level Biology.', prompt)
 
