@@ -2,6 +2,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .services.ai import generate_questions, evaluate_batch_responses_with_openai, evaluate_response_with_openai
+from .services.aiEssay import (
+    generate_questions as generate_essay_questions,
+    evaluate_batch_responses_with_openai as evaluate_essay_batch_responses_with_openai,
+    evaluate_response_with_openai as evaluate_essay_response_with_openai,
+)
 from .services.aiGCSE import (
     generate_questions as generate_gcse_questions,
     evaluate_batch_responses_with_openai as evaluate_gcse_batch_responses_with_openai,
@@ -76,6 +81,10 @@ ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
 ALLOWED_GCSE_SUBJECTS = {choice for choice, _ in GCSESubject.choices}
 ALLOWED_GCSE_TIERS = {choice for choice, _ in GCSETier.choices}
 GCSE_SUBJECT_ERROR_MESSAGE = "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', 'PHYSICS', or 'COMBINED'."
+QUESTION_TYPE_STANDARD = "STANDARD"
+QUESTION_TYPE_ESSAY_25_MARK = "ESSAY_25_MARK"
+ALLOWED_QUESTION_TYPES = {QUESTION_TYPE_STANDARD, QUESTION_TYPE_ESSAY_25_MARK}
+QUESTION_TYPE_ERROR_MESSAGE = "Invalid question_type. Use 'STANDARD' or 'ESSAY_25_MARK'."
 
 
 class DailyQuestionLimitExceeded(Exception):
@@ -113,6 +122,15 @@ def _normalize_gcse_tier(raw_value):
 
 def _normalize_specification(raw_value):
     return str(raw_value or "").strip()
+
+
+def _normalize_question_type(raw_value):
+    normalized = _normalize_choice(raw_value)
+    if not normalized:
+        return QUESTION_TYPE_STANDARD
+    if normalized == "ESSAY":
+        return QUESTION_TYPE_ESSAY_25_MARK
+    return normalized
 
 
 def _validate_specification_for_board(board_key, specification):
@@ -586,6 +604,51 @@ def prepare_alevel_generation(user, board_key, specification, topic_id, subtopic
     }
 
 
+def prepare_essay_generation(user, board_key, specification, topic_id, subtopic_id, subcategory_id):
+    topic_filters = {"id": topic_id, "exam_board": board_key}
+    if board_key == ExamBoard.EDEXCEL:
+        topic_filters["specification"] = specification
+    topic = BiologyTopic.objects.get(**topic_filters)
+
+    subtopic = None
+    if subtopic_id:
+        subtopic = BiologySubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
+
+    subcategory = None
+    if subcategory_id:
+        if not subtopic_id:
+            raise ValueError("subcategory_id provided without subtopic_id")
+        subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
+
+    scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
+    served_questions = get_user_served_question_set(user, board_key, scope_key)
+
+    scope = build_question_scope(topic.topic, subtopic, subcategory)
+    ai_response = generate_essay_questions(scope, 1, specification=specification)
+    ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
+    combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
+
+    if not combined_questions:
+        raise ValueError("No valid essay question returned.")
+
+    combined_questions = combined_questions[:1]
+    total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+    return {
+        "scope_key": scope_key,
+        "combined_questions": combined_questions,
+        "session_kwargs": {
+            "topic": topic,
+            "subtopic": subtopic,
+            "subcategory": subcategory,
+            "qualification": QualificationPath.ALEVEL_BIOLOGY,
+            "exam_board": board_key,
+            "specification": specification,
+            "number_of_questions": 1,
+            "total_available": total_available,
+        },
+    }
+
+
 def prepare_gcse_generation(user, board_key, specification, topic_id, subtopic_id, subcategory_id, gcse_subject, gcse_tier, number):
     topic_filters = {"id": topic_id, "exam_board": board_key, "subject": gcse_subject}
     if board_key == ExamBoard.EDEXCEL:
@@ -658,6 +721,7 @@ def generate_exam_questions(request):
     subcategory_id = request.data.get("subcategory_id")   # optional
     exam_board = request.data.get("exam_board")
     qualification = _normalize_qualification(request.data.get("qualification"), default='')
+    question_type = _normalize_question_type(request.data.get("question_type"))
     try:
         number = int(request.data.get("number_of_questions"))
     except (TypeError, ValueError):
@@ -672,11 +736,19 @@ def generate_exam_questions(request):
     specification = _normalize_specification(request.data.get("specification"))
     if board_key not in ALLOWED_BOARDS:
         return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+    if question_type not in ALLOWED_QUESTION_TYPES:
+        return Response({"error": QUESTION_TYPE_ERROR_MESSAGE}, status=400)
     specification_error = _validate_specification_for_board(board_key, specification)
     if specification_error:
         return Response({"error": specification_error}, status=400)
     if qualification not in ALLOWED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
+    if question_type == QUESTION_TYPE_ESSAY_25_MARK:
+        if qualification != QualificationPath.ALEVEL_BIOLOGY:
+            return Response({"error": "Essay questions are only available for A-level Biology."}, status=400)
+        if board_key != ExamBoard.AQA:
+            return Response({"error": "Essay questions are only available for AQA."}, status=400)
+        number = 1
 
     entitlement = get_or_create_entitlement(request.user)
     current_plan_type = _current_plan_type(request.user, entitlement)
@@ -707,15 +779,25 @@ def generate_exam_questions(request):
 
     try:
         if qualification == QualificationPath.ALEVEL_BIOLOGY:
-            generation_result = prepare_alevel_generation(
-                user=request.user,
-                board_key=board_key,
-                specification=specification,
-                topic_id=topic_id,
-                subtopic_id=subtopic_id,
-                subcategory_id=subcategory_id,
-                number=number,
-            )
+            if question_type == QUESTION_TYPE_ESSAY_25_MARK:
+                generation_result = prepare_essay_generation(
+                    user=request.user,
+                    board_key=board_key,
+                    specification=specification,
+                    topic_id=topic_id,
+                    subtopic_id=subtopic_id,
+                    subcategory_id=subcategory_id,
+                )
+            else:
+                generation_result = prepare_alevel_generation(
+                    user=request.user,
+                    board_key=board_key,
+                    specification=specification,
+                    topic_id=topic_id,
+                    subtopic_id=subtopic_id,
+                    subcategory_id=subcategory_id,
+                    number=number,
+                )
         else:
             gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
             gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
@@ -772,6 +854,7 @@ def generate_exam_questions(request):
             "questions": combined_questions,
             "session_id": session.id,
             "qualification": qualification,
+            "question_type": question_type,
             "questions_remaining_today": questions_remaining_today,
             "plan_type": current_plan_type,
         }, status=200)
@@ -815,10 +898,18 @@ def mark_user_answer(request):
     answers = request.data.get("answers")
     exam_board = (request.data.get("exam_board", "AQA") or "AQA").strip().upper()
     specification = _normalize_specification(request.data.get("specification"))
+    question_type = _normalize_question_type(request.data.get("question_type"))
     if exam_board not in ALLOWED_BOARDS:
         return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+    if question_type not in ALLOWED_QUESTION_TYPES:
+        return Response({"error": QUESTION_TYPE_ERROR_MESSAGE}, status=400)
     if qualification not in ALLOWED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
+    if question_type == QUESTION_TYPE_ESSAY_25_MARK:
+        if qualification != QualificationPath.ALEVEL_BIOLOGY:
+            return Response({"error": "Essay questions are only available for A-level Biology."}, status=400)
+        if exam_board != ExamBoard.AQA:
+            return Response({"error": "Essay questions are only available for AQA."}, status=400)
     if qualification == QualificationPath.ALEVEL_BIOLOGY:
         specification_error = _validate_specification_for_board(exam_board, specification)
         if specification_error:
@@ -843,6 +934,8 @@ def mark_user_answer(request):
         try:
             if qualification == QualificationPath.GCSE_SCIENCE:
                 result = evaluate_gcse_batch_responses_with_openai(answers, exam_board, gcse_subject, gcse_tier)
+            elif question_type == QUESTION_TYPE_ESSAY_25_MARK:
+                result = evaluate_essay_batch_responses_with_openai(answers, specification=specification)
             else:
                 result = evaluate_batch_responses_with_openai(answers, exam_board, specification=specification)
             return Response(result, status=200)
@@ -870,6 +963,8 @@ def mark_user_answer(request):
     try:
         if qualification == QualificationPath.GCSE_SCIENCE:
             result = evaluate_gcse_response_with_openai(question, mark_scheme, user_answer, exam_board, gcse_subject, gcse_tier)
+        elif question_type == QUESTION_TYPE_ESSAY_25_MARK:
+            result = evaluate_essay_response_with_openai(question, mark_scheme, user_answer, specification=specification)
         else:
             result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board, specification=specification)
         return Response(result, status=200)

@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage
 from accounts.models import CustomUser
 from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, GCSEScienceRoute, QuestionSession, QualificationPath, ServedQuestion
-from .services import ai, aiGCSE
+from .services import ai, aiEssay, aiGCSE
 from .views import GCSE_SUBJECT_ERROR_MESSAGE, is_self_contained_ai_question, resolve_gcse_fallback_bank_path
 
 
@@ -185,6 +185,42 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		self.assertEqual(response.data['plan_type'], 'paid')
 		self.assertIsNone(response.data['questions_remaining_today'])
 		self.assertFalse(QuestionUsage.objects.filter(user=self.user).exists())
+
+	@patch('examquestions.views.generate_essay_questions')
+	def test_aqa_essay_generation_routes_to_essay_service_and_forces_single_question(self, mock_generate_essay_questions):
+		self.topic.exam_board = 'AQA'
+		self.topic.save(update_fields=['exam_board'])
+		mock_generate_essay_questions.return_value = {
+			'questions': [
+				{
+					'question': 'The importance of ATP in biological processes. [25 marks]',
+					'total_marks': 25,
+					'mark_scheme': ['Reward breadth, relevance, and synoptic links.'],
+				}
+			]
+		}
+
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'AQA',
+				'number_of_questions': 3,
+				'question_type': 'ESSAY_25_MARK',
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['question_type'], 'ESSAY_25_MARK')
+		self.assertEqual(len(response.data['questions']), 1)
+		mock_generate_essay_questions.assert_called_once_with('Test Topic', 1, specification='')
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+		session = QuestionSession.objects.get(user=self.user)
+		self.assertEqual(session.number_of_questions, 1)
+		self.assertEqual(session.total_available, 25)
 
 	@patch('examquestions.views.generate_gcse_questions')
 	@patch('examquestions.views.generate_questions')
@@ -589,6 +625,22 @@ class QuestionPromptContractTests(APITestCase):
 		self.assertIn('Do not refer to any unseen method, figure, graph, table, practical setup, results, or source material.', prompt)
 		self.assertIn('include a concise stem describing that method or data directly in the `question` text', prompt)
 
+	@patch('examquestions.services.aiEssay._create_json_chat_completion')
+	def test_aqa_essay_generation_prompt_is_fixed_to_25_mark_aqa_essays(self, mock_create_completion):
+		mock_create_completion.return_value = _mock_openai_json_response({'questions': []})
+
+		aiEssay.generate_questions('Energy transfers', 3)
+
+		messages = mock_create_completion.call_args.kwargs['messages']
+		prompt = messages[1]['content']
+
+		self.assertIn('qualified teacher creating AQA A-level Biology essay questions', prompt)
+		self.assertIn('Create exactly 1 essay-style question', prompt)
+		self.assertIn('Return exactly 1 question in the JSON response.', prompt)
+		self.assertIn('Every question must be a full 25-mark AQA essay question.', prompt)
+		self.assertIn('exactly like this: [25 marks]', prompt)
+		self.assertIn('Use only content from the official the AQA specification for A-level Biology.', prompt)
+
 	@patch('examquestions.services.ai._create_json_chat_completion')
 	def test_alevel_generation_prompt_includes_specification_when_provided(self, mock_create_completion):
 		mock_create_completion.return_value = _mock_openai_json_response({'questions': []})
@@ -728,6 +780,36 @@ class MarkingFlowTests(APITestCase):
 		self.assertEqual(len(response.data['results']), 2)
 		self.assertEqual(response.data['strengths'][0], 'Strength 1')
 		mock_batch_mark.assert_called_once()
+
+	@patch('examquestions.views.evaluate_essay_response_with_openai')
+	def test_mark_user_answer_routes_to_essay_marking_service(self, mock_essay_mark):
+		mock_essay_mark.return_value = {
+			'score': 18,
+			'out_of': 25,
+			'feedback': 'Good breadth with some weaker links.',
+		}
+
+		response = self.client.post(
+			self.mark_url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'exam_board': 'AQA',
+				'question_type': 'ESSAY_25_MARK',
+				'question': 'The importance of ATP in biological processes. [25 marks]',
+				'mark_scheme': ['Reward breadth, relevance, and synoptic links.'],
+				'user_answer': 'ATP provides energy for active transport, muscle contraction, and phosphorylation pathways.',
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data['out_of'], 25)
+		mock_essay_mark.assert_called_once_with(
+			'The importance of ATP in biological processes. [25 marks]',
+			['Reward breadth, relevance, and synoptic links.'],
+			'ATP provides energy for active transport, muscle contraction, and phosphorylation pathways.',
+			specification='',
+		)
 
 	@patch('examquestions.views.evaluate_batch_responses_with_openai')
 	def test_submit_question_session_uses_provided_feedback_without_extra_openai_call(self, mock_batch_mark):
