@@ -42,12 +42,13 @@ def _build_specification_reference(specification=None):
 
 
 def generate_questions(topic, number_of_questions, specification=None):
+    del topic
     del number_of_questions
     specification_reference = _build_specification_reference(specification)
     prompt = f"""
 You are a qualified teacher creating AQA A-level Biology essay questions.
 
-Create exactly {ESSAY_QUESTION_COUNT} essay-style question on the topic: "{topic}" for {specification_reference}.
+Create exactly {ESSAY_QUESTION_COUNT} essay-style question for {specification_reference}.
 
 Return exactly {ESSAY_QUESTION_COUNT} question in the JSON response.
 
@@ -56,6 +57,7 @@ Every question must be a full {ESSAY_TOTAL_MARKS}-mark AQA essay question.
 For each question:
 - Write the question clearly, and include the total number of marks at the end of the question exactly like this: [{ESSAY_TOTAL_MARKS} marks]
 - The question must be suitable for an extended-response AQA A-level Biology essay, not a short-answer or structured question.
+- Choose a title from any topic area across the whole AQA A-level Biology specification, not from a user-selected topic.
 - Make the question broad enough to allow students to select and link relevant knowledge from across the AQA A-level Biology specification.
 - Focus on the style of real AQA Biology essays, rewarding breadth, depth, relevance, and clear biological links.
 - Do not refer to any unseen figure, graph, table, practical setup, source extract, or prior context.

@@ -636,8 +636,10 @@ class QuestionPromptContractTests(APITestCase):
 
 		self.assertIn('qualified teacher creating AQA A-level Biology essay questions', prompt)
 		self.assertIn('Create exactly 1 essay-style question', prompt)
+		self.assertNotIn('Energy transfers', prompt)
 		self.assertIn('Return exactly 1 question in the JSON response.', prompt)
 		self.assertIn('Every question must be a full 25-mark AQA essay question.', prompt)
+		self.assertIn('Choose a title from any topic area across the whole AQA A-level Biology specification', prompt)
 		self.assertIn('exactly like this: [25 marks]', prompt)
 		self.assertIn('Use only content from the official the AQA specification for A-level Biology.', prompt)
 
