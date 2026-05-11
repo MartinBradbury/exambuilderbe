@@ -822,6 +822,8 @@ class MarkingFlowTests(APITestCase):
 			'score': 18,
 			'out_of': 25,
 			'feedback': 'Good breadth with some weaker links.',
+			'strengths': ['Clear breadth', 'Relevant examples', 'Mostly accurate biology'],
+			'improvements': ['Add more synoptic links', 'Develop evaluation', 'Use more precise terminology'],
 		}
 
 		response = self.client.post(
@@ -839,6 +841,8 @@ class MarkingFlowTests(APITestCase):
 
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(response.data['out_of'], 25)
+		self.assertEqual(response.data['strengths'][0], 'Clear breadth')
+		self.assertEqual(response.data['improvements'][0], 'Add more synoptic links')
 		mock_essay_mark.assert_called_once_with(
 			'The importance of ATP in biological processes. [25 marks]',
 			['Reward breadth, relevance, and synoptic links.'],

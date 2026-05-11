@@ -125,12 +125,16 @@ Marking guidance:
 - Penalise major inaccuracies, weak relevance, repetition, or very narrow coverage.
 - Keep the score between 0 and {ESSAY_TOTAL_MARKS} inclusive.
 - Feedback should briefly explain why the score was awarded and what would improve the essay.
+- `strengths` must contain exactly 3 short strings summarising what the student did well.
+- `improvements` must contain exactly 3 short strings summarising what would improve the essay.
 
 Respond ONLY with strict valid JSON, no extra text:
 {{
   "score": <integer or float>,
   "out_of": {ESSAY_TOTAL_MARKS},
-  "feedback": "Brief explanation of awarded marks and what was missing."
+    "feedback": "Brief explanation of awarded marks and what was missing.",
+    "strengths": ["point1", "point2", "point3"],
+    "improvements": ["point1", "point2", "point3"]
 }}
 """
 
@@ -141,9 +145,16 @@ Respond ONLY with strict valid JSON, no extra text:
                 {"role": "user", "content": prompt},
             ],
             temperature=0.3,
-            max_tokens=600,
+            max_tokens=800,
         )
-        return _parse_json_response_content(response)
+        parsed = _parse_json_response_content(response)
+        return {
+            "score": parsed.get("score", 0),
+            "out_of": parsed.get("out_of", ESSAY_TOTAL_MARKS),
+            "feedback": parsed.get("feedback", ""),
+            "strengths": parsed.get("strengths", []),
+            "improvements": parsed.get("improvements", []),
+        }
     except Exception as error:
         print("OpenAI error:", error)
         print("Prompt content:\n", prompt)
