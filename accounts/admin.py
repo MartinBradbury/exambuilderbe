@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.db.models import Case, IntegerField, Value, When
 from .models import CustomUser, CustomUserProfile, QuestionUsage, UserEntitlement
 
 
@@ -12,17 +13,73 @@ def membership_label_for_user(user):
         return 'A Level'
     return 'Free'
 
+
+class MembershipTypeFilter(admin.SimpleListFilter):
+    title = 'membership type'
+    parameter_name = 'membership_type'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('free', 'Free'),
+            ('gcse', 'GCSE'),
+            ('alevel', 'A Level'),
+            ('both', 'GCSE + A Level'),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'free':
+            return queryset.filter(
+                has_gcse_paid_access=False,
+                has_alevel_paid_access=False,
+            )
+        if value == 'gcse':
+            return queryset.filter(
+                has_gcse_paid_access=True,
+                has_alevel_paid_access=False,
+            )
+        if value == 'alevel':
+            return queryset.filter(
+                has_gcse_paid_access=False,
+                has_alevel_paid_access=True,
+            )
+        if value == 'both':
+            return queryset.filter(
+                has_gcse_paid_access=True,
+                has_alevel_paid_access=True,
+            )
+        return queryset
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'username', 'membership_type', 'email_verified', 'email_verified_at')
-    list_filter = ('email', 'username', 'email_verified', 'has_gcse_paid_access', 'has_alevel_paid_access')
+    list_filter = (
+        MembershipTypeFilter,
+        'email',
+        'username',
+        'email_verified',
+        'has_gcse_paid_access',
+        'has_alevel_paid_access',
+    )
     fieldsets = UserAdmin.fieldsets + (
         ('Verification', {'fields': ('email_verified', 'email_verified_at')}),
         ('Membership', {'fields': ('has_gcse_paid_access', 'has_alevel_paid_access')}),
     )
     readonly_fields = ('email_verified_at',)
 
-    @admin.display(description='Membership')
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.annotate(
+            membership_sort_rank=Case(
+                When(has_gcse_paid_access=True, has_alevel_paid_access=True, then=Value(4)),
+                When(has_gcse_paid_access=True, has_alevel_paid_access=False, then=Value(3)),
+                When(has_gcse_paid_access=False, has_alevel_paid_access=True, then=Value(2)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        )
+
+    @admin.display(description='Membership', ordering='membership_sort_rank')
     def membership_type(self, obj):
         return membership_label_for_user(obj)
 
