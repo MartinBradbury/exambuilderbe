@@ -1,5 +1,7 @@
 # ExamBuilder API
 
+![ExamBuilder Dashboard](Screenshot%202026-09-04%20at%2011.36.09.png)
+
 ExamBuilder API is the Django REST backend for an exam-practice application supporting A-level Biology and GCSE Science. It provides a curriculum catalogue, AI-generated exam-style questions, answer marking, session history and performance tracking, account management, email verification, and qualification-specific paid access through Stripe.
 
 The API is consumed by a separate frontend application. Django admin is included for managing users, entitlements, and curriculum data.
