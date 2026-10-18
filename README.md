@@ -164,8 +164,31 @@ Do not commit `.env`, database URLs, API keys, Stripe keys, or SMTP passwords. C
 | `STRIPE_PRICE_ID` | Optional legacy fallback | Used when a qualification-specific Stripe price is not set. |
 | `STRIPE_CHECKOUT_MODE` | Optional | `payment` by default; `subscription` is also supported. |
 | `STRIPE_SUCCESS_URL`, `STRIPE_CANCEL_URL` | Optional | Checkout redirect URLs; default to account pages under `FRONTEND_URL`. |
+| `APP_ENV` | Optional | Defaults to `production`. Set to `staging` to enable the staging safeguards below. |
+| `EXTRA_ALLOWED_HOSTS` | Optional | Comma-separated hostnames appended to `ALLOWED_HOSTS` (for example the staging Heroku hostname). |
+| `EXTRA_CSRF_TRUSTED_ORIGINS` | Optional | Comma-separated HTTPS origins appended to `CSRF_TRUSTED_ORIGINS`. |
 
-`ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` are configured in [exambuilder/settings.py](exambuilder/settings.py). Add any new deployment domain there before deployment.
+`ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` start from the production values in [exambuilder/settings.py](exambuilder/settings.py); use `EXTRA_ALLOWED_HOSTS` and `EXTRA_CSRF_TRUSTED_ORIGINS` to add other deployments without editing code.
+
+### Staging Environment
+
+When `APP_ENV=staging`, startup fails with `ImproperlyConfigured` if:
+
+- `SECRET_KEY` is missing. Use a value different from production.
+- `DATABASE_URL` is missing. Point it at the staging database only.
+- `USE_LOCAL_DB` is enabled (or defaults to enabled because no `DYNO` is set). Set `USE_LOCAL_DB=false`.
+- `STRIPE_SECRET_KEY` is set but does not start with `sk_test_`. Leaving it unset is allowed; Stripe checkout and webhooks stay unavailable until test credentials are configured.
+
+Example staging config (placeholders only):
+
+```powershell
+heroku config:set APP_ENV=staging USE_LOCAL_DB=false DEBUG=false -a <staging-app>
+heroku config:set EXTRA_ALLOWED_HOSTS=<staging-app>.herokuapp.com -a <staging-app>
+heroku config:set EXTRA_CSRF_TRUSTED_ORIGINS=https://<staging-app>.herokuapp.com -a <staging-app>
+heroku config:set EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend -a <staging-app>
+```
+
+Set the remaining secrets (`SECRET_KEY`, `DATABASE_URL`, `OPENAI_API_KEY`, Stripe test keys and price IDs, `FRONTEND_URL`) separately, and do not reuse production values for any of them. Always pass `-a <staging-app>` to Heroku commands, including `migrate`.
 
 ## Authentication
 
@@ -527,7 +550,7 @@ web: python -m gunicorn exambuilder.wsgi --log-file -
 2. Provision a PostgreSQL-compatible database and set its URL as `DATABASE_URL`.
 3. Set `SECRET_KEY`, `DEBUG=False`, `OPENAI_API_KEY`, and `FRONTEND_URL`.
 4. Set all necessary SMTP, Cloudinary, and Stripe configuration values.
-5. Add the deployed backend URL to `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` in settings before release.
+5. Add the deployed backend hostname to `EXTRA_ALLOWED_HOSTS` and its HTTPS origin to `EXTRA_CSRF_TRUSTED_ORIGINS` (or to the lists in settings) before release.
 6. Deploy and run migrations:
 
    ```powershell
