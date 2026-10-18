@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 import os
 
@@ -9,12 +10,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv()
 
+APP_ENV = os.getenv('APP_ENV', 'production').strip().lower() or 'production'
+IS_STAGING = APP_ENV == 'staging'
+
 
 def env_to_bool(name, default=False):
     value = os.getenv(name)
     if value is None:
         return default
     return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def env_to_list(name):
+    return [item.strip() for item in os.getenv(name, '').split(',') if item.strip()]
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,12 +40,14 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
 ]
+ALLOWED_HOSTS += env_to_list('EXTRA_ALLOWED_HOSTS')
 
 CSRF_TRUSTED_ORIGINS = [
     "https://exambuilder-efae14d59f03.herokuapp.com",
     "http://localhost",
     "http://127.0.0.1",
 ]
+CSRF_TRUSTED_ORIGINS += env_to_list('EXTRA_CSRF_TRUSTED_ORIGINS')
 
 LOGGING = {
     'version': 1,
@@ -133,6 +143,14 @@ else:
 
 SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
 
+if IS_STAGING:
+    if not SECRET_KEY:
+        raise ImproperlyConfigured('Staging requires SECRET_KEY to be set.')
+    if not database_url:
+        raise ImproperlyConfigured('Staging requires DATABASE_URL to be set.')
+    if use_local_db:
+        raise ImproperlyConfigured('Staging must not use the local SQLite database; set USE_LOCAL_DB=false.')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -186,6 +204,8 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = env_to_bool('EMAIL_USE_TLS', default=True)
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+if IS_STAGING and STRIPE_SECRET_KEY and not STRIPE_SECRET_KEY.startswith('sk_test_'):
+    raise ImproperlyConfigured('Staging only allows Stripe test-mode secret keys (sk_test_...).')
 STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
 STRIPE_PRICE_ID = os.getenv('STRIPE_PRICE_ID', '')
