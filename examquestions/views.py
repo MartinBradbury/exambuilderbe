@@ -91,6 +91,12 @@ class DailyQuestionLimitExceeded(Exception):
     pass
 
 
+def _free_limit_error_message():
+    limit = UserEntitlement.FREE_DAILY_QUESTION_LIMIT
+    noun = "question" if limit == 1 else "questions"
+    return f"Free users can only generate {limit} {noun} per day total. Upgrade this qualification for unlimited access."
+
+
 def _normalize_choice(raw_value):
     return str(raw_value or "").strip().replace("-", "_").replace(" ", "_").upper()
 
@@ -780,7 +786,7 @@ def generate_exam_questions(request):
         if number > questions_remaining_today:
             return Response(
                 {
-                    "error": "Free users can only generate 1 question per day total. Upgrade this qualification for unlimited access.",
+                    "error": _free_limit_error_message(),
                     "plan_type": current_plan_type,
                     "questions_remaining_today": questions_remaining_today,
                 },
@@ -872,7 +878,7 @@ def generate_exam_questions(request):
     except DailyQuestionLimitExceeded:
         return Response(
             {
-                "error": "Free users can only generate 1 question per day total. Upgrade this qualification for unlimited access.",
+                "error": _free_limit_error_message(),
                 "plan_type": current_plan_type,
                 "questions_remaining_today": 0,
             },

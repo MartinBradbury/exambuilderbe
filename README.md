@@ -409,7 +409,7 @@ Fallback banks are application content, not a replacement for a missing OpenAI c
 
 ### Access Rules
 
-Free users can generate one question per calendar day. This allowance is shared across GCSE and A-level requests.
+Free users can generate two questions per calendar day (`UserEntitlement.FREE_DAILY_QUESTION_LIMIT`). This allowance is shared across GCSE and A-level requests.
 
 Paid access is qualification-specific:
 

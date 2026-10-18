@@ -98,17 +98,25 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		self.topic = BiologyTopic.objects.create(topic='Test Topic', exam_board='OCR')
 		self.url = reverse('generate-exam-questions')
 
-	@patch('examquestions.views.generate_questions')
-	def test_free_user_can_generate_one_question_per_day(self, mock_generate_questions):
-		mock_generate_questions.return_value = {
+	@staticmethod
+	def _ai_response(*question_texts):
+		return {
 			'questions': [
 				{
-					'question': 'Explain osmosis. [1 mark]',
+					'question': text,
 					'total_marks': 1,
-					'mark_scheme': ['Water moves down a water potential gradient (1 mark)'],
+					'mark_scheme': ['Valid point (1 mark)'],
 				}
+				for text in question_texts
 			]
 		}
+
+	@patch('examquestions.views.generate_questions')
+	def test_free_user_can_generate_two_questions_per_day(self, mock_generate_questions):
+		mock_generate_questions.side_effect = [
+			self._ai_response('Explain osmosis. [1 mark]'),
+			self._ai_response('Define diffusion. [1 mark]'),
+		]
 
 		self.client.force_authenticate(user=self.user)
 		payload = {
@@ -121,33 +129,50 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		first_response = self.client.post(self.url, payload, format='json')
 
 		self.assertEqual(first_response.status_code, 200)
-		self.assertEqual(first_response.data['questions_remaining_today'], 0)
+		self.assertEqual(first_response.data['questions_remaining_today'], 1)
 		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
-		self.assertEqual(QuestionSession.objects.filter(user=self.user).count(), 1)
 
 		second_response = self.client.post(self.url, payload, format='json')
 
-		self.assertEqual(second_response.status_code, 403)
+		self.assertEqual(second_response.status_code, 200)
 		self.assertEqual(second_response.data['questions_remaining_today'], 0)
-		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 2)
+		self.assertEqual(QuestionSession.objects.filter(user=self.user).count(), 2)
 
-	def test_free_user_cannot_request_multiple_questions(self):
-		self.client.force_authenticate(user=self.user)
+		third_response = self.client.post(self.url, payload, format='json')
 
-		response = self.client.post(
-			self.url,
-			{
-				'qualification': 'ALEVEL_BIOLOGY',
-				'topic_id': self.topic.id,
-				'exam_board': 'OCR',
-				'number_of_questions': 2,
-			},
-			format='json',
+		self.assertEqual(third_response.status_code, 403)
+		self.assertEqual(third_response.data['questions_remaining_today'], 0)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 2)
+		self.assertEqual(QuestionSession.objects.filter(user=self.user).count(), 2)
+		self.assertEqual(mock_generate_questions.call_count, 2)
+
+	@patch('examquestions.views.generate_questions')
+	def test_free_user_can_request_two_but_not_three_questions_in_one_request(self, mock_generate_questions):
+		mock_generate_questions.return_value = self._ai_response(
+			'Explain osmosis. [1 mark]',
+			'Define diffusion. [1 mark]',
 		)
+		self.client.force_authenticate(user=self.user)
+		payload = {
+			'qualification': 'ALEVEL_BIOLOGY',
+			'topic_id': self.topic.id,
+			'exam_board': 'OCR',
+		}
 
-		self.assertEqual(response.status_code, 403)
-		self.assertEqual(response.data['questions_remaining_today'], 1)
+		three_response = self.client.post(self.url, {**payload, 'number_of_questions': 3}, format='json')
+
+		self.assertEqual(three_response.status_code, 403)
+		self.assertEqual(three_response.data['questions_remaining_today'], 2)
 		self.assertFalse(QuestionUsage.objects.filter(user=self.user).exists())
+		mock_generate_questions.assert_not_called()
+
+		two_response = self.client.post(self.url, {**payload, 'number_of_questions': 2}, format='json')
+
+		self.assertEqual(two_response.status_code, 200)
+		self.assertEqual(len(two_response.data['questions']), 2)
+		self.assertEqual(two_response.data['questions_remaining_today'], 0)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 2)
 
 	@patch('examquestions.views.generate_questions')
 	def test_alevel_paid_user_has_unlimited_alevel_generation(self, mock_generate_questions):
@@ -302,9 +327,26 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 			format='json',
 		)
 
+		third_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'GCSE',
+				'topic_id': gcse_topic.id,
+				'exam_board': 'OCR',
+				'subject': 'PHYSICS',
+				'tier': 'FOUNDATION',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
+
 		self.assertEqual(gcse_response.status_code, 200)
-		self.assertEqual(alevel_response.status_code, 403)
-		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+		self.assertEqual(alevel_response.status_code, 200)
+		self.assertEqual(third_response.status_code, 403)
+		self.assertEqual(third_response.data['questions_remaining_today'], 0)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 2)
+		mock_generate_gcse_questions.assert_called_once()
+		mock_generate_questions.assert_called_once()
 
 	@patch('examquestions.views.generate_gcse_questions')
 	@patch('examquestions.views.generate_questions')
@@ -321,15 +363,10 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 				}
 			]
 		}
-		mock_generate_questions.return_value = {
-			'questions': [
-				{
-					'question': 'Explain osmosis. [1 mark]',
-					'total_marks': 1,
-					'mark_scheme': ['Water moves down a water potential gradient (1 mark)'],
-				}
-			]
-		}
+		mock_generate_questions.side_effect = [
+			self._ai_response('Explain osmosis. [1 mark]'),
+			self._ai_response('Define diffusion. [1 mark]'),
+		]
 
 		self.client.force_authenticate(user=self.user)
 		gcse_response = self.client.post(
@@ -364,11 +401,25 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 			},
 			format='json',
 		)
+		third_alevel_response = self.client.post(
+			self.url,
+			{
+				'qualification': 'ALEVEL_BIOLOGY',
+				'topic_id': self.topic.id,
+				'exam_board': 'OCR',
+				'number_of_questions': 1,
+			},
+			format='json',
+		)
 
 		self.assertEqual(gcse_response.status_code, 200)
+		self.assertIsNone(gcse_response.data['questions_remaining_today'])
 		self.assertEqual(first_alevel_response.status_code, 200)
-		self.assertEqual(second_alevel_response.status_code, 403)
-		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 1)
+		self.assertEqual(first_alevel_response.data['questions_remaining_today'], 1)
+		self.assertEqual(second_alevel_response.status_code, 200)
+		self.assertEqual(second_alevel_response.data['questions_remaining_today'], 0)
+		self.assertEqual(third_alevel_response.status_code, 403)
+		self.assertEqual(QuestionUsage.objects.get(user=self.user).question_count, 2)
 
 	def test_generate_exam_questions_requires_qualification(self):
 		self.client.force_authenticate(user=self.user)
