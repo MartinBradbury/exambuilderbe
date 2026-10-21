@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import Case, IntegerField, Value, When
-from .models import CustomUser, CustomUserProfile, QuestionUsage, UserEntitlement
+from .models import CustomUser, CustomUserProfile, QuestionUsage, Subject, SubjectEntitlement, UserEntitlement
 
 
 def membership_label_for_user(user):
@@ -147,6 +147,22 @@ class UserEntitlementAdmin(admin.ModelAdmin):
     @admin.action(description='Mark selected users as lifetime')
     def mark_as_lifetime(self, request, queryset):
         queryset.update(plan_type=UserEntitlement.PlanType.LIFETIME, lifetime_unlocked=True)
+
+
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name', 'qualification', 'is_active')
+    list_filter = ('qualification', 'is_active')
+    search_fields = ('name', 'code')
+
+
+@admin.register(SubjectEntitlement)
+class SubjectEntitlementAdmin(admin.ModelAdmin):
+    list_display = ('user', 'subject', 'granted_at')
+    list_filter = ('subject',)
+    search_fields = ('user__email', 'subject__code')
+    list_select_related = ('user', 'subject')
+    autocomplete_fields = ('user',)
 
 
 @admin.register(QuestionUsage)

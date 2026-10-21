@@ -106,6 +106,38 @@ class QuestionUsage(models.Model):
     def __str__(self):
         return f"{self.user.email} | {self.date} | {self.question_count}"
 
+class Subject(models.Model):
+    class Qualification(models.TextChoices):
+        GCSE = 'GCSE', 'GCSE'
+        A_LEVEL = 'A_LEVEL', 'A-level'
+
+    code = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    qualification = models.CharField(max_length=20, choices=Qualification.choices)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['qualification', 'name']
+
+    def __str__(self):
+        return f"{self.get_qualification_display()} {self.name}"
+
+
+class SubjectEntitlement(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='subject_entitlements')
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, related_name='entitlements')
+    granted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'subject'], name='uniq_subject_entitlement_per_user'),
+        ]
+        ordering = ['-granted_at']
+
+    def __str__(self):
+        return f"{self.user.email} | {self.subject.code}"
+
+
 @receiver(post_save, sender=CustomUser)
 def create_user_related_records(sender, instance, created, **kwargs):
     if created:

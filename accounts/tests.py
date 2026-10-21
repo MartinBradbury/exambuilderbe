@@ -6,7 +6,9 @@ from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import CustomUser, UserEntitlement
+from django.db import IntegrityError, transaction
+from django.db.models import ProtectedError
+from .models import CustomUser, Subject, SubjectEntitlement, UserEntitlement
 from .services.stripe import create_stripe_checkout_session
 
 
@@ -422,3 +424,72 @@ class PerformanceTrackingResetTests(APITestCase):
 		response = self.client.post(self.url, {}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class SubjectModelTests(APITestCase):
+	def test_initial_subjects_are_seeded(self):
+		codes = set(Subject.objects.values_list('code', flat=True))
+		self.assertTrue({'gcse_science', 'alevel_biology', 'alevel_chemistry', 'alevel_physics'} <= codes)
+		self.assertEqual(Subject.objects.get(code='gcse_science').qualification, Subject.Qualification.GCSE)
+		self.assertEqual(Subject.objects.get(code='alevel_physics').qualification, Subject.Qualification.A_LEVEL)
+
+	def test_create_subject(self):
+		subject = Subject.objects.create(code='alevel_geography', name='Geography', qualification=Subject.Qualification.A_LEVEL)
+
+		self.assertTrue(subject.is_active)
+		self.assertEqual(str(subject), 'A-level Geography')
+
+	def test_subject_code_must_be_unique(self):
+		Subject.objects.create(code='gcse_english', name='English', qualification=Subject.Qualification.GCSE)
+
+		with self.assertRaises(IntegrityError), transaction.atomic():
+			Subject.objects.create(code='gcse_english', name='English Again', qualification=Subject.Qualification.GCSE)
+
+
+class SubjectEntitlementTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(email='subject1@example.com', username='subject-user-1', password='SubjectPass123')
+		self.other_user = CustomUser.objects.create_user(email='subject2@example.com', username='subject-user-2', password='SubjectPass123')
+		self.biology = Subject.objects.get(code='alevel_biology')
+		self.chemistry = Subject.objects.get(code='alevel_chemistry')
+
+	def test_create_subject_entitlement(self):
+		entitlement = SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+
+		self.assertIsNotNone(entitlement.granted_at)
+		self.assertEqual(str(entitlement), 'subject1@example.com | alevel_biology')
+		self.assertEqual(list(self.user.subject_entitlements.all()), [entitlement])
+
+	def test_duplicate_entitlement_for_same_user_and_subject_is_rejected(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+
+		with self.assertRaises(IntegrityError), transaction.atomic():
+			SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+
+	def test_user_can_have_multiple_subject_entitlements(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+		SubjectEntitlement.objects.create(user=self.user, subject=self.chemistry)
+
+		self.assertEqual(self.user.subject_entitlements.count(), 2)
+
+	def test_different_users_can_share_a_subject(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+		SubjectEntitlement.objects.create(user=self.other_user, subject=self.biology)
+
+		self.assertEqual(self.biology.entitlements.count(), 2)
+
+	def test_subject_with_entitlements_is_protected_from_deletion(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+
+		with self.assertRaises(ProtectedError):
+			self.biology.delete()
+
+	def test_subject_entitlements_do_not_change_legacy_access_flags(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+		SubjectEntitlement.objects.create(user=self.user, subject=Subject.objects.get(code='gcse_science'))
+
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+		self.assertFalse(self.user.has_full_paid_access)
+		self.assertEqual(self.user.entitlement.plan_type, UserEntitlement.PlanType.FREE)
