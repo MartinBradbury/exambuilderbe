@@ -12,6 +12,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     lifetime_unlocked = serializers.SerializerMethodField()
     has_unlimited_access = serializers.SerializerMethodField()
     questions_remaining_today = serializers.SerializerMethodField()
+    unlocked_subjects = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -28,6 +29,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'lifetime_unlocked',
             'has_unlimited_access',
             'questions_remaining_today',
+            'unlocked_subjects',
         ]
 
     def _get_entitlement(self, obj):
@@ -61,6 +63,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
             or 0
         )
         return max(UserEntitlement.FREE_DAILY_QUESTION_LIMIT - question_count, 0)
+
+    def get_unlocked_subjects(self, obj):
+        return list(
+            obj.subject_entitlements.order_by('subject__code')
+            .values_list('subject__code', flat=True)
+        )
 
 class CustomUserProfileSerializer(serializers.ModelSerializer):
     class Meta:

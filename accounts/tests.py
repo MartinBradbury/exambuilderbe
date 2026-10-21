@@ -493,3 +493,118 @@ class SubjectEntitlementTests(APITestCase):
 		self.assertFalse(self.user.has_alevel_paid_access)
 		self.assertFalse(self.user.has_full_paid_access)
 		self.assertEqual(self.user.entitlement.plan_type, UserEntitlement.PlanType.FREE)
+
+	def test_gcse_entitlement_grants_only_gcse_subject_access(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=Subject.objects.get(code='gcse_science'))
+
+		self.assertTrue(self.user.has_subject_access('gcse_science'))
+		self.assertFalse(self.user.has_subject_access('alevel_biology'))
+
+	def test_biology_entitlement_grants_only_biology_subject_access(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+
+		self.assertTrue(self.user.has_subject_access('alevel_biology'))
+		self.assertFalse(self.user.has_subject_access('gcse_science'))
+
+	def test_both_legacy_subject_entitlements_grant_access_independently(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=Subject.objects.get(code='gcse_science'))
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+
+		self.assertTrue(self.user.has_subject_access('gcse_science'))
+		self.assertTrue(self.user.has_subject_access('alevel_biology'))
+
+	def test_chemistry_entitlement_does_not_unlock_other_subjects(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=self.chemistry)
+
+		self.assertTrue(self.user.has_subject_access('alevel_chemistry'))
+		self.assertFalse(self.user.has_subject_access('alevel_biology'))
+		self.assertFalse(self.user.has_subject_access('alevel_physics'))
+
+	def test_physics_entitlement_is_independent(self):
+		physics = Subject.objects.get(code='alevel_physics')
+		SubjectEntitlement.objects.create(user=self.user, subject=physics)
+
+		self.assertTrue(self.user.has_subject_access('alevel_physics'))
+		self.assertFalse(self.user.has_subject_access('alevel_biology'))
+		self.assertFalse(self.user.has_subject_access('alevel_chemistry'))
+
+	def test_lifetime_legacy_entitlements_do_not_unlock_new_subjects(self):
+		SubjectEntitlement.objects.create(user=self.user, subject=Subject.objects.get(code='gcse_science'))
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+		self.user.entitlement.lifetime_unlocked = True
+		self.user.entitlement.save(update_fields=['lifetime_unlocked'])
+
+		self.assertTrue(self.user.has_subject_access('gcse_science'))
+		self.assertTrue(self.user.has_subject_access('alevel_biology'))
+		self.assertFalse(self.user.has_subject_access('alevel_chemistry'))
+		self.assertFalse(self.user.has_subject_access('alevel_physics'))
+
+	def test_unknown_and_unentitled_subjects_return_false(self):
+		self.assertFalse(self.user.has_subject_access('not_a_subject'))
+		self.assertFalse(self.user.has_subject_access('alevel_biology'))
+
+	def test_paid_plan_without_subject_entitlement_does_not_grant_subject_access(self):
+		self.user.entitlement.plan_type = UserEntitlement.PlanType.PAID
+		self.user.entitlement.save(update_fields=['plan_type'])
+
+		self.assertFalse(self.user.has_subject_access('gcse_science'))
+		self.assertFalse(self.user.has_subject_access('alevel_biology'))
+
+	def test_subject_access_does_not_change_legacy_access_methods(self):
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+		SubjectEntitlement.objects.create(user=self.user, subject=self.chemistry)
+
+		self.assertTrue(self.user.has_paid_access_for_qualification('GCSE_SCIENCE'))
+		self.assertFalse(self.user.has_paid_access_for_qualification('ALEVEL_BIOLOGY'))
+		self.assertFalse(self.user.has_full_paid_access)
+		self.assertFalse(self.user.has_subject_access('alevel_biology'))
+
+	def test_user_api_returns_sorted_subject_entitlements_and_legacy_fields(self):
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+		SubjectEntitlement.objects.create(user=self.user, subject=self.chemistry)
+		SubjectEntitlement.objects.create(user=self.user, subject=Subject.objects.get(code='gcse_science'))
+		SubjectEntitlement.objects.create(user=self.user, subject=self.biology)
+		SubjectEntitlement.objects.create(user=self.other_user, subject=Subject.objects.get(code='alevel_physics'))
+		self.client.force_authenticate(user=self.user)
+
+		response = self.client.get(reverse('user-info'))
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(
+			response.data['unlocked_subjects'],
+			['alevel_biology', 'alevel_chemistry', 'gcse_science'],
+		)
+		self.assertEqual(
+			set(response.data),
+			{
+				'id',
+				'username',
+				'email',
+				'email_verified',
+				'email_verified_at',
+				'performance_tracking_start_date',
+				'has_gcse_paid_access',
+				'has_alevel_paid_access',
+				'plan_type',
+				'lifetime_unlocked',
+				'has_unlimited_access',
+				'questions_remaining_today',
+				'unlocked_subjects',
+			},
+		)
+		self.assertTrue(response.data['has_gcse_paid_access'])
+		self.assertFalse(response.data['has_alevel_paid_access'])
+		self.assertEqual(response.data['plan_type'], UserEntitlement.PlanType.PAID)
+		self.assertFalse(response.data['lifetime_unlocked'])
+		self.assertFalse(response.data['has_unlimited_access'])
+		self.assertEqual(response.data['questions_remaining_today'], 2)
+
+	def test_user_api_returns_empty_subject_list_for_free_user(self):
+		self.client.force_authenticate(user=self.user)
+
+		response = self.client.get(reverse('user-info'))
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['unlocked_subjects'], [])

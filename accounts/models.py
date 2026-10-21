@@ -46,6 +46,9 @@ class CustomUser(AbstractUser):
             return self.has_alevel_paid_access
         return False
 
+    def has_subject_access(self, subject_code):
+        return self.subject_entitlements.filter(subject__code=subject_code).exists()
+
     @property
     def has_full_paid_access(self):
         return self.has_gcse_paid_access and self.has_alevel_paid_access
