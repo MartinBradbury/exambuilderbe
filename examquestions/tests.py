@@ -2287,3 +2287,103 @@ class SharedALevelBoardSpecificationTests(APITestCase):
 					self._session(qualification, topic, specification='').clean()
 				with self.assertRaisesMessage(ValidationError, 'specification'):
 					self._session(qualification, topic, specification='Spec B').clean()
+
+
+class SharedALevelAdminTests(APITestCase):
+	def setUp(self):
+		self.admin_user = CustomUser.objects.create_superuser(
+			email='admin-alevel@example.com', username='admin-alevel', password='testpass123'
+		)
+		self.client.force_login(self.admin_user)
+		self.bio = Subject.objects.get(code='alevel_biology')
+		self.chem = Subject.objects.get(code='alevel_chemistry')
+		self.bio_topic = ALevelTopic.objects.create(subject=self.bio, topic='Admin Bio Topic', exam_board='AQA')
+		self.chem_topic = ALevelTopic.objects.create(
+			subject=self.chem, topic='Admin Chem Topic', exam_board='EDEXCEL', specification='Spec A'
+		)
+		self.bio_sub = ALevelSubTopic.objects.create(topic=self.bio_topic, title='Admin Bio Sub')
+		self.chem_sub = ALevelSubTopic.objects.create(topic=self.chem_topic, title='Admin Chem Sub')
+		ALevelSubCategory.objects.create(subtopic=self.bio_sub, title='Admin Bio Cat')
+		ALevelSubCategory.objects.create(subtopic=self.chem_sub, title='Admin Chem Cat')
+
+	def changelist(self, model, query=''):
+		return self.client.get(reverse(f'admin:examquestions_{model}_changelist') + query)
+
+	def test_models_registered_and_legacy_admin_preserved(self):
+		from django.contrib import admin as django_admin
+		from .models import GCSEScienceTopic
+		for model in (ALevelTopic, ALevelSubTopic, ALevelSubCategory, BiologyTopic, GCSEScienceTopic, QuestionSession):
+			self.assertTrue(django_admin.site.is_registered(model), model)
+
+	def test_list_pages_show_records(self):
+		for model, text in (
+			('aleveltopic', 'Admin Bio Topic'),
+			('alevelsubtopic', 'Admin Chem Sub'),
+			('alevelsubcategory', 'Admin Chem Cat'),
+		):
+			with self.subTest(model=model):
+				response = self.changelist(model)
+				self.assertEqual(response.status_code, 200)
+				self.assertContains(response, text)
+
+	def test_list_pages_use_bounded_queries(self):
+		for model in ('aleveltopic', 'alevelsubtopic', 'alevelsubcategory'):
+			with self.subTest(model=model):
+				from django.db import connection
+				from django.test.utils import CaptureQueriesContext
+				with CaptureQueriesContext(connection) as ctx:
+					self.changelist(model)
+				self.assertLess(len(ctx), 20)
+
+	def test_search(self):
+		self.assertContains(self.changelist('aleveltopic', '?q=Chem+Topic'), 'Admin Chem Topic')
+		self.assertNotContains(self.changelist('aleveltopic', '?q=Chem+Topic'), 'Admin Bio Topic')
+		by_subject = self.changelist('aleveltopic', '?q=Chemistry')
+		self.assertContains(by_subject, 'Admin Chem Topic')
+		self.assertNotContains(by_subject, 'Admin Bio Topic')
+		self.assertContains(self.changelist('alevelsubtopic', '?q=Admin+Bio+Sub'), 'Admin Bio Sub')
+		self.assertNotContains(self.changelist('alevelsubtopic', '?q=Admin+Bio+Sub'), 'Admin Chem Sub')
+		self.assertContains(self.changelist('alevelsubcategory', '?q=Admin+Chem+Cat'), 'Admin Chem Cat')
+		self.assertNotContains(self.changelist('alevelsubcategory', '?q=Admin+Chem+Cat'), 'Admin Bio Cat')
+
+	def test_filters(self):
+		by_subject = self.changelist('aleveltopic', f'?subject__id__exact={self.chem.id}')
+		self.assertContains(by_subject, 'Admin Chem Topic')
+		self.assertNotContains(by_subject, 'Admin Bio Topic')
+		by_board = self.changelist('aleveltopic', '?exam_board__exact=AQA')
+		self.assertContains(by_board, 'Admin Bio Topic')
+		self.assertNotContains(by_board, 'Admin Chem Topic')
+		by_spec = self.changelist('aleveltopic', '?specification=Spec+A')
+		self.assertContains(by_spec, 'Admin Chem Topic')
+		self.assertNotContains(by_spec, 'Admin Bio Topic')
+		sub_filter = self.changelist('alevelsubtopic', f'?topic__subject__id__exact={self.bio.id}')
+		self.assertContains(sub_filter, 'Admin Bio Sub')
+		self.assertNotContains(sub_filter, 'Admin Chem Sub')
+		cat_filter = self.changelist('alevelsubcategory', '?subtopic__topic__exam_board__exact=EDEXCEL')
+		self.assertContains(cat_filter, 'Admin Chem Cat')
+		self.assertNotContains(cat_filter, 'Admin Bio Cat')
+
+	def test_add_and_change_pages_load(self):
+		for model, obj in (('aleveltopic', self.bio_topic), ('alevelsubtopic', self.bio_sub)):
+			self.assertEqual(self.client.get(reverse(f'admin:examquestions_{model}_add')).status_code, 200)
+			self.assertEqual(self.client.get(reverse(f'admin:examquestions_{model}_change', args=[obj.pk])).status_code, 200)
+		self.assertEqual(self.client.get(reverse('admin:examquestions_alevelsubcategory_add')).status_code, 200)
+
+	def test_admin_form_keeps_model_validation(self):
+		response = self.client.post(reverse('admin:examquestions_aleveltopic_add'), {
+			'subject': self.chem.pk, 'topic': 'No Spec', 'exam_board': 'EDEXCEL', 'specification': '',
+		})
+		self.assertEqual(response.status_code, 200)
+		self.assertFalse(ALevelTopic.objects.filter(topic='No Spec').exists())
+		gcse = Subject.objects.get(code='gcse_science')
+		response = self.client.post(reverse('admin:examquestions_aleveltopic_add'), {
+			'subject': gcse.pk, 'topic': 'Wrong Subject', 'exam_board': 'AQA', 'specification': '',
+		})
+		self.assertFalse(ALevelTopic.objects.filter(topic='Wrong Subject').exists())
+
+	def test_admin_can_create_valid_topic(self):
+		response = self.client.post(reverse('admin:examquestions_aleveltopic_add'), {
+			'subject': self.chem.pk, 'topic': 'Created In Admin', 'exam_board': 'OCR', 'specification': '',
+		})
+		self.assertEqual(response.status_code, 302)
+		self.assertTrue(ALevelTopic.objects.filter(topic='Created In Admin', subject=self.chem).exists())
