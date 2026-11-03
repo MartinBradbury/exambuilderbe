@@ -78,6 +78,9 @@ GCSE_FALLBACK_PATHS_BY_BOARD = {
 ALLOWED_BOARDS = {choice for choice, _ in ExamBoard.choices}
 EXAM_BOARD_ERROR_MESSAGE = "Invalid exam_board. Use 'OCR', 'AQA', or 'EDEXCEL'."
 ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
+# Qualifications with an implemented generation and marking path; anything else fails closed.
+SUPPORTED_QUALIFICATIONS = {QualificationPath.ALEVEL_BIOLOGY, QualificationPath.GCSE_SCIENCE}
+UNSUPPORTED_QUALIFICATION_MESSAGE = "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."
 ALLOWED_GCSE_SUBJECTS = {choice for choice, _ in GCSESubject.choices}
 ALLOWED_GCSE_TIERS = {choice for choice, _ in GCSETier.choices}
 GCSE_SUBJECT_ERROR_MESSAGE = "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', 'PHYSICS', or 'COMBINED'."
@@ -103,6 +106,17 @@ def _normalize_choice(raw_value):
 
 def _normalize_qualification(raw_value, default=QualificationPath.ALEVEL_BIOLOGY):
     return CustomUser.normalize_paid_access_qualification(raw_value) or default
+
+
+def _is_blank(raw_value):
+    return raw_value is None or str(raw_value).strip() == ''
+
+
+def _normalize_marking_qualification(raw_value):
+    # A missing qualification keeps its legacy Biology default; unrecognised values are never defaulted.
+    if _is_blank(raw_value):
+        return QualificationPath.ALEVEL_BIOLOGY
+    return _normalize_qualification(raw_value, default='')
 
 
 def _has_paid_generation_access(user, qualification):
@@ -741,7 +755,9 @@ def generate_exam_questions(request):
 
     if question_type == QUESTION_TYPE_ESSAY_25_MARK:
         exam_board = exam_board or ExamBoard.AQA
-        qualification = qualification or QualificationPath.ALEVEL_BIOLOGY
+        # Only a missing qualification defaults to Biology; unrecognised values stay invalid.
+        if _is_blank(request.data.get("qualification")):
+            qualification = QualificationPath.ALEVEL_BIOLOGY
         number = 1
 
     if question_type != QUESTION_TYPE_ESSAY_25_MARK and not all([topic_id, exam_board, number]):
@@ -758,7 +774,7 @@ def generate_exam_questions(request):
     specification_error = _validate_specification_for_board(board_key, specification)
     if specification_error:
         return Response({"error": specification_error}, status=400)
-    if qualification not in ALLOWED_QUALIFICATIONS:
+    if qualification not in SUPPORTED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
     if question_type == QUESTION_TYPE_ESSAY_25_MARK:
         if qualification != QualificationPath.ALEVEL_BIOLOGY:
@@ -814,7 +830,7 @@ def generate_exam_questions(request):
                     subcategory_id=subcategory_id,
                     number=number,
                 )
-        else:
+        elif qualification == QualificationPath.GCSE_SCIENCE:
             gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
             gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
             if gcse_subject not in ALLOWED_GCSE_SUBJECTS:
@@ -833,6 +849,8 @@ def generate_exam_questions(request):
                 gcse_tier=gcse_tier,
                 number=number,
             )
+        else:
+            return Response({"error": UNSUPPORTED_QUALIFICATION_MESSAGE}, status=400)
 
         scope_key = generation_result["scope_key"]
         combined_questions = generation_result["combined_questions"]
@@ -910,7 +928,7 @@ def generate_exam_questions(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mark_user_answer(request):
-    qualification = _normalize_qualification(request.data.get("qualification"))
+    qualification = _normalize_marking_qualification(request.data.get("qualification"))
     answers = request.data.get("answers")
     exam_board = (request.data.get("exam_board", "AQA") or "AQA").strip().upper()
     specification = _normalize_specification(request.data.get("specification"))
@@ -919,7 +937,7 @@ def mark_user_answer(request):
         return Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
     if question_type not in ALLOWED_QUESTION_TYPES:
         return Response({"error": QUESTION_TYPE_ERROR_MESSAGE}, status=400)
-    if qualification not in ALLOWED_QUALIFICATIONS:
+    if qualification not in SUPPORTED_QUALIFICATIONS:
         return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
     if question_type == QUESTION_TYPE_ESSAY_25_MARK:
         if qualification != QualificationPath.ALEVEL_BIOLOGY:
@@ -950,10 +968,12 @@ def mark_user_answer(request):
         try:
             if qualification == QualificationPath.GCSE_SCIENCE:
                 result = evaluate_gcse_batch_responses_with_openai(answers, exam_board, gcse_subject, gcse_tier)
-            elif question_type == QUESTION_TYPE_ESSAY_25_MARK:
+            elif qualification == QualificationPath.ALEVEL_BIOLOGY and question_type == QUESTION_TYPE_ESSAY_25_MARK:
                 result = evaluate_essay_batch_responses_with_openai(answers, specification=specification)
-            else:
+            elif qualification == QualificationPath.ALEVEL_BIOLOGY:
                 result = evaluate_batch_responses_with_openai(answers, exam_board, specification=specification)
+            else:
+                return Response({"error": UNSUPPORTED_QUALIFICATION_MESSAGE}, status=400)
             return Response(result, status=200)
         except json.JSONDecodeError as e:
             logger.error("Invalid JSON from OpenAI batch marking: %s", e)
@@ -979,10 +999,12 @@ def mark_user_answer(request):
     try:
         if qualification == QualificationPath.GCSE_SCIENCE:
             result = evaluate_gcse_response_with_openai(question, mark_scheme, user_answer, exam_board, gcse_subject, gcse_tier)
-        elif question_type == QUESTION_TYPE_ESSAY_25_MARK:
+        elif qualification == QualificationPath.ALEVEL_BIOLOGY and question_type == QUESTION_TYPE_ESSAY_25_MARK:
             result = evaluate_essay_response_with_openai(question, mark_scheme, user_answer, specification=specification)
-        else:
+        elif qualification == QualificationPath.ALEVEL_BIOLOGY:
             result = evaluate_response_with_openai(question, mark_scheme, user_answer, exam_board, specification=specification)
+        else:
+            return Response({"error": UNSUPPORTED_QUALIFICATION_MESSAGE}, status=400)
         return Response(result, status=200)
     except json.JSONDecodeError as e:
         logger.error("Invalid JSON from OpenAI: %s", e)

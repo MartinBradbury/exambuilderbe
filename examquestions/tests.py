@@ -1978,3 +1978,123 @@ class QuestionSessionALevelCurriculumCleanTests(APITestCase):
 		):
 			with self.subTest(field=field), self.assertRaises(ValidationError):
 				self._session(**base, **{field: value}).clean()
+
+
+class FailClosedQualificationTests(APITestCase):
+	UNSUPPORTED = ['ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS', 'A_LEVEL_CHEMISTRY', 'physics', 'BOTH', 'nonsense']
+
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='failclosed@example.com', username='failclosed-user', password='testpass123'
+		)
+		self.topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+		self.generate_url = reverse('generate-exam-questions')
+		self.mark_url = reverse('mark-user-answer')
+		self.client.force_authenticate(user=self.user)
+
+	def _generation_payload(self, qualification, **extra):
+		payload = {
+			'qualification': qualification,
+			'topic_id': self.topic.id,
+			'exam_board': 'OCR',
+			'number_of_questions': 1,
+		}
+		payload.update(extra)
+		return payload
+
+	def _mark_payload(self, qualification, **extra):
+		payload = {
+			'qualification': qualification,
+			'exam_board': 'OCR',
+			'question': 'Explain osmosis. [2 marks]',
+			'mark_scheme': ['Water moves down a water potential gradient'],
+			'user_answer': 'Water moves.',
+		}
+		payload.update(extra)
+		return payload
+
+	@patch('examquestions.views.generate_essay_questions')
+	@patch('examquestions.views.generate_gcse_questions')
+	@patch('examquestions.views.generate_questions')
+	def test_generation_rejects_unsupported_qualifications_without_side_effects(self, mock_bio, mock_gcse, mock_essay):
+		for qualification in self.UNSUPPORTED:
+			for extra in ({}, {'question_type': 'ESSAY_25_MARK', 'exam_board': 'AQA'}):
+				with self.subTest(qualification=qualification, extra=extra):
+					response = self.client.post(
+						self.generate_url, self._generation_payload(qualification, **extra), format='json'
+					)
+					self.assertEqual(response.status_code, 400)
+
+		mock_bio.assert_not_called()
+		mock_gcse.assert_not_called()
+		mock_essay.assert_not_called()
+		self.assertEqual(QuestionSession.objects.count(), 0)
+		self.assertEqual(QuestionUsage.objects.count(), 0)
+
+	@patch('examquestions.views.generate_questions')
+	def test_generation_missing_qualification_still_rejected(self, mock_bio):
+		payload = self._generation_payload('')
+		response = self.client.post(self.generate_url, payload, format='json')
+		self.assertEqual(response.status_code, 400)
+		mock_bio.assert_not_called()
+		self.assertEqual(QuestionSession.objects.count(), 0)
+
+	@patch('examquestions.views.generate_questions')
+	def test_generation_valid_biology_aliases_still_work(self, mock_bio):
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_alevel_paid_access'])
+		mock_bio.side_effect = [
+			{'questions': [{'question': f'Define term {i}. [1 mark]', 'total_marks': 1, 'mark_scheme': ['Point (1 mark)']}]}
+			for i in range(3)
+		]
+		for alias in ('ALEVEL_BIOLOGY', 'ALEVEL', 'a-level biology'):
+			with self.subTest(alias=alias):
+				response = self.client.post(self.generate_url, self._generation_payload(alias), format='json')
+				self.assertEqual(response.status_code, 200)
+				self.assertEqual(response.data['qualification'], 'ALEVEL_BIOLOGY')
+		self.assertEqual(QuestionSession.objects.filter(qualification='ALEVEL_BIOLOGY').count(), 3)
+
+	@patch('examquestions.views.evaluate_essay_response_with_openai')
+	@patch('examquestions.views.evaluate_gcse_response_with_openai')
+	@patch('examquestions.views.evaluate_response_with_openai')
+	@patch('examquestions.views.evaluate_gcse_batch_responses_with_openai')
+	@patch('examquestions.views.evaluate_batch_responses_with_openai')
+	def test_marking_rejects_unsupported_qualifications_without_marking(
+		self, mock_batch, mock_gcse_batch, mock_single, mock_gcse_single, mock_essay
+	):
+		batch = [{'question': 'Q [1 mark]', 'mark_scheme': ['x'], 'user_answer': 'a'}]
+		for qualification in self.UNSUPPORTED:
+			for extra in ({}, {'answers': batch}, {'question_type': 'ESSAY_25_MARK', 'exam_board': 'AQA'}):
+				with self.subTest(qualification=qualification, extra=extra):
+					response = self.client.post(
+						self.mark_url, self._mark_payload(qualification, **extra), format='json'
+					)
+					self.assertEqual(response.status_code, 400)
+
+		for mock in (mock_batch, mock_gcse_batch, mock_single, mock_gcse_single, mock_essay):
+			mock.assert_not_called()
+
+	@patch('examquestions.views.evaluate_response_with_openai')
+	def test_marking_missing_qualification_keeps_legacy_biology_default(self, mock_single):
+		mock_single.return_value = {'score': 1, 'out_of': 2, 'feedback': 'ok'}
+		payload = self._mark_payload('')
+		del payload['qualification']
+		self.assertEqual(self.client.post(self.mark_url, payload, format='json').status_code, 200)
+		self.assertEqual(self.client.post(self.mark_url, self._mark_payload(''), format='json').status_code, 200)
+		self.assertEqual(mock_single.call_count, 2)
+
+	@patch('examquestions.views.evaluate_response_with_openai')
+	def test_marking_valid_biology_aliases_still_work(self, mock_single):
+		mock_single.return_value = {'score': 1, 'out_of': 2, 'feedback': 'ok'}
+		for alias in ('ALEVEL_BIOLOGY', 'ALEVEL', 'A_LEVEL_BIOLOGY'):
+			with self.subTest(alias=alias):
+				response = self.client.post(self.mark_url, self._mark_payload(alias), format='json')
+				self.assertEqual(response.status_code, 200)
+
+	@patch('examquestions.views.evaluate_gcse_response_with_openai')
+	def test_marking_gcse_still_routes_to_gcse_marker(self, mock_gcse):
+		mock_gcse.return_value = {'score': 1, 'out_of': 2, 'feedback': 'ok'}
+		payload = self._mark_payload('GCSE_SCIENCE', subject='BIOLOGY', tier='HIGHER')
+		response = self.client.post(self.mark_url, payload, format='json')
+		self.assertEqual(response.status_code, 200)
+		mock_gcse.assert_called_once()
