@@ -330,7 +330,10 @@ class QuestionSession(models.Model):
                 raise ValidationError("Selected subtopic doesn’t belong to the chosen topic.")
             if self.subcategory and self.subcategory.subtopic.topic_id != self.topic_id:
                 raise ValidationError("Selected subcategory doesn’t belong to the chosen topic.")
+            self._clean_alevel_curriculum_links()
         elif self.qualification == QualificationPath.GCSE_SCIENCE:
+            if self.alevel_topic_id or self.alevel_subtopic_id or self.alevel_subcategory_id:
+                raise ValidationError("GCSE Science sessions cannot include A-level curriculum fields.")
             if not self.gcse_topic_id:
                 raise ValidationError("GCSE Science sessions require a GCSE topic.")
             if not self.gcse_subject or not self.gcse_tier or not self.science_route:
@@ -350,6 +353,43 @@ class QuestionSession(models.Model):
                 raise ValidationError("Selected GCSE subcategory does not belong to the chosen GCSE topic.")
             if self.gcse_subcategory and self.gcse_subtopic and self.gcse_subcategory.subtopic_id != self.gcse_subtopic_id:
                 raise ValidationError("Selected GCSE subcategory does not belong to the chosen GCSE subtopic.")
+
+    def _clean_alevel_curriculum_links(self):
+        from django.core.exceptions import ValidationError
+        if self.alevel_subtopic_id and not self.alevel_topic_id:
+            raise ValidationError("An A-level subtopic requires an A-level topic.")
+        if self.alevel_subcategory_id and not self.alevel_subtopic_id:
+            raise ValidationError("An A-level subcategory requires an A-level subtopic.")
+        if self.alevel_topic_id:
+            alevel_topic = self.alevel_topic
+            if alevel_topic.subject.code != "alevel_biology":
+                raise ValidationError("A-level Biology sessions require an A-level Biology curriculum topic.")
+            legacy = self.topic
+            if (
+                alevel_topic.topic != legacy.topic
+                or alevel_topic.exam_board != legacy.exam_board
+                or alevel_topic.specification != legacy.specification
+            ):
+                raise ValidationError("Selected A-level topic does not match the session's Biology topic.")
+        if self.alevel_subtopic_id and self.alevel_subtopic.topic_id != self.alevel_topic_id:
+            raise ValidationError("Selected A-level subtopic does not belong to the chosen A-level topic.")
+        if self.alevel_subcategory_id and self.alevel_subcategory.subtopic_id != self.alevel_subtopic_id:
+            raise ValidationError("Selected A-level subcategory does not belong to the chosen A-level subtopic.")
+        if self.alevel_subtopic_id:
+            legacy_subtopic = self.subtopic
+            if legacy_subtopic is None:
+                raise ValidationError("An A-level subtopic requires the matching legacy Biology subtopic.")
+            if legacy_subtopic.topic_id != self.topic_id or legacy_subtopic.title != self.alevel_subtopic.title:
+                raise ValidationError("Selected A-level subtopic does not match the session's Biology subtopic.")
+        if self.alevel_subcategory_id:
+            legacy_subcategory = self.subcategory
+            if legacy_subcategory is None:
+                raise ValidationError("An A-level subcategory requires the matching legacy Biology subcategory.")
+            if (
+                legacy_subcategory.subtopic_id != self.subtopic_id
+                or legacy_subcategory.title != self.alevel_subcategory.title
+            ):
+                raise ValidationError("Selected A-level subcategory does not match the session's Biology subcategory.")
 
 
 class ServedQuestion(models.Model):

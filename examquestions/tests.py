@@ -1814,3 +1814,167 @@ class QuestionSessionALevelCurriculumLinkTests(APITestCase):
 				'number_of_questions', 'total_score', 'total_available', 'created_at', 'feedback',
 			},
 		)
+
+
+class QuestionSessionALevelCurriculumCleanTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='clean-links@example.com', username='clean-links-user', password='testpass123'
+		)
+		self.biology = Subject.objects.get(code='alevel_biology')
+		self.chemistry = Subject.objects.get(code='alevel_chemistry')
+		self.legacy_topic = BiologyTopic.objects.create(topic='Cells', exam_board='EDEXCEL', specification='Spec A')
+		self.legacy_sub = BiologySubTopic.objects.create(topic=self.legacy_topic, title='Membranes')
+		self.legacy_cat = BiologySubCategory.objects.create(subtopic=self.legacy_sub, title='Transport')
+		self.topic = ALevelTopic.objects.create(
+			subject=self.biology, topic='Cells', exam_board='EDEXCEL', specification='Spec A'
+		)
+		self.sub = ALevelSubTopic.objects.create(topic=self.topic, title='Membranes')
+		self.cat = ALevelSubCategory.objects.create(subtopic=self.sub, title='Transport')
+		other_topic = ALevelTopic.objects.create(
+			subject=self.biology, topic='Exchange', exam_board='EDEXCEL', specification='Spec A'
+		)
+		self.other_sub = ALevelSubTopic.objects.create(topic=other_topic, title='Gas exchange')
+		self.other_cat = ALevelSubCategory.objects.create(subtopic=self.other_sub, title='Lungs')
+
+	def _session(self, **kwargs):
+		defaults = dict(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=self.legacy_topic,
+			exam_board='EDEXCEL',
+			specification='Spec A',
+			number_of_questions=2,
+		)
+		defaults.update(kwargs)
+		return QuestionSession(**defaults)
+
+	def test_valid_biology_session_without_alevel_links(self):
+		self._session().full_clean()
+		self._session(subtopic=self.legacy_sub, subcategory=self.legacy_cat).full_clean()
+
+	def test_valid_biology_session_with_alevel_links(self):
+		self._session(alevel_topic=self.topic).full_clean()
+		self._session(
+			subtopic=self.legacy_sub, alevel_topic=self.topic, alevel_subtopic=self.sub
+		).full_clean()
+		self._session(
+			subtopic=self.legacy_sub,
+			subcategory=self.legacy_cat,
+			alevel_topic=self.topic,
+			alevel_subtopic=self.sub,
+			alevel_subcategory=self.cat,
+		).full_clean()
+
+	def test_legacy_links_without_new_links_remain_valid(self):
+		self._session(subtopic=self.legacy_sub, alevel_topic=self.topic).full_clean()
+		self._session(
+			subtopic=self.legacy_sub, subcategory=self.legacy_cat, alevel_topic=self.topic, alevel_subtopic=self.sub
+		).full_clean()
+
+	def test_wrong_subtopic_title_under_correct_topic_rejected(self):
+		renamed = ALevelSubTopic.objects.create(topic=self.topic, title='Different')
+		with self.assertRaises(ValidationError):
+			self._session(
+				subtopic=self.legacy_sub, alevel_topic=self.topic, alevel_subtopic=renamed
+			).clean()
+
+	def test_wrong_subcategory_title_under_correct_subtopic_rejected(self):
+		renamed = ALevelSubCategory.objects.create(subtopic=self.sub, title='Different')
+		with self.assertRaises(ValidationError):
+			self._session(
+				subtopic=self.legacy_sub,
+				subcategory=self.legacy_cat,
+				alevel_topic=self.topic,
+				alevel_subtopic=self.sub,
+				alevel_subcategory=renamed,
+			).clean()
+
+	def test_subcategory_under_different_legacy_subtopic_rejected(self):
+		legacy_other_sub = BiologySubTopic.objects.create(topic=self.legacy_topic, title='Other')
+		with self.assertRaises(ValidationError):
+			self._session(
+				subtopic=legacy_other_sub,
+				subcategory=self.legacy_cat,
+				alevel_topic=self.topic,
+				alevel_subtopic=self.sub,
+				alevel_subcategory=self.cat,
+			).clean()
+
+	def test_new_links_require_matching_legacy_links(self):
+		with self.assertRaises(ValidationError):
+			self._session(alevel_topic=self.topic, alevel_subtopic=self.sub).clean()
+		with self.assertRaises(ValidationError):
+			self._session(
+				subtopic=self.legacy_sub,
+				alevel_topic=self.topic,
+				alevel_subtopic=self.sub,
+				alevel_subcategory=self.cat,
+			).clean()
+
+	def test_link_validation_uses_legacy_topic_not_session_free_text(self):
+		session = self._session(alevel_topic=self.topic, exam_board='OCR', specification='')
+		session.exam_board = 'OCR'
+		session.specification = 'unrelated'
+		# Free-text board/specification are not compared; only the legacy BiologyTopic is.
+		session._clean_alevel_curriculum_links()
+
+	def test_wrong_subject_rejected(self):
+		chem = ALevelTopic.objects.create(
+			subject=self.chemistry, topic='Cells', exam_board='EDEXCEL', specification='Spec A'
+		)
+		with self.assertRaises(ValidationError):
+			self._session(alevel_topic=chem).clean()
+
+	def test_topic_name_board_or_specification_mismatch_rejected(self):
+		for kwargs in (
+			{'topic': 'Other', 'exam_board': 'EDEXCEL', 'specification': 'Spec A'},
+			{'topic': 'Cells', 'exam_board': 'OCR', 'specification': 'Spec A'},
+			{'topic': 'Cells', 'exam_board': 'EDEXCEL', 'specification': 'Spec B'},
+		):
+			mismatched = ALevelTopic.objects.create(subject=self.biology, **kwargs)
+			with self.subTest(**kwargs), self.assertRaises(ValidationError):
+				self._session(alevel_topic=mismatched).clean()
+
+	def test_missing_parents_rejected(self):
+		with self.assertRaises(ValidationError):
+			self._session(alevel_subtopic=self.sub).clean()
+		with self.assertRaises(ValidationError):
+			self._session(alevel_topic=self.topic, alevel_subcategory=self.cat).clean()
+
+	def test_incorrect_parents_rejected(self):
+		with self.assertRaises(ValidationError):
+			self._session(alevel_topic=self.topic, alevel_subtopic=self.other_sub).clean()
+		with self.assertRaises(ValidationError):
+			self._session(
+				alevel_topic=self.topic, alevel_subtopic=self.sub, alevel_subcategory=self.other_cat
+			).clean()
+
+	def test_legacy_biology_topic_still_required(self):
+		with self.assertRaises(ValidationError):
+			self._session(topic=None).clean()
+		with self.assertRaises(ValidationError):
+			self._session(topic=None, alevel_topic=self.topic).clean()
+
+	def test_gcse_session_rejects_any_alevel_link(self):
+		gcse_topic = GCSEScienceTopic.objects.create(
+			topic='Atomic structure', exam_board='AQA', subject='CHEMISTRY', tier='HIGHER'
+		)
+		base = dict(
+			qualification=QualificationPath.GCSE_SCIENCE,
+			topic=None,
+			gcse_topic=gcse_topic,
+			gcse_subject='CHEMISTRY',
+			gcse_tier='HIGHER',
+			science_route=GCSEScienceRoute.SEPARATE,
+			exam_board='AQA',
+			specification='',
+		)
+		self._session(**base).full_clean()
+		for field, value in (
+			('alevel_topic', self.topic),
+			('alevel_subtopic', self.sub),
+			('alevel_subcategory', self.cat),
+		):
+			with self.subTest(field=field), self.assertRaises(ValidationError):
+				self._session(**base, **{field: value}).clean()
