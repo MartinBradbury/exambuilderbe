@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.db.models.signals import post_save
@@ -139,6 +140,113 @@ class SubjectEntitlement(models.Model):
 
     def __str__(self):
         return f"{self.user.email} | {self.subject.code}"
+
+
+class Purchase(models.Model):
+    class PaymentStatus(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        PAID = 'paid', 'Paid'
+        FAILED = 'failed', 'Failed'
+        REFUNDED = 'refunded', 'Refunded'
+        UNKNOWN = 'unknown', 'Unknown'
+
+    class Source(models.TextChoices):
+        STRIPE = 'stripe', 'Verified Stripe transaction'
+        LEGACY_SNAPSHOT = 'legacy_snapshot', 'Incomplete legacy snapshot'
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='purchases',
+    )
+    product_identifier = models.CharField(
+        max_length=64,
+        help_text='Extensible product key, e.g. gcse_science, alevel_biology, both, alevel_bundle.',
+    )
+    stripe_checkout_session_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PaymentStatus.choices,
+        default=PaymentStatus.PENDING,
+    )
+    amount = models.PositiveBigIntegerField(
+        blank=True,
+        null=True,
+        help_text='Amount in the smallest currency unit.',
+    )
+    currency = models.CharField(max_length=3, blank=True, null=True)
+    purchased_at = models.DateTimeField(blank=True, null=True)
+    source = models.CharField(
+        max_length=20,
+        choices=Source.choices,
+        default=Source.STRIPE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-purchased_at', '-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['stripe_checkout_session_id'],
+                condition=(
+                    models.Q(stripe_checkout_session_id__isnull=False)
+                    & ~models.Q(stripe_checkout_session_id='')
+                ),
+                name='uniq_purchase_checkout_session',
+            ),
+            models.UniqueConstraint(
+                fields=['stripe_payment_intent_id'],
+                condition=(
+                    models.Q(stripe_payment_intent_id__isnull=False)
+                    & ~models.Q(stripe_payment_intent_id='')
+                ),
+                name='uniq_purchase_payment_intent',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['user', '-purchased_at'], name='purchase_user_date_idx'),
+            models.Index(fields=['product_identifier', 'payment_status'], name='purchase_product_status_idx'),
+        ]
+
+    def __str__(self):
+        return f'{self.product_identifier} | {self.payment_status} | {self.stripe_checkout_session_id or "no session"}'
+
+
+class StripeWebhookEvent(models.Model):
+    class ProcessingStatus(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        PROCESSED = 'processed', 'Processed'
+        FAILED = 'failed', 'Failed'
+
+    stripe_event_id = models.CharField(max_length=255, unique=True)
+    event_type = models.CharField(max_length=100)
+    processing_status = models.CharField(
+        max_length=20,
+        choices=ProcessingStatus.choices,
+        default=ProcessingStatus.PENDING,
+    )
+    attempt_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    processed_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    error_message = models.CharField(max_length=500, blank=True)
+    stripe_object_id = models.CharField(max_length=255, blank=True)
+    livemode = models.BooleanField(blank=True, null=True)
+    api_version = models.CharField(max_length=50, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['processing_status', 'created_at'], name='stripe_event_status_idx'),
+            models.Index(fields=['event_type', 'created_at'], name='stripe_event_type_created_idx'),
+        ]
+
+    def __str__(self):
+        return f'{self.event_type} | {self.stripe_event_id} | {self.processing_status}'
 
 
 @receiver(post_save, sender=CustomUser)

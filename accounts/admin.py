@@ -1,7 +1,16 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import Case, IntegerField, Value, When
-from .models import CustomUser, CustomUserProfile, QuestionUsage, Subject, SubjectEntitlement, UserEntitlement
+from .models import (
+    CustomUser,
+    CustomUserProfile,
+    Purchase,
+    QuestionUsage,
+    StripeWebhookEvent,
+    Subject,
+    SubjectEntitlement,
+    UserEntitlement,
+)
 
 
 def membership_label_for_user(user):
@@ -170,3 +179,68 @@ class QuestionUsageAdmin(admin.ModelAdmin):
     list_display = ('user', 'date', 'question_count')
     list_filter = ('date',)
     search_fields = ('user__email', 'user__username')
+
+
+@admin.register(Purchase)
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = (
+        'product_identifier',
+        'user',
+        'payment_status',
+        'amount',
+        'currency',
+        'purchased_at',
+        'source',
+        'stripe_checkout_session_id',
+    )
+    list_filter = ('product_identifier', 'payment_status', 'source', 'currency')
+    search_fields = (
+        'user__email',
+        'stripe_checkout_session_id',
+        'stripe_payment_intent_id',
+    )
+    list_select_related = ('user',)
+    readonly_fields = (
+        'stripe_checkout_session_id',
+        'stripe_payment_intent_id',
+        'payment_status',
+        'amount',
+        'currency',
+        'purchased_at',
+        'source',
+        'created_at',
+        'updated_at',
+    )
+
+
+@admin.register(StripeWebhookEvent)
+class StripeWebhookEventAdmin(admin.ModelAdmin):
+    list_display = (
+        'stripe_event_id',
+        'event_type',
+        'processing_status',
+        'attempt_count',
+        'created_at',
+        'processed_at',
+    )
+    list_filter = ('processing_status', 'event_type')
+    search_fields = ('stripe_event_id', 'stripe_object_id')
+    readonly_fields = (
+        'stripe_event_id',
+        'event_type',
+        'processing_status',
+        'attempt_count',
+        'created_at',
+        'processed_at',
+        'updated_at',
+        'error_message',
+        'stripe_object_id',
+        'livemode',
+        'api_version',
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

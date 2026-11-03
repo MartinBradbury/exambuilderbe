@@ -2,14 +2,196 @@ import re
 from unittest.mock import patch
 from types import SimpleNamespace
 from django.core import mail
+from django.core.exceptions import ValidationError
 from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.db import IntegrityError, transaction
 from django.db.models import ProtectedError
-from .models import CustomUser, Subject, SubjectEntitlement, UserEntitlement
+from .models import CustomUser, Purchase, Subject, SubjectEntitlement, StripeWebhookEvent, UserEntitlement
 from .services.stripe import create_stripe_checkout_session
+
+
+class PurchaseModelTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='purchase@example.com',
+			username='purchase-user',
+			password='PurchasePass123',
+			email_verified=False,
+		)
+
+	def test_purchase_supports_known_and_future_product_identifiers(self):
+		product_identifiers = (
+			'gcse_science',
+			'alevel_biology',
+			'alevel_chemistry',
+			'alevel_physics',
+			'both',
+			'alevel_bundle',
+			'future_product',
+		)
+
+		for product_identifier in product_identifiers:
+			with self.subTest(product_identifier=product_identifier):
+				purchase = Purchase.objects.create(
+					user=self.user,
+					product_identifier=product_identifier,
+				)
+				self.assertEqual(purchase.product_identifier, product_identifier)
+
+	def test_stripe_identifiers_are_unique_when_present(self):
+		Purchase.objects.create(
+			user=self.user,
+			product_identifier='gcse_science',
+			stripe_checkout_session_id='cs_unique',
+		)
+		with self.assertRaises(IntegrityError):
+			with transaction.atomic():
+				Purchase.objects.create(
+					user=self.user,
+					product_identifier='gcse_science',
+					stripe_checkout_session_id='cs_unique',
+				)
+
+		Purchase.objects.create(
+			user=self.user,
+			product_identifier='alevel_biology',
+			stripe_payment_intent_id='pi_unique',
+		)
+		with self.assertRaises(IntegrityError):
+			with transaction.atomic():
+				Purchase.objects.create(
+					user=self.user,
+					product_identifier='alevel_biology',
+					stripe_payment_intent_id='pi_unique',
+				)
+
+	def test_null_and_empty_stripe_identifiers_do_not_conflict(self):
+		first = Purchase.objects.create(
+			user=self.user,
+			product_identifier='gcse_science',
+		)
+		second = Purchase.objects.create(
+			user=self.user,
+			product_identifier='alevel_biology',
+			stripe_checkout_session_id='',
+			stripe_payment_intent_id='',
+		)
+		third = Purchase.objects.create(
+			user=self.user,
+			product_identifier='both',
+		)
+
+		self.assertIsNone(first.stripe_checkout_session_id)
+		self.assertIsNone(first.stripe_payment_intent_id)
+		self.assertEqual(second.stripe_checkout_session_id, '')
+		self.assertEqual(second.stripe_payment_intent_id, '')
+		self.assertIsNone(third.stripe_checkout_session_id)
+		self.assertIsNone(third.stripe_payment_intent_id)
+
+	def test_purchase_status_and_source_choices_validate(self):
+		for payment_status in Purchase.PaymentStatus.values:
+			purchase = Purchase(
+				user=self.user,
+				product_identifier='gcse_science',
+				payment_status=payment_status,
+			)
+			purchase.full_clean()
+
+		for source in Purchase.Source.values:
+			purchase = Purchase(
+				user=self.user,
+				product_identifier='gcse_science',
+				source=source,
+			)
+			purchase.full_clean()
+
+	def test_purchase_allows_incomplete_legacy_snapshot(self):
+		purchase = Purchase.objects.create(
+			user=None,
+			product_identifier='both',
+			payment_status=Purchase.PaymentStatus.UNKNOWN,
+			source=Purchase.Source.LEGACY_SNAPSHOT,
+		)
+
+		self.assertIsNone(purchase.user)
+		self.assertIsNone(purchase.amount)
+		self.assertIsNone(purchase.currency)
+		self.assertIsNone(purchase.purchased_at)
+
+	def test_purchase_user_relationship_uses_set_null(self):
+		purchase = Purchase.objects.create(
+			user=self.user,
+			product_identifier='gcse_science',
+		)
+
+		self.user.delete()
+		purchase.refresh_from_db()
+		self.assertIsNone(purchase.user)
+
+	def test_purchase_string_representation(self):
+		purchase = Purchase.objects.create(
+			user=self.user,
+			product_identifier='gcse_science',
+			payment_status=Purchase.PaymentStatus.PAID,
+			stripe_checkout_session_id='cs_string',
+		)
+
+		self.assertEqual(str(purchase), 'gcse_science | paid | cs_string')
+
+
+class StripeWebhookEventModelTests(APITestCase):
+	def test_stripe_event_id_is_unique(self):
+		StripeWebhookEvent.objects.create(
+			stripe_event_id='evt_unique',
+			event_type='checkout.session.completed',
+		)
+
+		with self.assertRaises(IntegrityError):
+			with transaction.atomic():
+				StripeWebhookEvent.objects.create(
+					stripe_event_id='evt_unique',
+					event_type='checkout.session.completed',
+				)
+
+	def test_processing_status_choices_validate(self):
+		for processing_status in StripeWebhookEvent.ProcessingStatus.values:
+			event = StripeWebhookEvent(
+				stripe_event_id=f'evt_{processing_status}',
+				event_type='checkout.session.completed',
+				processing_status=processing_status,
+			)
+			event.full_clean()
+
+	def test_event_defaults_and_operational_metadata(self):
+		event = StripeWebhookEvent.objects.create(
+			stripe_event_id='evt_operational',
+			event_type='checkout.session.completed',
+			stripe_object_id='cs_123',
+			livemode=False,
+			api_version='2026-01-01',
+			error_message='',
+		)
+
+		self.assertEqual(event.processing_status, StripeWebhookEvent.ProcessingStatus.PENDING)
+		self.assertEqual(event.attempt_count, 0)
+		self.assertIsNone(event.processed_at)
+		self.assertEqual(event.stripe_object_id, 'cs_123')
+		self.assertFalse(event.livemode)
+		self.assertEqual(event.api_version, '2026-01-01')
+		self.assertEqual(str(event), 'checkout.session.completed | evt_operational | pending')
+
+	def test_event_error_message_is_bounded(self):
+		event = StripeWebhookEvent(
+			stripe_event_id='evt_error',
+			event_type='checkout.session.completed',
+			error_message='x' * 501,
+		)
+
+		with self.assertRaises(ValidationError):
+			event.full_clean()
 
 
 @override_settings(
