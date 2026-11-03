@@ -13,6 +13,8 @@ class ExamBoard(models.TextChoices):
 class QualificationPath(models.TextChoices):
     ALEVEL_BIOLOGY = "ALEVEL_BIOLOGY", "A-level Biology"
     GCSE_SCIENCE = "GCSE_SCIENCE", "GCSE Science"
+    ALEVEL_CHEMISTRY = "ALEVEL_CHEMISTRY", "A-level Chemistry"
+    ALEVEL_PHYSICS = "ALEVEL_PHYSICS", "A-level Physics"
 
 
 class GCSESubject(models.TextChoices):
@@ -353,6 +355,35 @@ class QuestionSession(models.Model):
                 raise ValidationError("Selected GCSE subcategory does not belong to the chosen GCSE topic.")
             if self.gcse_subcategory and self.gcse_subtopic and self.gcse_subcategory.subtopic_id != self.gcse_subtopic_id:
                 raise ValidationError("Selected GCSE subcategory does not belong to the chosen GCSE subtopic.")
+        elif self.qualification in self.SHARED_ALEVEL_SUBJECT_CODES:
+            label = QualificationPath(self.qualification).label
+            if self.topic_id or self.subtopic_id or self.subcategory_id:
+                raise ValidationError(f"{label} sessions cannot include legacy Biology topic fields.")
+            if self.gcse_topic_id or self.gcse_subtopic_id or self.gcse_subcategory_id or self.gcse_subject or self.gcse_tier or self.science_route:
+                raise ValidationError(f"{label} sessions cannot include GCSE fields.")
+            self._clean_shared_alevel_links(self.SHARED_ALEVEL_SUBJECT_CODES[self.qualification], label)
+
+    SHARED_ALEVEL_SUBJECT_CODES = {
+        QualificationPath.ALEVEL_CHEMISTRY: "alevel_chemistry",
+        QualificationPath.ALEVEL_PHYSICS: "alevel_physics",
+    }
+
+    def _clean_shared_alevel_links(self, subject_code, label):
+        from django.core.exceptions import ValidationError
+        if not self.alevel_topic_id:
+            raise ValidationError(f"{label} sessions require an A-level topic.")
+        if self.alevel_topic.subject.code != subject_code:
+            raise ValidationError(f"{label} sessions require a {label} curriculum topic.")
+        if self.exam_board != self.alevel_topic.exam_board:
+            raise ValidationError("Session exam board does not match the selected A-level topic.")
+        if self.specification != self.alevel_topic.specification:
+            raise ValidationError("Session specification does not match the selected A-level topic.")
+        if self.alevel_subcategory_id and not self.alevel_subtopic_id:
+            raise ValidationError("An A-level subcategory requires an A-level subtopic.")
+        if self.alevel_subtopic_id and self.alevel_subtopic.topic_id != self.alevel_topic_id:
+            raise ValidationError("Selected A-level subtopic does not belong to the chosen A-level topic.")
+        if self.alevel_subcategory_id and self.alevel_subcategory.subtopic_id != self.alevel_subtopic_id:
+            raise ValidationError("Selected A-level subcategory does not belong to the chosen A-level subtopic.")
 
     def _clean_alevel_curriculum_links(self):
         from django.core.exceptions import ValidationError

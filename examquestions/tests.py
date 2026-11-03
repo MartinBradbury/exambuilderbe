@@ -2098,3 +2098,192 @@ class FailClosedQualificationTests(APITestCase):
 		response = self.client.post(self.mark_url, payload, format='json')
 		self.assertEqual(response.status_code, 200)
 		mock_gcse.assert_called_once()
+
+
+class SharedALevelSessionCleanTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='shared@example.com', username='shared-user', password='testpass123'
+		)
+		self.subjects = {code: Subject.objects.get(code=code) for code in ('alevel_biology', 'alevel_chemistry', 'alevel_physics')}
+		self.topics = {}
+		for code, subject in self.subjects.items():
+			self.topics[code] = ALevelTopic.objects.create(subject=subject, topic='Core', exam_board='OCR')
+		self.gcse_topic = GCSEScienceTopic.objects.create(subject='BIOLOGY', tier='HIGHER', topic='Cells')
+
+	def _session(self, qualification, code, **extra):
+		fields = {
+			'user': self.user,
+			'qualification': qualification,
+			'exam_board': 'OCR',
+			'number_of_questions': 1,
+			'alevel_topic': self.topics[code],
+		}
+		fields.update(extra)
+		return QuestionSession(**fields)
+
+	def test_valid_chemistry_and_physics_sessions(self):
+		for qualification, code in (('ALEVEL_CHEMISTRY', 'alevel_chemistry'), ('ALEVEL_PHYSICS', 'alevel_physics')):
+			with self.subTest(qualification=qualification):
+				sub = ALevelSubTopic.objects.create(topic=self.topics[code], title='Sub')
+				cat = ALevelSubCategory.objects.create(subtopic=sub, title='Cat')
+				self._session(qualification, code).full_clean()
+				self._session(qualification, code, alevel_subtopic=sub).full_clean()
+				self._session(qualification, code, alevel_subtopic=sub, alevel_subcategory=cat).full_clean()
+
+	def test_choices_added_and_default_unchanged(self):
+		self.assertIn('ALEVEL_CHEMISTRY', QualificationPath.values)
+		self.assertIn('ALEVEL_PHYSICS', QualificationPath.values)
+		self.assertEqual(QuestionSession._meta.get_field('qualification').default, QualificationPath.ALEVEL_BIOLOGY)
+
+	def test_missing_topic_rejected(self):
+		for qualification, code in (('ALEVEL_CHEMISTRY', 'alevel_chemistry'), ('ALEVEL_PHYSICS', 'alevel_physics')):
+			with self.subTest(qualification=qualification):
+				with self.assertRaises(ValidationError):
+					self._session(qualification, code, alevel_topic=None).clean()
+
+	def test_wrong_subject_topic_rejected(self):
+		cases = (
+			('ALEVEL_CHEMISTRY', 'alevel_physics'),
+			('ALEVEL_CHEMISTRY', 'alevel_biology'),
+			('ALEVEL_PHYSICS', 'alevel_chemistry'),
+			('ALEVEL_PHYSICS', 'alevel_biology'),
+		)
+		for qualification, code in cases:
+			with self.subTest(qualification=qualification, topic=code):
+				with self.assertRaises(ValidationError):
+					self._session(qualification, code).clean()
+
+	def test_parent_mismatches_and_missing_parents_rejected(self):
+		for qualification, code in (('ALEVEL_CHEMISTRY', 'alevel_chemistry'), ('ALEVEL_PHYSICS', 'alevel_physics')):
+			with self.subTest(qualification=qualification):
+				other_topic = ALevelTopic.objects.create(subject=self.subjects[code], topic='Other', exam_board='OCR')
+				sub = ALevelSubTopic.objects.create(topic=self.topics[code], title='Sub')
+				other_sub = ALevelSubTopic.objects.create(topic=other_topic, title='OtherSub')
+				cat = ALevelSubCategory.objects.create(subtopic=sub, title='Cat')
+				bad = (
+					{'alevel_subtopic': other_sub},
+					{'alevel_subtopic': sub, 'alevel_subcategory': ALevelSubCategory.objects.create(subtopic=other_sub, title='X')},
+					{'alevel_subcategory': cat},
+				)
+				for extra in bad:
+					with self.assertRaises(ValidationError):
+						self._session(qualification, code, **extra).clean()
+
+	def test_legacy_biology_and_gcse_fields_rejected(self):
+		bio_topic = BiologyTopic.objects.create(topic='Core', exam_board='OCR')
+		bio_sub = BiologySubTopic.objects.create(topic=bio_topic, title='S')
+		bio_cat = BiologySubCategory.objects.create(subtopic=bio_sub, title='C')
+		forbidden = (
+			{'topic': bio_topic},
+			{'subtopic': bio_sub},
+			{'subcategory': bio_cat},
+			{'gcse_topic': self.gcse_topic},
+			{'gcse_subject': 'BIOLOGY'},
+			{'gcse_tier': 'HIGHER'},
+			{'science_route': 'SEPARATE'},
+		)
+		for qualification, code in (('ALEVEL_CHEMISTRY', 'alevel_chemistry'), ('ALEVEL_PHYSICS', 'alevel_physics')):
+			for extra in forbidden:
+				with self.subTest(qualification=qualification, extra=list(extra)):
+					with self.assertRaises(ValidationError):
+						self._session(qualification, code, **extra).clean()
+
+	def test_no_legacy_biology_link_required(self):
+		self.assertIsNone(self._session('ALEVEL_CHEMISTRY', 'alevel_chemistry').topic_id)
+		self._session('ALEVEL_CHEMISTRY', 'alevel_chemistry').clean()
+
+
+class NewSubjectsStillBlockedByApiTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='blocked@example.com', username='blocked-user', password='testpass123'
+		)
+		self.client.force_authenticate(user=self.user)
+
+	def test_supported_allowlist_unchanged(self):
+		from .views import SUPPORTED_QUALIFICATIONS
+		self.assertEqual(set(SUPPORTED_QUALIFICATIONS), {'ALEVEL_BIOLOGY', 'GCSE_SCIENCE'})
+
+	@patch('examquestions.views.generate_questions')
+	@patch('examquestions.views.generate_gcse_questions')
+	@patch('examquestions.views.generate_essay_questions')
+	def test_generation_returns_400_for_new_choices(self, mock_essay, mock_gcse, mock_bio):
+		for qualification in ('ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'):
+			with self.subTest(qualification=qualification):
+				response = self.client.post(reverse('generate-exam-questions'), {
+					'qualification': qualification, 'exam_board': 'OCR', 'number_of_questions': 1,
+				}, format='json')
+				self.assertEqual(response.status_code, 400)
+		for mock in (mock_bio, mock_gcse, mock_essay):
+			mock.assert_not_called()
+		self.assertEqual(QuestionSession.objects.count(), 0)
+		self.assertEqual(QuestionUsage.objects.count(), 0)
+
+	@patch('examquestions.views.evaluate_essay_response_with_openai')
+	@patch('examquestions.views.evaluate_gcse_response_with_openai')
+	@patch('examquestions.views.evaluate_response_with_openai')
+	@patch('examquestions.views.evaluate_batch_responses_with_openai')
+	def test_marking_returns_400_for_new_choices(self, mock_batch, mock_single, mock_gcse, mock_essay):
+		for qualification in ('ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'):
+			with self.subTest(qualification=qualification):
+				response = self.client.post(reverse('mark-user-answer'), {
+					'qualification': qualification, 'exam_board': 'OCR',
+					'question': 'Q [1 mark]', 'mark_scheme': ['x'], 'user_answer': 'a',
+				}, format='json')
+				self.assertEqual(response.status_code, 400)
+		for mock in (mock_batch, mock_single, mock_gcse, mock_essay):
+			mock.assert_not_called()
+
+
+class SharedALevelBoardSpecificationTests(APITestCase):
+	CASES = (('ALEVEL_CHEMISTRY', 'alevel_chemistry'), ('ALEVEL_PHYSICS', 'alevel_physics'))
+
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='boardspec@example.com', username='boardspec-user', password='testpass123'
+		)
+
+	def _session(self, qualification, topic, **extra):
+		fields = {
+			'user': self.user, 'qualification': qualification, 'alevel_topic': topic,
+			'exam_board': topic.exam_board, 'specification': topic.specification, 'number_of_questions': 1,
+		}
+		fields.update(extra)
+		return QuestionSession(**fields)
+
+	def _topic(self, code, **extra):
+		fields = {'subject': Subject.objects.get(code=code), 'topic': 'Core', 'exam_board': 'OCR'}
+		fields.update(extra)
+		return ALevelTopic.objects.create(**fields)
+
+	def test_matching_board_and_specification_accepted(self):
+		for qualification, code in self.CASES:
+			with self.subTest(qualification=qualification):
+				self._session(qualification, self._topic(code, specification='Spec A')).clean()
+
+	def test_mismatched_exam_board_rejected(self):
+		for qualification, code in self.CASES:
+			with self.subTest(qualification=qualification):
+				topic = self._topic(code, topic='Board', exam_board='OCR')
+				with self.assertRaisesMessage(ValidationError, 'exam board'):
+					self._session(qualification, topic, exam_board='AQA').clean()
+
+	def test_mismatched_specification_rejected(self):
+		for qualification, code in self.CASES:
+			with self.subTest(qualification=qualification):
+				topic = self._topic(code, topic='Spec', specification='Spec A')
+				with self.assertRaisesMessage(ValidationError, 'specification'):
+					self._session(qualification, topic, specification='Spec B').clean()
+				with self.assertRaisesMessage(ValidationError, 'specification'):
+					self._session(qualification, topic, specification='').clean()
+
+	def test_edexcel_specification_cases(self):
+		for qualification, code in self.CASES:
+			with self.subTest(qualification=qualification):
+				topic = self._topic(code, topic='Edx', exam_board='EDEXCEL', specification='Spec A')
+				self._session(qualification, topic).clean()
+				with self.assertRaises(ValidationError):
+					self._session(qualification, topic, specification='').clean()
+				with self.assertRaisesMessage(ValidationError, 'specification'):
+					self._session(qualification, topic, specification='Spec B').clean()
