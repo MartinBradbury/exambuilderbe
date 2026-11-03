@@ -126,7 +126,8 @@ class ALevelTopicAdmin(admin.ModelAdmin):
     search_fields = ("topic", "subject__name", "subject__code")
     list_select_related = ("subject",)
     autocomplete_fields = ("subject",)
-    ordering = ("subject__code", "exam_board", "specification", "topic")
+    ordering = ("subject__code", "exam_board", "specification", "sort_key", "topic")
+    readonly_fields = ("sort_key",)
 
     def get_urls(self):
         custom = [

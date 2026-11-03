@@ -191,9 +191,12 @@ class BackfillQuestionSessionALevelLinksMigrationTests(TransactionTestCase):
 		self.ACat.objects.create(subtopic=offset_sub, title='Offset')
 		self.ACat.objects.create(subtopic=offset_sub, title='Offset 2')
 
-		self.src_topic = self.BioTopic.objects.create(topic='Cells', exam_board='EDEXCEL', specification='Spec A')
-		self.src_sub = self.BioSub.objects.create(topic=self.src_topic, title='Membranes')
-		self.src_cat = self.BioCat.objects.create(subtopic=self.src_sub, title='Transport')
+		# Explicit high source keys guarantee they differ from auto-assigned destination keys
+		# regardless of SQLite sequence state (table rebuilds in migrations reset sequences).
+		self.src_topic = self.BioTopic.objects.create(
+			pk=9001, topic='Cells', exam_board='EDEXCEL', specification='Spec A')
+		self.src_sub = self.BioSub.objects.create(pk=9002, topic=self.src_topic, title='Membranes')
+		self.src_cat = self.BioCat.objects.create(pk=9003, subtopic=self.src_sub, title='Transport')
 		self.dst_topic, self.dst_sub, self.dst_cat = self._create_destination(self.src_topic, self.src_sub, self.src_cat)
 
 	def tearDown(self):

@@ -2,6 +2,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from accounts.models import CustomUser, Subject
+from .curriculum_ordering import SORT_KEY_MAX_LENGTH, natural_sort_key
 
 
 class ExamBoard(models.TextChoices):
@@ -205,9 +206,12 @@ class ALevelTopic(models.Model):
         db_index=True,
     )
     specification = models.CharField(max_length=100, blank=True, default="", db_index=True)
+    sort_key = models.CharField(
+        max_length=SORT_KEY_MAX_LENGTH, blank=True, default="", editable=False, db_index=True,
+    )
 
     class Meta:
-        ordering = ["subject__code", "exam_board", "specification", "topic"]
+        ordering = ["subject__code", "exam_board", "specification", "sort_key", "topic"]
         constraints = [
             models.UniqueConstraint(
                 fields=["subject", "topic", "exam_board", "specification"],
@@ -219,6 +223,13 @@ class ALevelTopic(models.Model):
         if self.specification:
             return f"{self.subject.name}: {self.topic} ({self.exam_board} - {self.specification})"
         return f"{self.subject.name}: {self.topic} ({self.exam_board})"
+
+    def save(self, *args, **kwargs):
+        self.sort_key = natural_sort_key(self.topic)
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None and "topic" in update_fields:
+            kwargs["update_fields"] = set(update_fields) | {"sort_key"}
+        super().save(*args, **kwargs)
 
     def clean(self):
         from django.core.exceptions import ValidationError
