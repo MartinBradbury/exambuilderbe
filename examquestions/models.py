@@ -282,6 +282,9 @@ class QuestionSession(models.Model):
     gcse_topic = models.ForeignKey("GCSEScienceTopic", on_delete=models.SET_NULL, null=True, blank=True)
     gcse_subtopic = models.ForeignKey("GCSEScienceSubTopic", on_delete=models.SET_NULL, null=True, blank=True)
     gcse_subcategory = models.ForeignKey("GCSEScienceSubCategory", on_delete=models.SET_NULL, null=True, blank=True)
+    alevel_topic = models.ForeignKey("ALevelTopic", on_delete=models.PROTECT, null=True, blank=True, related_name="sessions")
+    alevel_subtopic = models.ForeignKey("ALevelSubTopic", on_delete=models.PROTECT, null=True, blank=True, related_name="sessions")
+    alevel_subcategory = models.ForeignKey("ALevelSubCategory", on_delete=models.PROTECT, null=True, blank=True, related_name="sessions")
 
     qualification = models.CharField(
         max_length=32,

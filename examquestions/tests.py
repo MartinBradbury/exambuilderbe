@@ -1714,3 +1714,103 @@ class ALevelCurriculumModelTests(APITestCase):
 		subtopic.delete()
 		topic.delete()
 		self.assertFalse(ALevelTopic.objects.exists())
+
+
+class QuestionSessionALevelCurriculumLinkTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='alevel-links@example.com',
+			username='alevel-links-user',
+			password='testpass123',
+		)
+		self.client.force_authenticate(user=self.user)
+		self.biology = Subject.objects.get(code='alevel_biology')
+		self.alevel_topic = ALevelTopic.objects.create(subject=self.biology, topic='Cells', exam_board='OCR')
+		self.alevel_subtopic = ALevelSubTopic.objects.create(topic=self.alevel_topic, title='Membranes')
+		self.alevel_subcategory = ALevelSubCategory.objects.create(subtopic=self.alevel_subtopic, title='Transport')
+
+	def _legacy_biology_session(self):
+		topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+		subtopic = BiologySubTopic.objects.create(topic=topic, title='Membranes')
+		subcategory = BiologySubCategory.objects.create(subtopic=subtopic, title='Transport')
+		return QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.ALEVEL_BIOLOGY,
+			topic=topic,
+			subtopic=subtopic,
+			subcategory=subcategory,
+			exam_board='OCR',
+			number_of_questions=2,
+		)
+
+	def test_existing_biology_and_gcse_sessions_have_null_alevel_links(self):
+		biology_session = self._legacy_biology_session()
+		gcse_topic = GCSEScienceTopic.objects.create(
+			topic='Atomic structure', exam_board='AQA', subject='CHEMISTRY', tier='HIGHER'
+		)
+		gcse_session = QuestionSession.objects.create(
+			user=self.user,
+			qualification=QualificationPath.GCSE_SCIENCE,
+			gcse_topic=gcse_topic,
+			gcse_subject='CHEMISTRY',
+			gcse_tier='HIGHER',
+			science_route=GCSEScienceRoute.SEPARATE,
+			exam_board='AQA',
+			number_of_questions=2,
+		)
+
+		for session in (biology_session, gcse_session):
+			session.full_clean()
+			session.refresh_from_db()
+			self.assertIsNone(session.alevel_topic_id)
+			self.assertIsNone(session.alevel_subtopic_id)
+			self.assertIsNone(session.alevel_subcategory_id)
+
+	def test_alevel_relationships_can_be_assigned(self):
+		session = self._legacy_biology_session()
+		session.alevel_topic = self.alevel_topic
+		session.alevel_subtopic = self.alevel_subtopic
+		session.alevel_subcategory = self.alevel_subcategory
+		session.save()
+
+		session.refresh_from_db()
+		self.assertEqual(session.alevel_topic, self.alevel_topic)
+		self.assertEqual(session.alevel_subtopic, self.alevel_subtopic)
+		self.assertEqual(session.alevel_subcategory, self.alevel_subcategory)
+		self.assertEqual(list(self.alevel_topic.sessions.all()), [session])
+		self.assertEqual(list(self.alevel_subtopic.sessions.all()), [session])
+		self.assertEqual(list(self.alevel_subcategory.sessions.all()), [session])
+
+	def test_referenced_alevel_curriculum_records_are_protected(self):
+		session = self._legacy_biology_session()
+		session.alevel_topic = self.alevel_topic
+		session.alevel_subtopic = self.alevel_subtopic
+		session.alevel_subcategory = self.alevel_subcategory
+		session.save()
+
+		for record in (self.alevel_subcategory, self.alevel_subtopic, self.alevel_topic):
+			with self.assertRaises(ProtectedError):
+				record.delete()
+		self.assertTrue(QuestionSession.objects.filter(pk=session.pk).exists())
+
+	def test_session_serializer_output_unchanged_by_alevel_links(self):
+		session = self._legacy_biology_session()
+		url = reverse('get_user_sessions')
+		before = self.client.get(url).data
+
+		session.alevel_topic = self.alevel_topic
+		session.alevel_subtopic = self.alevel_subtopic
+		session.alevel_subcategory = self.alevel_subcategory
+		session.save()
+		after = self.client.get(url).data
+
+		self.assertEqual(before, after)
+		self.assertEqual(
+			set(after[0]),
+			{
+				'id', 'level', 'science_route', 'qualification', 'topic', 'subtopic', 'subcategory',
+				'gcse_topic', 'gcse_subtopic', 'gcse_subcategory', 'topic_name', 'subtopic_name',
+				'subcategory_name', 'exam_board', 'specification', 'gcse_subject', 'gcse_tier',
+				'number_of_questions', 'total_score', 'total_available', 'created_at', 'feedback',
+			},
+		)
