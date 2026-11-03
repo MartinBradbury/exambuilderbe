@@ -7,7 +7,7 @@ import stripe
 from types import SimpleNamespace
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.db import close_old_connections
+from django.db import close_old_connections, connections
 from django.test import override_settings
 from django.test import TransactionTestCase
 from django.urls import reverse
@@ -1394,7 +1394,8 @@ class ConcurrentStripeWebhookTests(TransactionTestCase):
 							raise
 						time.sleep(0.05)
 			finally:
-				close_old_connections()
+				# close_old_connections() keeps healthy connections open when CONN_MAX_AGE > 0.
+				connections.close_all()
 
 		with ThreadPoolExecutor(max_workers=2) as executor:
 			results = list(executor.map(lambda _: deliver_event(), range(2)))
