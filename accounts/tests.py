@@ -1,16 +1,22 @@
 import re
+import time
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
 from unittest.mock import patch
+import stripe
 from types import SimpleNamespace
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.db import close_old_connections
 from django.test import override_settings
+from django.test import TransactionTestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, OperationalError, transaction
 from django.db.models import ProtectedError
 from .models import CustomUser, Purchase, Subject, SubjectEntitlement, StripeWebhookEvent, UserEntitlement
-from .services.stripe import create_stripe_checkout_session
+from .services.stripe import create_stripe_checkout_session, process_stripe_webhook_event
 
 
 class PurchaseModelTests(APITestCase):
@@ -362,9 +368,18 @@ class StripeBillingTests(APITestCase):
 		)
 		self.checkout_url = reverse('stripe-checkout-session')
 		self.webhook_url = reverse('stripe-webhook')
+		self.webhook_event_counter = 0
 
-	def _post_stripe_event(self, mock_construct_event, event_type, event_object):
+	def _post_stripe_event(self, mock_construct_event, event_type, event_object, event_id=None):
+		self.webhook_event_counter += 1
+		event_object.setdefault('id', f'cs_test_{self.webhook_event_counter}')
+		if event_object.get('mode') == 'payment':
+			event_object.setdefault('amount_total', 1200)
+			event_object.setdefault('currency', 'gbp')
+			event_object.setdefault('created', 1790000000)
+			event_object.setdefault('payment_intent', f'pi_test_{self.webhook_event_counter}')
 		mock_construct_event.return_value = {
+			'id': event_id or f'evt_test_{self.webhook_event_counter}',
 			'type': event_type,
 			'data': {'object': event_object},
 		}
@@ -467,6 +482,7 @@ class StripeBillingTests(APITestCase):
 	@patch('accounts.views.construct_stripe_event')
 	def test_checkout_completed_webhook_promotes_user_to_both_paid_access(self, mock_construct_event):
 		mock_construct_event.return_value = {
+			'id': 'evt_both',
 			'type': 'checkout.session.completed',
 			'data': {
 				'object': {
@@ -491,9 +507,149 @@ class StripeBillingTests(APITestCase):
 		self.user.refresh_from_db()
 		self.assertTrue(self.user.has_gcse_paid_access)
 		self.assertTrue(self.user.has_alevel_paid_access)
+		purchase = Purchase.objects.get(stripe_checkout_session_id='cs_live_both')
+		self.assertEqual(purchase.product_identifier, 'both')
+		self.assertEqual(purchase.payment_status, Purchase.PaymentStatus.PAID)
+		self.assertEqual(purchase.user, self.user)
 
 	@patch('accounts.views.construct_stripe_event')
-	def test_subscription_deleted_webhook_removes_both_access_flags_for_combined_plan(self, mock_construct_event):
+	def test_duplicate_processed_event_does_not_repeat_entitlement_or_purchase_updates(self, mock_construct_event):
+		session = {
+			'id': 'cs_duplicate',
+			'mode': 'payment',
+			'payment_status': 'paid',
+			'created': 1790000000,
+			'amount_total': 1500,
+			'currency': 'gbp',
+			'payment_intent': 'pi_duplicate',
+			'client_reference_id': str(self.user.id),
+			'metadata': {'qualification': 'GCSE_SCIENCE'},
+		}
+		first_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			session.copy(),
+			event_id='evt_duplicate',
+		)
+		purchase = Purchase.objects.get(stripe_checkout_session_id='cs_duplicate')
+		entitlement = self.user.entitlement
+		entitlement.refresh_from_db()
+		purchase_timestamp = purchase.purchased_at
+		paid_at = entitlement.paid_at
+
+		stale_session = {**session, 'created': 1791000000, 'amount_total': 1}
+		second_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			stale_session,
+			event_id='evt_duplicate',
+		)
+
+		purchase.refresh_from_db()
+		entitlement.refresh_from_db()
+		webhook_event = StripeWebhookEvent.objects.get(stripe_event_id='evt_duplicate')
+		self.assertEqual(first_response.status_code, status.HTTP_200_OK)
+		self.assertEqual(second_response.status_code, status.HTTP_200_OK)
+		self.assertEqual(Purchase.objects.filter(stripe_checkout_session_id='cs_duplicate').count(), 1)
+		self.assertEqual(purchase.purchased_at, purchase_timestamp)
+		self.assertEqual(purchase.amount, 1500)
+		self.assertEqual(purchase.currency, 'gbp')
+		self.assertEqual(purchase.stripe_payment_intent_id, 'pi_duplicate')
+		self.assertEqual(entitlement.paid_at, paid_at)
+		self.assertEqual(webhook_event.attempt_count, 1)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_distinct_events_for_same_checkout_create_one_paid_purchase(self, mock_construct_event):
+		session = {
+			'id': 'cs_two_events',
+			'mode': 'payment',
+			'payment_status': 'paid',
+			'created': 1790000000,
+			'amount_total': 2400,
+			'currency': 'gbp',
+			'payment_intent': 'pi_two_events',
+			'client_reference_id': str(self.user.id),
+			'metadata': {'qualification': 'ALEVEL_BIOLOGY'},
+		}
+		first = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			session.copy(),
+			event_id='evt_completed',
+		)
+		first_purchase = Purchase.objects.get(stripe_checkout_session_id='cs_two_events')
+		purchased_at = first_purchase.purchased_at
+		second = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.async_payment_succeeded',
+			{**session, 'created': 1791000000, 'amount_total': 10},
+			event_id='evt_async_succeeded',
+		)
+
+		first_purchase.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertEqual(first.status_code, status.HTTP_200_OK)
+		self.assertEqual(second.status_code, status.HTTP_200_OK)
+		self.assertEqual(Purchase.objects.filter(stripe_checkout_session_id='cs_two_events').count(), 1)
+		self.assertEqual(first_purchase.purchased_at, purchased_at)
+		self.assertEqual(first_purchase.amount, 2400)
+		self.assertTrue(self.user.has_alevel_paid_access)
+		self.assertFalse(self.user.has_gcse_paid_access)
+
+	@patch('accounts.services.stripe._save_user_access_flags', side_effect=RuntimeError('temporary failure'))
+	@patch('accounts.views.construct_stripe_event')
+	def test_failed_processing_is_retryable_and_atomic(self, mock_construct_event, mock_save_access):
+		session = {
+			'id': 'cs_retry',
+			'mode': 'payment',
+			'payment_status': 'paid',
+			'created': 1790000000,
+			'amount_total': 900,
+			'currency': 'gbp',
+			'payment_intent': 'pi_retry',
+			'client_reference_id': str(self.user.id),
+			'metadata': {'qualification': 'GCSE_SCIENCE'},
+		}
+		failed_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			session.copy(),
+			event_id='evt_retry',
+		)
+		webhook_event = StripeWebhookEvent.objects.get(stripe_event_id='evt_retry')
+		self.assertEqual(failed_response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.FAILED)
+		self.assertEqual(webhook_event.attempt_count, 1)
+		self.assertFalse(Purchase.objects.filter(stripe_checkout_session_id='cs_retry').exists())
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+
+		def save_access_flags(user, **access_flags):
+			field_names = {
+				'gcse_access': 'has_gcse_paid_access',
+				'alevel_access': 'has_alevel_paid_access',
+			}
+			for field, value in access_flags.items():
+				setattr(user, field_names[field], value)
+			user.save(update_fields=[field_names[field] for field in access_flags])
+
+		mock_save_access.side_effect = save_access_flags
+		retry_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			session.copy(),
+			event_id='evt_retry',
+		)
+		webhook_event.refresh_from_db()
+		self.assertEqual(retry_response.status_code, status.HTTP_200_OK)
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.PROCESSED)
+		self.assertEqual(webhook_event.attempt_count, 2)
+		self.assertTrue(Purchase.objects.filter(stripe_checkout_session_id='cs_retry').exists())
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_gcse_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_subscription_deleted_webhook_does_not_revoke_both_access_flags(self, mock_construct_event):
 		entitlement = self.user.entitlement
 		self.user.has_gcse_paid_access = True
 		self.user.has_alevel_paid_access = True
@@ -504,6 +660,7 @@ class StripeBillingTests(APITestCase):
 		entitlement.save(update_fields=['plan_type', 'stripe_customer_id', 'stripe_subscription_id'])
 
 		mock_construct_event.return_value = {
+			'id': 'evt_subscription_deleted_both',
 			'type': 'customer.subscription.deleted',
 			'data': {
 				'object': {
@@ -524,8 +681,9 @@ class StripeBillingTests(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.user.refresh_from_db()
-		self.assertFalse(self.user.has_gcse_paid_access)
-		self.assertFalse(self.user.has_alevel_paid_access)
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+		self.assertFalse(Purchase.objects.exists())
 
 	@patch('accounts.services.stripe.stripe.Subscription.retrieve')
 	@patch('accounts.views.construct_stripe_event')
@@ -536,6 +694,7 @@ class StripeBillingTests(APITestCase):
 			'status': 'active',
 		}
 		mock_construct_event.return_value = {
+			'id': 'evt_subscription_checkout',
 			'type': 'checkout.session.completed',
 			'data': {
 				'object': {
@@ -591,6 +750,7 @@ class StripeBillingTests(APITestCase):
 				self.user.refresh_from_db()
 				self.assertFalse(self.user.has_gcse_paid_access)
 				self.assertFalse(self.user.has_alevel_paid_access)
+				self.assertFalse(Purchase.objects.exists())
 
 	@patch('accounts.services.stripe.stripe.Subscription.retrieve')
 	@patch('accounts.views.construct_stripe_event')
@@ -615,10 +775,83 @@ class StripeBillingTests(APITestCase):
 			},
 		)
 
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
 		self.user.refresh_from_db()
 		self.assertFalse(self.user.has_gcse_paid_access)
 		self.assertFalse(self.user.has_alevel_paid_access)
+		webhook_event = StripeWebhookEvent.objects.get()
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.FAILED)
+
+	@patch('accounts.services.stripe.stripe.Subscription.retrieve')
+	@patch('accounts.views.construct_stripe_event')
+	def test_subscription_lookup_failure_is_retryable_and_recovers(
+		self, mock_construct_event, mock_subscription_retrieve
+	):
+		session = {
+			'mode': 'subscription',
+			'subscription': 'sub_retry',
+			'customer': 'cus_retry',
+			'payment_status': 'paid',
+			'client_reference_id': str(self.user.id),
+			'metadata': {'qualification': 'ALEVEL_BIOLOGY'},
+		}
+		mock_subscription_retrieve.side_effect = stripe.error.APIConnectionError('network down')
+		first = self._post_stripe_event(
+			mock_construct_event, 'checkout.session.completed', session.copy(), event_id='evt_sub_retry'
+		)
+		webhook_event = StripeWebhookEvent.objects.get(stripe_event_id='evt_sub_retry')
+		self.assertEqual(first.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.FAILED)
+		self.assertEqual(webhook_event.attempt_count, 1)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+		mock_subscription_retrieve.side_effect = None
+		mock_subscription_retrieve.return_value = {
+			'id': 'sub_retry',
+			'customer': 'cus_retry',
+			'status': 'active',
+		}
+		second = self._post_stripe_event(
+			mock_construct_event, 'checkout.session.completed', session.copy(), event_id='evt_sub_retry'
+		)
+		webhook_event.refresh_from_db()
+		self.assertEqual(second.status_code, status.HTTP_200_OK)
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.PROCESSED)
+		self.assertEqual(webhook_event.attempt_count, 2)
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_alevel_paid_access)
+
+	@patch('accounts.services.stripe.stripe.Subscription.retrieve')
+	@patch('accounts.views.construct_stripe_event')
+	def test_canceled_or_mismatched_subscription_is_permanently_ignored(
+		self, mock_construct_event, mock_subscription_retrieve
+	):
+		cases = (('canceled', 'cus_123'), ('active', 'cus_other'))
+		for index, (sub_status, sub_customer) in enumerate(cases):
+			with self.subTest(status=sub_status, customer=sub_customer):
+				mock_subscription_retrieve.return_value = {
+					'id': 'sub_123',
+					'customer': sub_customer,
+					'status': sub_status,
+				}
+				response = self._post_stripe_event(
+					mock_construct_event,
+					'checkout.session.completed',
+					{
+						'mode': 'subscription',
+						'subscription': 'sub_123',
+						'customer': 'cus_123',
+						'client_reference_id': str(self.user.id),
+						'metadata': {'qualification': 'ALEVEL_BIOLOGY'},
+					},
+					event_id=f'evt_ignored_{index}',
+				)
+				event = StripeWebhookEvent.objects.get(stripe_event_id=f'evt_ignored_{index}')
+				self.assertEqual(response.status_code, status.HTTP_200_OK)
+				self.assertEqual(event.processing_status, StripeWebhookEvent.ProcessingStatus.PROCESSED)
+				self.user.refresh_from_db()
+				self.assertFalse(self.user.has_alevel_paid_access)
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_paid_gcse_checkout_grants_gcse_access_only(self, mock_construct_event):
@@ -673,6 +906,7 @@ class StripeBillingTests(APITestCase):
 		self.user.refresh_from_db()
 		self.assertFalse(self.user.has_gcse_paid_access)
 		self.assertFalse(self.user.has_alevel_paid_access)
+		self.assertFalse(Purchase.objects.exists())
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_pending_checkout_grants_access_after_confirmed_async_payment(self, mock_construct_event):
@@ -762,6 +996,38 @@ class StripeBillingTests(APITestCase):
 		self.user.refresh_from_db()
 		self.assertFalse(self.user.has_gcse_paid_access)
 		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_conflicting_checkout_user_metadata_does_not_guess_account(self, mock_construct_event):
+		other_user = CustomUser.objects.create_user(
+			email='other-billing@example.com',
+			username='other-billing-user',
+			password='OtherBillingPass123',
+		)
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'id': 'cs_conflicting_user',
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {
+					'user_id': str(other_user.id),
+					'qualification': 'GCSE_SCIENCE',
+				},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		other_user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(other_user.has_gcse_paid_access)
+		self.assertFalse(Purchase.objects.exists())
+		webhook_event = StripeWebhookEvent.objects.get(stripe_event_id='evt_test_1')
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.PROCESSED)
+		self.assertIn('conflicting', webhook_event.error_message)
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_checkout_preserves_existing_lifetime_access(self, mock_construct_event):
@@ -902,7 +1168,7 @@ class StripeBillingTests(APITestCase):
 		self.assertTrue(self.user.has_alevel_paid_access)
 
 	@patch('accounts.views.construct_stripe_event')
-	def test_subscription_deleted_webhook_downgrades_user_to_free(self, mock_construct_event):
+	def test_subscription_deleted_webhook_does_not_downgrade_one_off_access(self, mock_construct_event):
 		entitlement = self.user.entitlement
 		self.user.has_gcse_paid_access = True
 		self.user.save(update_fields=['has_gcse_paid_access'])
@@ -912,6 +1178,7 @@ class StripeBillingTests(APITestCase):
 		entitlement.save(update_fields=['plan_type', 'stripe_customer_id', 'stripe_subscription_id'])
 
 		mock_construct_event.return_value = {
+			'id': 'evt_subscription_deleted',
 			'type': 'customer.subscription.deleted',
 			'data': {
 				'object': {
@@ -933,8 +1200,212 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		entitlement.refresh_from_db()
 		self.user.refresh_from_db()
-		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.FREE)
+		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.PAID)
+		self.assertTrue(self.user.has_gcse_paid_access)
+
+	def _subscription_event(self, mock_construct_event, event_type, sub_status, subscription_id, qualification):
+		return self._post_stripe_event(
+			mock_construct_event,
+			event_type,
+			{
+				'id': subscription_id,
+				'customer': 'cus_123',
+				'status': sub_status,
+				'metadata': {'qualification': qualification},
+			},
+		)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_legacy_purchaser_without_purchase_record_keeps_access_after_cancellation(self, mock_construct_event):
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+		entitlement = self.user.entitlement
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.save(update_fields=['stripe_customer_id'])
+
+		for index, (sub_status, event_type) in enumerate((
+			('canceled', 'customer.subscription.deleted'),
+			('unpaid', 'customer.subscription.updated'),
+		)):
+			with self.subTest(sub_status=sub_status):
+				response = self._subscription_event(
+					mock_construct_event, event_type, sub_status, f'sub_other_{index}', 'GCSE_SCIENCE'
+				)
+				self.assertEqual(response.status_code, status.HTTP_200_OK)
+				self.user.refresh_from_db()
+				self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertFalse(Purchase.objects.exists())
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_paid_purchaser_keeps_access_after_canceled_or_unpaid_matching_subscription(self, mock_construct_event):
+		self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'customer': 'cus_123',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'GCSE_SCIENCE'},
+			},
+		)
+		entitlement = self.user.entitlement
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.save(update_fields=['stripe_subscription_id'])
+
+		for index, (sub_status, event_type) in enumerate((
+			('canceled', 'customer.subscription.deleted'),
+			('unpaid', 'customer.subscription.updated'),
+		)):
+			with self.subTest(sub_status=sub_status):
+				response = self._subscription_event(mock_construct_event, event_type, sub_status, 'sub_123', 'GCSE_SCIENCE')
+				self.assertEqual(response.status_code, status.HTTP_200_OK)
+				self.user.refresh_from_db()
+				self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertEqual(Purchase.objects.count(), 1)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_gcse_customer_buying_biology_keeps_both_flags_after_cancellation(self, mock_construct_event):
+		for qualification in ('GCSE_SCIENCE', 'ALEVEL_BIOLOGY'):
+			self._post_stripe_event(
+				mock_construct_event,
+				'checkout.session.completed',
+				{
+					'mode': 'payment',
+					'payment_status': 'paid',
+					'customer': 'cus_123',
+					'client_reference_id': str(self.user.id),
+					'metadata': {'qualification': qualification},
+				},
+			)
+		entitlement = self.user.entitlement
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.save(update_fields=['stripe_subscription_id'])
+
+		self._subscription_event(mock_construct_event, 'customer.subscription.deleted', 'canceled', 'sub_123', 'GCSE_SCIENCE')
+
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+		self.assertEqual(Purchase.objects.count(), 2)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_unrelated_subscription_id_is_ignored_even_with_matching_customer(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.save(update_fields=['stripe_customer_id', 'stripe_subscription_id'])
+
+		response = self._subscription_event(
+			mock_construct_event, 'customer.subscription.updated', 'active', 'sub_unrelated', 'ALEVEL_BIOLOGY'
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertEqual(entitlement.stripe_subscription_id, 'sub_123')
+		self.assertFalse(self.user.has_alevel_paid_access)
 		self.assertFalse(self.user.has_gcse_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_subscription_event_without_stored_subscription_id_is_ignored(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.save(update_fields=['stripe_customer_id'])
+
+		response = self._subscription_event(
+			mock_construct_event, 'customer.subscription.updated', 'active', 'sub_new', 'GCSE_SCIENCE'
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertIsNone(entitlement.stripe_subscription_id)
+		self.assertFalse(self.user.has_gcse_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_duplicate_checkout_events_do_not_change_existing_access(self, mock_construct_event):
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+		session = {
+			'id': 'cs_dup',
+			'mode': 'payment',
+			'payment_status': 'paid',
+			'client_reference_id': str(self.user.id),
+			'metadata': {'qualification': 'ALEVEL_BIOLOGY'},
+		}
+		self._post_stripe_event(mock_construct_event, 'checkout.session.completed', session.copy(), event_id='evt_dup_1')
+		purchase = Purchase.objects.get()
+		purchased_at = purchase.purchased_at
+		for event_id, event_type in (
+			('evt_dup_1', 'checkout.session.completed'),
+			('evt_dup_2', 'checkout.session.async_payment_succeeded'),
+		):
+			response = self._post_stripe_event(mock_construct_event, event_type, session.copy(), event_id=event_id)
+			self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		purchase.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertEqual(Purchase.objects.count(), 1)
+		self.assertEqual(purchase.purchased_at, purchased_at)
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+
+
+class ConcurrentStripeWebhookTests(TransactionTestCase):
+	reset_sequences = True
+
+	def test_concurrent_duplicate_delivery_creates_one_purchase(self):
+		user = CustomUser.objects.create_user(
+			email='concurrent-billing@example.com',
+			username='concurrent-billing-user',
+			password='ConcurrentBillingPass123',
+			email_verified=False,
+		)
+		event = {
+			'id': 'evt_concurrent',
+			'type': 'checkout.session.completed',
+			'data': {
+				'object': {
+					'id': 'cs_concurrent',
+					'mode': 'payment',
+					'payment_status': 'paid',
+					'created': 1790000000,
+					'amount_total': 1700,
+					'currency': 'gbp',
+					'payment_intent': 'pi_concurrent',
+					'client_reference_id': str(user.id),
+					'metadata': {'qualification': 'GCSE_SCIENCE'},
+				},
+			},
+		}
+		barrier = Barrier(2)
+
+		def deliver_event():
+			close_old_connections()
+			try:
+				barrier.wait(timeout=5)
+				for attempt in range(40):
+					try:
+						return process_stripe_webhook_event(event)
+					except OperationalError:
+						# SQLite table locks stand in for PostgreSQL row-lock waits.
+						if attempt == 39:
+							raise
+						time.sleep(0.05)
+			finally:
+				close_old_connections()
+
+		with ThreadPoolExecutor(max_workers=2) as executor:
+			results = list(executor.map(lambda _: deliver_event(), range(2)))
+
+		self.assertEqual(sorted(results), [False, True])
+		self.assertEqual(Purchase.objects.filter(stripe_checkout_session_id='cs_concurrent').count(), 1)
+		webhook_event = StripeWebhookEvent.objects.get(stripe_event_id='evt_concurrent')
+		self.assertEqual(webhook_event.processing_status, StripeWebhookEvent.ProcessingStatus.PROCESSED)
+		user.refresh_from_db()
+		self.assertTrue(user.has_gcse_paid_access)
+		self.assertFalse(user.has_alevel_paid_access)
 
 
 class PerformanceTrackingResetTests(APITestCase):

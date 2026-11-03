@@ -14,9 +14,8 @@ from .services.stripe import (
     CheckoutNotAllowedError,
     create_stripe_checkout_session,
     construct_stripe_event,
+    process_stripe_webhook_event,
     stripe_value,
-    sync_entitlement_from_checkout_session,
-    sync_entitlement_from_subscription,
 )
 from .serializers import (
     CustomUserSerializer,
@@ -268,14 +267,9 @@ class StripeWebhookAPIView(GenericAPIView):
             return Response({'detail': 'Unexpected error while validating Stripe webhook.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         event_type = stripe_value(event, 'type')
-        event_data = stripe_value(event, 'data', {}) or {}
-        event_object = stripe_value(event_data, 'object', {}) or {}
 
         try:
-            if event_type in {'checkout.session.completed', 'checkout.session.async_payment_succeeded'}:
-                sync_entitlement_from_checkout_session(event_object)
-            elif event_type in {'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'}:
-                sync_entitlement_from_subscription(event_object)
+            process_stripe_webhook_event(event)
         except Exception:
             logger.exception('Unexpected Stripe webhook processing failure for event %s', event_type)
             return Response({'detail': 'Unexpected error while processing Stripe webhook.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
