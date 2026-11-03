@@ -8,8 +8,11 @@ from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from accounts.models import QuestionUsage
-from accounts.models import CustomUser
-from .models import BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, GCSEScienceRoute, QuestionSession, QualificationPath, ServedQuestion
+from accounts.models import CustomUser, Subject
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
+from django.db.models import ProtectedError
+from .models import ALevelTopic, ALevelSubTopic, ALevelSubCategory, BiologyTopic, BiologySubTopic, BiologySubCategory, GCSEScienceTopic, GCSEScienceSubTopic, GCSEScienceSubCategory, GCSEScienceRoute, QuestionSession, QualificationPath, ServedQuestion
 from .services import ai, aiEssay, aiGCSE
 from .views import GCSE_SUBJECT_ERROR_MESSAGE, is_self_contained_ai_question, resolve_gcse_fallback_bank_path
 
@@ -1633,3 +1636,81 @@ class EdexcelSpecificationFlowTests(APITestCase):
 		session = QuestionSession.objects.get(user=self.user)
 		self.assertEqual(session.specification, 'Spec A')
 		self.assertEqual(session.exam_board, 'EDEXCEL')
+
+
+class ALevelCurriculumModelTests(APITestCase):
+	def setUp(self):
+		self.biology = Subject.objects.get(code='alevel_biology')
+		self.chemistry = Subject.objects.get(code='alevel_chemistry')
+		self.physics = Subject.objects.get(code='alevel_physics')
+
+	def test_topics_can_be_created_for_each_alevel_subject(self):
+		for subject in (self.biology, self.chemistry, self.physics):
+			topic = ALevelTopic.objects.create(subject=subject, topic='Energy', exam_board='OCR')
+			topic.full_clean()
+			self.assertEqual(str(topic), f'{subject.name}: Energy (OCR)')
+
+		self.assertEqual(ALevelTopic.objects.count(), 3)
+
+	def test_same_topic_name_allowed_for_different_subjects(self):
+		ALevelTopic.objects.create(subject=self.chemistry, topic='Rates', exam_board='AQA')
+		ALevelTopic.objects.create(subject=self.physics, topic='Rates', exam_board='AQA')
+
+		self.assertEqual(ALevelTopic.objects.filter(topic='Rates').count(), 2)
+
+	def test_duplicate_topic_rejected_within_subject_board_and_specification(self):
+		ALevelTopic.objects.create(subject=self.chemistry, topic='Rates', exam_board='AQA', specification='7405')
+
+		with self.assertRaises(IntegrityError), transaction.atomic():
+			ALevelTopic.objects.create(subject=self.chemistry, topic='Rates', exam_board='AQA', specification='7405')
+
+		ALevelTopic.objects.create(subject=self.chemistry, topic='Rates', exam_board='AQA', specification='Other')
+		ALevelTopic.objects.create(subject=self.chemistry, topic='Rates', exam_board='OCR', specification='7405')
+
+	def test_subtopic_and_subcategory_relationships(self):
+		topic = ALevelTopic.objects.create(subject=self.physics, topic='Fields', exam_board='OCR')
+		subtopic = ALevelSubTopic.objects.create(topic=topic, title='Gravitational fields')
+		subcategory = ALevelSubCategory.objects.create(subtopic=subtopic, title='Orbits')
+
+		self.assertEqual(list(topic.subtopics.all()), [subtopic])
+		self.assertEqual(list(subtopic.subcategories.all()), [subcategory])
+		self.assertEqual(str(subtopic), f'{topic} – Gravitational fields')
+		self.assertEqual(str(subcategory), f'{subtopic} – Orbits')
+
+		with self.assertRaises(IntegrityError), transaction.atomic():
+			ALevelSubTopic.objects.create(topic=topic, title='Gravitational fields')
+		with self.assertRaises(IntegrityError), transaction.atomic():
+			ALevelSubCategory.objects.create(subtopic=subtopic, title='Orbits')
+
+	def test_edexcel_topic_requires_specification(self):
+		topic = ALevelTopic(subject=self.biology, topic='Cells', exam_board='EDEXCEL')
+		with self.assertRaises(ValidationError):
+			topic.full_clean()
+
+		topic.specification = 'Spec A'
+		topic.full_clean()
+
+	def test_gcse_subject_is_rejected(self):
+		gcse = Subject.objects.get(code='gcse_science')
+		topic = ALevelTopic(subject=gcse, topic='Cells', exam_board='OCR')
+
+		with self.assertRaises(ValidationError) as context:
+			topic.full_clean()
+		self.assertIn('subject', context.exception.message_dict)
+
+	def test_referenced_curriculum_records_are_protected_from_deletion(self):
+		topic = ALevelTopic.objects.create(subject=self.chemistry, topic='Bonding', exam_board='OCR')
+		subtopic = ALevelSubTopic.objects.create(topic=topic, title='Ionic')
+		subcategory = ALevelSubCategory.objects.create(subtopic=subtopic, title='Lattices')
+
+		with self.assertRaises(ProtectedError):
+			self.chemistry.delete()
+		with self.assertRaises(ProtectedError):
+			topic.delete()
+		with self.assertRaises(ProtectedError):
+			subtopic.delete()
+
+		subcategory.delete()
+		subtopic.delete()
+		topic.delete()
+		self.assertFalse(ALevelTopic.objects.exists())

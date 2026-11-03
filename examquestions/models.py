@@ -1,7 +1,7 @@
 # models.py
 from django.db import models
 from django.core.validators import MinValueValidator
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Subject
 
 
 class ExamBoard(models.TextChoices):
@@ -183,6 +183,90 @@ class BiologySubCategory(models.Model):
             models.UniqueConstraint(
                 fields=["subtopic", "title"],
                 name="uniq_subcategory_per_subtopic",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.subtopic} – {self.title}"
+
+
+class ALevelTopic(models.Model):
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.PROTECT,
+        related_name="alevel_topics",
+    )
+    topic = models.CharField(max_length=255)
+    exam_board = models.CharField(
+        max_length=8,
+        choices=ExamBoard.choices,
+        db_index=True,
+    )
+    specification = models.CharField(max_length=100, blank=True, default="", db_index=True)
+
+    class Meta:
+        ordering = ["subject__code", "exam_board", "specification", "topic"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["subject", "topic", "exam_board", "specification"],
+                name="uniq_alevel_topic_per_subject_board_spec",
+            )
+        ]
+
+    def __str__(self):
+        if self.specification:
+            return f"{self.subject.name}: {self.topic} ({self.exam_board} - {self.specification})"
+        return f"{self.subject.name}: {self.topic} ({self.exam_board})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.subject_id and self.subject.qualification != Subject.Qualification.A_LEVEL:
+            raise ValidationError({"subject": "A-level topics require an A-level subject."})
+        if self.exam_board == ExamBoard.EDEXCEL and not self.specification:
+            raise ValidationError("Edexcel topics require a specification.")
+
+
+class ALevelSubTopic(models.Model):
+    topic = models.ForeignKey(
+        ALevelTopic,
+        on_delete=models.PROTECT,
+        related_name="subtopics",
+    )
+    title = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ["topic__subject__code", "topic__exam_board", "topic__topic", "title"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["topic", "title"],
+                name="uniq_alevel_subtopic_per_topic",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.topic} – {self.title}"
+
+
+class ALevelSubCategory(models.Model):
+    subtopic = models.ForeignKey(
+        ALevelSubTopic,
+        on_delete=models.PROTECT,
+        related_name="subcategories",
+    )
+    title = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = [
+            "subtopic__topic__subject__code",
+            "subtopic__topic__exam_board",
+            "subtopic__topic__topic",
+            "subtopic__title",
+            "title",
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["subtopic", "title"],
+                name="uniq_alevel_subcategory_per_subtopic",
             ),
         ]
 
