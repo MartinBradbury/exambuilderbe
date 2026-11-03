@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from accounts.models import CustomUser, Subject
 from examquestions.curriculum_ordering import SORT_KEY_MAX_LENGTH, natural_sort_key
-from examquestions.models import ALevelSubTopic, ALevelTopic
+from examquestions.models import ALevelSubCategory, ALevelSubTopic, ALevelTopic
 from examquestions.services.curriculum_import import apply_import
 
 
@@ -109,11 +109,6 @@ class ALevelTopicSortKeyModelTests(TestCase):
 		result = [(t.specification, t.topic) for t in ALevelTopic.objects.filter(exam_board='EDEXCEL')]
 		self.assertEqual(result, [('Spec A', '3.20 Z'), ('Spec B', '3.2 Y'), ('Spec B', '3.10 X')])
 
-	def test_subtopic_ordering_unchanged(self):
-		self.assertEqual(
-			ALevelSubTopic._meta.ordering,
-			['topic__subject__code', 'topic__exam_board', 'topic__topic', 'title'],
-		)
 
 
 class ALevelTopicSortKeyAdminAndImportTests(TestCase):
@@ -254,3 +249,132 @@ class ALevelTopicSortKeyPersistenceTests(TestCase):
 		topic.save(update_fields=['specification'])
 		topic.refresh_from_db()
 		self.assertEqual(topic.sort_key, natural_sort_key('3.2 Old'))
+
+
+class ALevelSubTopicSortKeyTests(TestCase):
+	def setUp(self):
+		self.phys = Subject.objects.get(code='alevel_physics')
+		self.chem = Subject.objects.get(code='alevel_chemistry')
+		self.topic = ALevelTopic.objects.create(subject=self.phys, topic='3.1 T', exam_board='AQA')
+
+	def sub(self, title, topic=None):
+		return ALevelSubTopic.objects.create(topic=topic or self.topic, title=title)
+
+	def test_numeric_ordering(self):
+		for title in ['3.10.1 J', '3.1.2 B', '3.2.1 C', '3.11.1 K', '3.1.10 D', '3.1.1 A']:
+			self.sub(title)
+		self.assertEqual(
+			[s.title for s in ALevelSubTopic.objects.all()],
+			['3.1.1 A', '3.1.2 B', '3.1.10 D', '3.2.1 C', '3.10.1 J', '3.11.1 K'],
+		)
+
+	def test_grouped_by_parent_topic_natural_order(self):
+		t10 = ALevelTopic.objects.create(subject=self.phys, topic='3.10 U', exam_board='AQA')
+		t2 = ALevelTopic.objects.create(subject=self.phys, topic='3.2 V', exam_board='AQA')
+		self.sub('A sub', t10)
+		self.sub('Z sub', t2)
+		other = ALevelTopic.objects.create(subject=self.chem, topic='1.1 C', exam_board='AQA')
+		self.sub('Chem sub', other)
+		order = [(s.topic.topic, s.title) for s in ALevelSubTopic.objects.all()]
+		self.assertEqual(order, [('1.1 C', 'Chem sub'), ('3.2 V', 'Z sub'), ('3.10 U', 'A sub')])
+
+	def test_save_and_update_fields_maintain_key(self):
+		s = self.sub('3.2.1 X')
+		self.assertEqual(s.sort_key, natural_sort_key('3.2.1 X'))
+		s.title = '3.10.1 X'
+		s.save(update_fields=['title'])
+		s.refresh_from_db()
+		self.assertEqual(s.sort_key, natural_sort_key('3.10.1 X'))
+
+	def test_unnumbered_subtopics_alphabetical(self):
+		for title in ['Zeta', 'alpha', 'Beta']:
+			self.sub(title)
+		self.assertEqual([s.title for s in ALevelSubTopic.objects.all()], ['alpha', 'Beta', 'Zeta'])
+
+	def test_subcategories_keep_alphabetical_within_naturally_ordered_subtopic(self):
+		s10 = self.sub('3.10.1 B')
+		s2 = self.sub('3.2.1 A')
+		for sub, titles in ((s10, ['Zinc', 'Apple']), (s2, ['Mango', 'Banana'])):
+			for t in titles:
+				ALevelSubCategory.objects.create(subtopic=sub, title=t)
+		self.assertEqual(
+			[(c.subtopic.title, c.title) for c in ALevelSubCategory.objects.all()],
+			[('3.2.1 A', 'Banana'), ('3.2.1 A', 'Mango'), ('3.10.1 B', 'Apple'), ('3.10.1 B', 'Zinc')],
+		)
+
+	def test_admin_lists_in_natural_order(self):
+		user = CustomUser.objects.create_superuser(email='s4@example.com', username='s4-user', password='testpass123')
+		self.client.force_login(user)
+		for title in ['3.10.1 Ten', '3.2.1 Two', '3.1.1 One']:
+			self.sub(title)
+		content = self.client.get(reverse('admin:examquestions_alevelsubtopic_changelist')).content.decode()
+		positions = [content.index(t) for t in ['3.1.1 One', '3.2.1 Two', '3.10.1 Ten']]
+		self.assertEqual(positions, sorted(positions))
+		model_admin = site._registry[ALevelSubTopic]
+		self.assertIn('sort_key', model_admin.ordering)
+		self.assertIn('subtopic__sort_key', site._registry[ALevelSubCategory].ordering)
+
+	def test_admin_add_and_edit_maintain_key(self):
+		user = CustomUser.objects.create_superuser(email='s5@example.com', username='s5-user', password='testpass123')
+		self.client.force_login(user)
+		r = self.client.post(reverse('admin:examquestions_alevelsubtopic_add'), {'topic': self.topic.pk, 'title': '3.1.10 New'})
+		self.assertEqual(r.status_code, 302)
+		s = ALevelSubTopic.objects.get(title='3.1.10 New')
+		self.assertEqual(s.sort_key, natural_sort_key('3.1.10 New'))
+		r = self.client.post(reverse('admin:examquestions_alevelsubtopic_change', args=[s.pk]), {'topic': self.topic.pk, 'title': '3.1.2 Edited'})
+		self.assertEqual(r.status_code, 302)
+		s.refresh_from_db()
+		self.assertEqual(s.sort_key, natural_sort_key('3.1.2 Edited'))
+
+	def test_importer_sets_subtopic_keys_and_is_idempotent(self):
+		data = {'subject': 'alevel_chemistry', 'exam_board': 'AQA', 'specification': '', 'topics': [
+			{'topic': '3.1 Topic', 'subtopics': [
+				{'title': '3.1.10 Ten', 'subcategories': ['Free text b', 'Free text a']},
+				{'title': '3.1.2 Two'},
+			]},
+		]}
+		apply_import(json.loads(json.dumps(data)))
+		snapshot = list(ALevelSubTopic.objects.values_list('pk', 'title', 'sort_key'))
+		counts = apply_import(json.loads(json.dumps(data)))
+		self.assertEqual(list(ALevelSubTopic.objects.values_list('pk', 'title', 'sort_key')), snapshot)
+		self.assertEqual(counts['subtopics'], [0, 2])
+		self.assertEqual(counts['subcategories'], [0, 2])
+		self.assertEqual(
+			[s.title for s in ALevelSubTopic.objects.filter(topic__subject=self.chem)],
+			['3.1.2 Two', '3.1.10 Ten'],
+		)
+
+
+class BackfillSubTopicSortKeyMigrationTests(TransactionTestCase):
+	before = [('examquestions', '0018_aleveltopic_sort_key')]
+	after = [('examquestions', '0019_alevelsubtopic_sort_key')]
+
+	def test_backfill_preserves_records_and_relationships(self):
+		executor = MigrationExecutor(connection)
+		executor.migrate(self.before)
+		apps = executor.loader.project_state(self.before).apps
+		Subject_ = apps.get_model('accounts', 'Subject')
+		Topic = apps.get_model('examquestions', 'ALevelTopic')
+		Sub = apps.get_model('examquestions', 'ALevelSubTopic')
+		Cat = apps.get_model('examquestions', 'ALevelSubCategory')
+		snapshot = {}
+		for code, name in (('alevel_biology', 'Biology'), ('alevel_chemistry', 'Chemistry'), ('alevel_physics', 'Physics')):
+			subject, _ = Subject_.objects.get_or_create(
+				code=code, defaults={'name': name, 'qualification': 'A_LEVEL', 'is_active': True})
+			topic = Topic.objects.create(subject=subject, topic='3.1 T', exam_board='AQA')
+			for title in ('3.10.1 Ten', '3.2.1 Two', 'Free text'):
+				sub = Sub.objects.create(topic=topic, title=title)
+				cat = Cat.objects.create(subtopic=sub, title='Cat')
+				snapshot[sub.pk] = (topic.pk, title, cat.pk)
+
+		executor = MigrationExecutor(connection)
+		executor.migrate(self.after)
+		apps = executor.loader.project_state(self.after).apps
+		Sub = apps.get_model('examquestions', 'ALevelSubTopic')
+		Cat = apps.get_model('examquestions', 'ALevelSubCategory')
+		self.assertEqual(Sub.objects.count(), 9)
+		for pk, (topic_pk, title, cat_pk) in snapshot.items():
+			row = Sub.objects.get(pk=pk)
+			self.assertEqual((row.topic_id, row.title), (topic_pk, title))
+			self.assertEqual(row.sort_key, natural_sort_key(title))
+			self.assertEqual(Cat.objects.get(pk=cat_pk).subtopic_id, pk)

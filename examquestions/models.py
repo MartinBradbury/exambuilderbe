@@ -246,9 +246,15 @@ class ALevelSubTopic(models.Model):
         related_name="subtopics",
     )
     title = models.CharField(max_length=200)
+    sort_key = models.CharField(
+        max_length=SORT_KEY_MAX_LENGTH, blank=True, default="", editable=False, db_index=True,
+    )
 
     class Meta:
-        ordering = ["topic__subject__code", "topic__exam_board", "topic__topic", "title"]
+        ordering = [
+            "topic__subject__code", "topic__exam_board", "topic__specification",
+            "topic__sort_key", "topic__topic", "sort_key", "title",
+        ]
         constraints = [
             models.UniqueConstraint(
                 fields=["topic", "title"],
@@ -258,6 +264,13 @@ class ALevelSubTopic(models.Model):
 
     def __str__(self):
         return f"{self.topic} – {self.title}"
+
+    def save(self, *args, **kwargs):
+        self.sort_key = natural_sort_key(self.title)
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None and "title" in update_fields:
+            kwargs["update_fields"] = set(update_fields) | {"sort_key"}
+        super().save(*args, **kwargs)
 
 
 class ALevelSubCategory(models.Model):
@@ -272,7 +285,10 @@ class ALevelSubCategory(models.Model):
         ordering = [
             "subtopic__topic__subject__code",
             "subtopic__topic__exam_board",
+            "subtopic__topic__specification",
+            "subtopic__topic__sort_key",
             "subtopic__topic__topic",
+            "subtopic__sort_key",
             "subtopic__title",
             "title",
         ]

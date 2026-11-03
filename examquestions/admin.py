@@ -252,8 +252,11 @@ class ALevelSubTopicAdmin(admin.ModelAdmin):
     search_fields = ("title", "topic__topic", "topic__subject__name", "topic__subject__code")
     list_select_related = ("topic", "topic__subject")
     autocomplete_fields = ("topic",)
-    ordering = ("topic__subject__code", "topic__exam_board", "topic__specification", "topic__topic", "title")
-
+    ordering = (
+        "topic__subject__code", "topic__exam_board", "topic__specification",
+        "topic__sort_key", "topic__topic", "sort_key", "title",
+    )
+    readonly_fields = ("sort_key",)
     @admin.display(description="Subject", ordering="topic__subject__name")
     def subject_name(self, obj):
         return obj.topic.subject.name
@@ -280,7 +283,9 @@ class ALevelSubCategoryAdmin(admin.ModelAdmin):
         "subtopic__topic__subject__code",
         "subtopic__topic__exam_board",
         "subtopic__topic__specification",
+        "subtopic__topic__sort_key",
         "subtopic__topic__topic",
+        "subtopic__sort_key",
         "subtopic__title",
         "title",
     )
