@@ -20,6 +20,9 @@ from .models import (
     GCSEScienceTopic,
     GCSEScienceSubTopic,
     GCSEScienceSubCategory,
+    ALevelTopic,
+    ALevelSubTopic,
+    ALevelSubCategory,
     ServedQuestion,
     ExamBoard,
     QualificationPath,
@@ -27,7 +30,8 @@ from .models import (
     GCSEScienceRoute,
     GCSETier,
 )
-from accounts.models import CustomUser, QuestionUsage, UserEntitlement
+from accounts.models import CustomUser, QuestionUsage, Subject, UserEntitlement
+from .curriculum_ordering import natural_sort_key
 from django.db import transaction
 from django.utils import timezone
 from functools import lru_cache
@@ -40,6 +44,9 @@ from .serializers import (
     GCSETopicListSerializer,
     GCSESubTopicListSerializer,
     GCSESubCategoryListSerializer,
+    ALevelTopicListSerializer,
+    ALevelSubTopicListSerializer,
+    ALevelSubCategoryListSerializer,
 )
 import logging
 
@@ -1137,6 +1144,104 @@ def get_biology_subcategories(request):
         if specification:
             qs = qs.filter(subtopic__topic__specification=specification)
     return Response(BiologySubCategoryListSerializer(qs, many=True).data)
+
+
+def _parse_alevel_scope(request):
+    """Validate subject/exam_board/specification. Returns (scope, error_response)."""
+    subject_code = (request.query_params.get("subject") or "").strip().lower()
+    if not subject_code:
+        return None, Response({"error": "subject is required."}, status=400)
+    subject = Subject.objects.filter(
+        code=subject_code, qualification=Subject.Qualification.A_LEVEL, is_active=True
+    ).first()
+    if subject is None:
+        return None, Response({"error": "Invalid subject."}, status=400)
+
+    board = (request.query_params.get("exam_board") or "").strip().upper()
+    if not board:
+        return None, Response({"error": "exam_board is required."}, status=400)
+    if board not in ALLOWED_BOARDS:
+        return None, Response({"error": EXAM_BOARD_ERROR_MESSAGE}, status=400)
+
+    specification = _normalize_specification(request.query_params.get("specification"))
+    if board == ExamBoard.EDEXCEL:
+        if not specification:
+            return None, Response(
+                {"error": "specification is required for EDEXCEL."}, status=400
+            )
+    elif specification:
+        return None, Response(
+            {"error": f"specification is not supported for {board}."}, status=400
+        )
+    return (subject, board, specification), None
+
+
+def _parse_parent_id(request, param):
+    raw = (request.query_params.get(param) or "").strip()
+    if not raw:
+        return None, Response({"error": f"{param} is required."}, status=400)
+    if not raw.isdigit() or int(raw) > 2**31 - 1:
+        return None, Response({"error": f"{param} must be a positive integer."}, status=400)
+    return int(raw), None
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_alevel_topics(request):
+    scope, error = _parse_alevel_scope(request)
+    if error:
+        return error
+    subject, board, specification = scope
+    qs = (
+        ALevelTopic.objects.filter(
+            subject=subject, exam_board=board, specification=specification
+        )
+        .select_related("subject")
+        .order_by("sort_key", "topic", "id")
+    )
+    return Response(ALevelTopicListSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_alevel_subtopics(request):
+    scope, error = _parse_alevel_scope(request)
+    if error:
+        return error
+    subject, board, specification = scope
+    topic_id, error = _parse_parent_id(request, "topic_id")
+    if error:
+        return error
+    if not ALevelTopic.objects.filter(
+        id=topic_id, subject=subject, exam_board=board, specification=specification
+    ).exists():
+        return Response({"error": "Topic not found."}, status=404)
+    qs = ALevelSubTopic.objects.filter(topic_id=topic_id).order_by("sort_key", "title", "id")
+    return Response(ALevelSubTopicListSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_alevel_subcategories(request):
+    scope, error = _parse_alevel_scope(request)
+    if error:
+        return error
+    subject, board, specification = scope
+    subtopic_id, error = _parse_parent_id(request, "subtopic_id")
+    if error:
+        return error
+    if not ALevelSubTopic.objects.filter(
+        id=subtopic_id,
+        topic__subject=subject,
+        topic__exam_board=board,
+        topic__specification=specification,
+    ).exists():
+        return Response({"error": "Subtopic not found."}, status=404)
+    items = sorted(
+        ALevelSubCategory.objects.filter(subtopic_id=subtopic_id),
+        key=lambda item: (natural_sort_key(item.title), item.id),
+    )
+    return Response(ALevelSubCategoryListSerializer(items, many=True).data)
 
 
 @api_view(['GET'])

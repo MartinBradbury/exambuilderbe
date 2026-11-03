@@ -7,6 +7,9 @@ from .models import (
     GCSEScienceTopic,
     GCSEScienceSubTopic,
     GCSEScienceSubCategory,
+    ALevelTopic,
+    ALevelSubTopic,
+    ALevelSubCategory,
 )
 
 class BiologyTopicListSerializer(serializers.ModelSerializer):
@@ -24,6 +27,26 @@ class BiologySubTopicListSerializer(serializers.ModelSerializer):
 class BiologySubCategoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = BiologySubCategory
+        fields = ["id", "title", "subtopic"]
+
+
+class ALevelTopicListSerializer(serializers.ModelSerializer):
+    subject = serializers.CharField(source="subject.code", read_only=True)
+
+    class Meta:
+        model = ALevelTopic
+        fields = ["id", "topic", "subject", "exam_board", "specification"]
+
+
+class ALevelSubTopicListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ALevelSubTopic
+        fields = ["id", "title", "topic"]
+
+
+class ALevelSubCategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ALevelSubCategory
         fields = ["id", "title", "subtopic"]
 
 
