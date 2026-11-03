@@ -124,7 +124,32 @@ def construct_stripe_event(payload, signature):
 
 
 def sync_entitlement_from_checkout_session(session):
+    session_mode = stripe_value(session, 'mode')
+    payment_status = stripe_value(session, 'payment_status')
+    if session_mode == 'payment':
+        if payment_status != 'paid':
+            return None
+    elif session_mode == 'subscription':
+        subscription_id = stripe_value(session, 'subscription')
+        customer_id = stripe_value(session, 'customer')
+        if not subscription_id or not customer_id:
+            return None
+
+        subscription = stripe.Subscription.retrieve(subscription_id)
+        subscription_customer_id = stripe_value(subscription, 'customer')
+        if (
+            (stripe_value(subscription, 'status') or '').strip().lower() not in ACTIVE_SUBSCRIPTION_STATUSES
+            or subscription_customer_id != customer_id
+        ):
+            return None
+    else:
+        return None
+
     metadata = stripe_value(session, 'metadata', {}) or {}
+    qualification = CustomUser.normalize_paid_access_qualification(stripe_value(metadata, 'qualification'))
+    if qualification is None:
+        return None
+
     user_id = stripe_value(session, 'client_reference_id') or stripe_value(metadata, 'user_id')
     if not user_id:
         return None
@@ -135,9 +160,10 @@ def sync_entitlement_from_checkout_session(session):
 
     with transaction.atomic():
         entitlement, _ = UserEntitlement.objects.select_for_update().get_or_create(user=user)
-        qualification = CustomUser.normalize_paid_access_qualification(stripe_value(metadata, 'qualification'))
-        entitlement.plan_type = stripe_value(metadata, 'plan_type', UserEntitlement.PlanType.PAID)
-        entitlement.lifetime_unlocked = entitlement.plan_type == UserEntitlement.PlanType.LIFETIME
+        plan_type = stripe_value(metadata, 'plan_type', UserEntitlement.PlanType.PAID)
+        if plan_type == UserEntitlement.PlanType.LIFETIME and not entitlement.lifetime_unlocked:
+            plan_type = UserEntitlement.PlanType.PAID
+        entitlement.plan_type = plan_type
 
         if entitlement.lifetime_unlocked or qualification == 'BOTH':
             # The combined purchase grants both flags together in a single save.
@@ -146,8 +172,6 @@ def sync_entitlement_from_checkout_session(session):
             _save_user_access_flags(user, gcse_access=True)
         elif qualification == 'ALEVEL_BIOLOGY':
             _save_user_access_flags(user, alevel_access=True)
-        else:
-            _save_user_access_flags(user, gcse_access=True, alevel_access=True)
 
         _sync_legacy_plan_type(entitlement)
         entitlement.stripe_customer_id = stripe_value(session, 'customer') or entitlement.stripe_customer_id
@@ -180,9 +204,12 @@ def sync_entitlement_from_subscription(subscription):
     if entitlement is None:
         return None
 
+    qualification = CustomUser.normalize_paid_access_qualification(stripe_value(metadata, 'qualification'))
+    if qualification is None:
+        return None
+
     with transaction.atomic():
         entitlement = UserEntitlement.objects.select_for_update().get(pk=entitlement.pk)
-        qualification = CustomUser.normalize_paid_access_qualification(stripe_value(metadata, 'qualification'))
         user = entitlement.user
         status = (stripe_value(subscription, 'status') or '').strip().lower()
         if status in ACTIVE_SUBSCRIPTION_STATUSES:
@@ -193,16 +220,13 @@ def sync_entitlement_from_subscription(subscription):
             elif qualification == 'ALEVEL_BIOLOGY':
                 _save_user_access_flags(user, alevel_access=True)
             entitlement.paid_at = entitlement.paid_at or timezone.now()
-        else:
+        elif not entitlement.lifetime_unlocked:
             if qualification == 'BOTH':
                 _save_user_access_flags(user, gcse_access=False, alevel_access=False)
             elif qualification == 'GCSE_SCIENCE':
                 _save_user_access_flags(user, gcse_access=False)
             elif qualification == 'ALEVEL_BIOLOGY':
                 _save_user_access_flags(user, alevel_access=False)
-            elif not entitlement.lifetime_unlocked:
-                _save_user_access_flags(user, gcse_access=False, alevel_access=False)
-            entitlement.lifetime_unlocked = False
 
         _sync_legacy_plan_type(entitlement)
         entitlement.stripe_subscription_id = subscription_id or entitlement.stripe_subscription_id

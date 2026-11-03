@@ -181,6 +181,18 @@ class StripeBillingTests(APITestCase):
 		self.checkout_url = reverse('stripe-checkout-session')
 		self.webhook_url = reverse('stripe-webhook')
 
+	def _post_stripe_event(self, mock_construct_event, event_type, event_object):
+		mock_construct_event.return_value = {
+			'type': event_type,
+			'data': {'object': event_object},
+		}
+		return self.client.post(
+			self.webhook_url,
+			data='{}',
+			content_type='application/json',
+			HTTP_STRIPE_SIGNATURE='sig_test',
+		)
+
 	@patch('accounts.services.stripe.stripe.checkout.Session.create')
 	def test_create_checkout_session_uses_gcse_price_id(self, mock_session_create):
 		mock_session_create.return_value = SimpleNamespace(id='cs_gcse', url='https://checkout.stripe.com/c/pay/cs_gcse')
@@ -278,7 +290,8 @@ class StripeBillingTests(APITestCase):
 				'object': {
 					'id': 'cs_live_both',
 					'customer': 'cus_123',
-					'subscription': 'sub_123',
+					'mode': 'payment',
+					'payment_status': 'paid',
 					'client_reference_id': str(self.user.id),
 					'metadata': {'plan_type': UserEntitlement.PlanType.PAID, 'qualification': 'BOTH'},
 				}
@@ -332,8 +345,14 @@ class StripeBillingTests(APITestCase):
 		self.assertFalse(self.user.has_gcse_paid_access)
 		self.assertFalse(self.user.has_alevel_paid_access)
 
+	@patch('accounts.services.stripe.stripe.Subscription.retrieve')
 	@patch('accounts.views.construct_stripe_event')
-	def test_checkout_completed_webhook_promotes_user_to_paid(self, mock_construct_event):
+	def test_checkout_completed_webhook_promotes_user_to_paid(self, mock_construct_event, mock_subscription_retrieve):
+		mock_subscription_retrieve.return_value = {
+			'id': 'sub_123',
+			'customer': 'cus_123',
+			'status': 'active',
+		}
 		mock_construct_event.return_value = {
 			'type': 'checkout.session.completed',
 			'data': {
@@ -341,6 +360,8 @@ class StripeBillingTests(APITestCase):
 					'id': 'cs_live_123',
 					'customer': 'cus_123',
 					'subscription': 'sub_123',
+					'mode': 'subscription',
+					'payment_status': 'paid',
 					'client_reference_id': str(self.user.id),
 					'metadata': {'plan_type': UserEntitlement.PlanType.PAID, 'qualification': 'ALEVEL_BIOLOGY'},
 				}
@@ -364,6 +385,339 @@ class StripeBillingTests(APITestCase):
 		self.user.refresh_from_db()
 		self.assertTrue(self.user.has_alevel_paid_access)
 		self.assertFalse(self.user.has_gcse_paid_access)
+		mock_subscription_retrieve.assert_called_once_with('sub_123')
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_checkout_with_missing_or_unknown_mode_does_not_grant_access(self, mock_construct_event):
+		for mode in (None, 'unknown'):
+			with self.subTest(mode=mode):
+				checkout_session = {
+					'payment_status': 'paid',
+					'client_reference_id': str(self.user.id),
+					'metadata': {'qualification': 'GCSE_SCIENCE'},
+				}
+				if mode is not None:
+					checkout_session['mode'] = mode
+
+				response = self._post_stripe_event(
+					mock_construct_event,
+					'checkout.session.completed',
+					checkout_session,
+				)
+
+				self.assertEqual(response.status_code, status.HTTP_200_OK)
+				self.user.refresh_from_db()
+				self.assertFalse(self.user.has_gcse_paid_access)
+				self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.services.stripe.stripe.Subscription.retrieve')
+	@patch('accounts.views.construct_stripe_event')
+	def test_inactive_subscription_checkout_does_not_grant_access(
+		self, mock_construct_event, mock_subscription_retrieve
+	):
+		mock_subscription_retrieve.return_value = {
+			'id': 'sub_123',
+			'customer': 'cus_123',
+			'status': 'incomplete',
+		}
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'subscription',
+				'subscription': 'sub_123',
+				'customer': 'cus_123',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'ALEVEL_BIOLOGY'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_paid_gcse_checkout_grants_gcse_access_only(self, mock_construct_event):
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'GCSE_SCIENCE'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_paid_biology_checkout_grants_biology_access_only(self, mock_construct_event):
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'ALEVEL_BIOLOGY'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_unpaid_checkout_does_not_grant_access(self, mock_construct_event):
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'unpaid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'GCSE_SCIENCE'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_pending_checkout_grants_access_after_confirmed_async_payment(self, mock_construct_event):
+		pending_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'unpaid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'GCSE_SCIENCE'},
+			},
+		)
+		self.user.refresh_from_db()
+		self.assertEqual(pending_response.status_code, status.HTTP_200_OK)
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+		async_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.async_payment_succeeded',
+			{
+				'mode': 'payment',
+				'payment_status': 'unpaid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'GCSE_SCIENCE'},
+			},
+		)
+		self.user.refresh_from_db()
+		self.assertEqual(async_response.status_code, status.HTTP_200_OK)
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+		async_response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.async_payment_succeeded',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {
+					'qualification': 'GCSE_SCIENCE',
+					'plan_type': UserEntitlement.PlanType.LIFETIME,
+				},
+			},
+		)
+
+		self.assertEqual(async_response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_missing_checkout_qualification_does_not_grant_access(self, mock_construct_event):
+		for metadata in ({}, {'qualification': ''}):
+			with self.subTest(metadata=metadata):
+				response = self._post_stripe_event(
+					mock_construct_event,
+					'checkout.session.completed',
+					{
+						'mode': 'payment',
+						'payment_status': 'paid',
+						'client_reference_id': str(self.user.id),
+						'metadata': metadata,
+					},
+				)
+
+				self.assertEqual(response.status_code, status.HTTP_200_OK)
+				self.user.refresh_from_db()
+				self.assertFalse(self.user.has_gcse_paid_access)
+				self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_unknown_checkout_qualification_does_not_grant_access(self, mock_construct_event):
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'CHEMISTRY'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_checkout_preserves_existing_lifetime_access(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		entitlement.lifetime_unlocked = True
+		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
+		entitlement.save(update_fields=['lifetime_unlocked', 'plan_type'])
+		self.user.has_gcse_paid_access = True
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access', 'has_alevel_paid_access'])
+
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {
+					'qualification': 'GCSE_SCIENCE',
+					'plan_type': UserEntitlement.PlanType.LIFETIME,
+				},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertTrue(entitlement.lifetime_unlocked)
+		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.LIFETIME)
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_checkout_lifetime_metadata_does_not_create_lifetime_access(self, mock_construct_event):
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {
+					'qualification': 'GCSE_SCIENCE',
+					'plan_type': UserEntitlement.PlanType.LIFETIME,
+				},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement = self.user.entitlement
+		entitlement.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertFalse(entitlement.lifetime_unlocked)
+		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.PAID)
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_checkout_historical_qualification_aliases_still_work(self, mock_construct_event):
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'checkout.session.completed',
+			{
+				'mode': 'payment',
+				'payment_status': 'paid',
+				'client_reference_id': str(self.user.id),
+				'metadata': {'qualification': 'A-Level Biology'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.user.refresh_from_db()
+		self.assertFalse(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_invalid_subscription_qualification_does_not_change_access(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.save(update_fields=['stripe_customer_id', 'stripe_subscription_id'])
+		self.user.has_gcse_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access'])
+
+		for subscription_status, event_type in (
+			('active', 'customer.subscription.updated'),
+			('canceled', 'customer.subscription.deleted'),
+		):
+			with self.subTest(subscription_status=subscription_status):
+				response = self._post_stripe_event(
+					mock_construct_event,
+					event_type,
+					{
+						'id': 'sub_123',
+						'customer': 'cus_123',
+						'status': subscription_status,
+						'metadata': {'qualification': 'UNKNOWN'},
+					},
+				)
+
+				self.assertEqual(response.status_code, status.HTTP_200_OK)
+				self.user.refresh_from_db()
+				self.assertTrue(self.user.has_gcse_paid_access)
+				self.assertFalse(self.user.has_alevel_paid_access)
+
+	@patch('accounts.views.construct_stripe_event')
+	def test_subscription_cancellation_preserves_lifetime_access(self, mock_construct_event):
+		entitlement = self.user.entitlement
+		entitlement.stripe_customer_id = 'cus_123'
+		entitlement.stripe_subscription_id = 'sub_123'
+		entitlement.lifetime_unlocked = True
+		entitlement.plan_type = UserEntitlement.PlanType.LIFETIME
+		entitlement.save(
+			update_fields=['stripe_customer_id', 'stripe_subscription_id', 'lifetime_unlocked', 'plan_type']
+		)
+		self.user.has_gcse_paid_access = True
+		self.user.has_alevel_paid_access = True
+		self.user.save(update_fields=['has_gcse_paid_access', 'has_alevel_paid_access'])
+
+		response = self._post_stripe_event(
+			mock_construct_event,
+			'customer.subscription.deleted',
+			{
+				'id': 'sub_123',
+				'customer': 'cus_123',
+				'status': 'canceled',
+				'metadata': {'qualification': 'BOTH'},
+			},
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		entitlement.refresh_from_db()
+		self.user.refresh_from_db()
+		self.assertTrue(entitlement.lifetime_unlocked)
+		self.assertEqual(entitlement.plan_type, UserEntitlement.PlanType.LIFETIME)
+		self.assertTrue(self.user.has_gcse_paid_access)
+		self.assertTrue(self.user.has_alevel_paid_access)
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_subscription_deleted_webhook_downgrades_user_to_free(self, mock_construct_event):
