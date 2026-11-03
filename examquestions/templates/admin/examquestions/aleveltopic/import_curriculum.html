@@ -1,0 +1,59 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a>
+  &rsaquo; <a href="{{ changelist_url }}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  {% if preview %}
+    <h2>Preview (nothing has been written yet)</h2>
+    <table>
+      <tr><th>Subject</th><td>{{ preview.subject }}</td></tr>
+      <tr><th>Exam board</th><td>{{ preview.exam_board }}</td></tr>
+      <tr><th>Specification</th><td>{% if preview.specification %}{{ preview.specification }}{% else %}(none){% endif %}</td></tr>
+      {% if preview.source_name %}<tr><th>Source</th><td>{{ preview.source_name }}</td></tr>{% endif %}
+    </table>
+    <table>
+      <thead><tr><th>Level</th><th>New</th><th>Existing (reused)</th></tr></thead>
+      <tbody>
+        {% for label, new, reused in preview.rows %}
+          <tr><td>{{ label|capfirst }}</td><td>{{ new }}</td><td>{{ reused }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <form method="post" action="">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="confirm">
+      <input type="hidden" name="token" value="{{ preview.token }}">
+      <div class="submit-row">
+        <input type="submit" class="default" value="Confirm import">
+        <a href="{{ changelist_url }}" class="closelink">Cancel</a>
+      </div>
+    </form>
+  {% else %}
+    <form method="post" enctype="multipart/form-data" action="">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <ul class="errorlist">{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+      {% endif %}
+      <fieldset class="module aligned">
+        <div class="form-row">
+          {{ form.file.errors }}
+          {{ form.file.label_tag }} {{ form.file }}
+          <div class="help">{{ form.file.help_text }}</div>
+        </div>
+      </fieldset>
+      <input type="hidden" name="action" value="preview">
+      <div class="submit-row">
+        <input type="submit" class="default" value="Upload and preview">
+        <a href="{{ changelist_url }}" class="closelink">Cancel</a>
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}
