@@ -10,7 +10,7 @@ import logging
 import math
 import re
 
-from .ai import MODEL_NAME, get_openai_client
+from .ai import MODEL_NAME, get_alevel_openai_client as get_openai_client
 
 logger = logging.getLogger(__name__)
 

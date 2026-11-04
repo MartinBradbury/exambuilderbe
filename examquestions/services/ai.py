@@ -12,6 +12,19 @@ def get_openai_client():
     return OpenAI(api_key=settings.OPEN_AI_KEY)
 
 
+ALEVEL_OPENAI_TIMEOUT_SECONDS = 25.0
+
+
+@lru_cache(maxsize=1)
+def get_alevel_openai_client():
+    # Single bounded attempt so a slow response fails inside Heroku's 30s request window.
+    return OpenAI(
+        api_key=settings.OPEN_AI_KEY,
+        timeout=ALEVEL_OPENAI_TIMEOUT_SECONDS,
+        max_retries=0,
+    )
+
+
 def _parse_json_response_content(response):
     content = response.choices[0].message.content
     if not content:

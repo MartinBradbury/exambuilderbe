@@ -343,7 +343,7 @@ class ChemistryMarkAllocationTests(SimpleTestCase):
 
 
 class ChemistryIsolationTests(SimpleTestCase):
-    def test_not_enabled_in_public_api(self):
-        self.assertNotIn("ALEVEL_CHEMISTRY", SUPPORTED_QUALIFICATIONS)
+    def test_enabled_in_public_api(self):
+        self.assertIn("ALEVEL_CHEMISTRY", SUPPORTED_QUALIFICATIONS)
         import examquestions.views as views
-        self.assertFalse(hasattr(views, "ai_chemistry"))
+        self.assertIs(views.ai_chemistry, chem)

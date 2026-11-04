@@ -438,7 +438,10 @@ class GenerateExamQuestionsLimitTests(APITestCase):
 		)
 
 		self.assertEqual(response.status_code, 400)
-		self.assertEqual(response.data['error'], "qualification is required. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'.")
+		self.assertEqual(
+			response.data['error'],
+			"qualification is required. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', 'ALEVEL_CHEMISTRY' or 'ALEVEL_PHYSICS'.",
+		)
 
 	@patch('examquestions.views.load_fallback_bank_for_board')
 	@patch('examquestions.views.generate_questions')
@@ -1887,7 +1890,7 @@ class QuestionSessionALevelCurriculumLinkTests(APITestCase):
 		self.assertEqual(
 			set(after[0]),
 			{
-				'id', 'level', 'science_route', 'qualification', 'topic', 'subtopic', 'subcategory',
+				'id', 'level', 'subject', 'science_route', 'qualification', 'topic', 'subtopic', 'subcategory',
 				'gcse_topic', 'gcse_subtopic', 'gcse_subcategory', 'topic_name', 'subtopic_name',
 				'subcategory_name', 'exam_board', 'specification', 'gcse_subject', 'gcse_tier',
 				'number_of_questions', 'total_score', 'total_available', 'created_at', 'feedback',
@@ -2060,7 +2063,7 @@ class QuestionSessionALevelCurriculumCleanTests(APITestCase):
 
 
 class FailClosedQualificationTests(APITestCase):
-	UNSUPPORTED = ['ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS', 'A_LEVEL_CHEMISTRY', 'physics', 'BOTH', 'nonsense']
+	UNSUPPORTED = ['BOTH', 'nonsense']
 
 	def setUp(self):
 		self.user = CustomUser.objects.create_user(
@@ -2273,21 +2276,24 @@ class SharedALevelSessionCleanTests(APITestCase):
 		self._session('ALEVEL_CHEMISTRY', 'alevel_chemistry').clean()
 
 
-class NewSubjectsStillBlockedByApiTests(APITestCase):
+class NewSubjectsApiRoutingTests(APITestCase):
 	def setUp(self):
 		self.user = CustomUser.objects.create_user(
 			email='blocked@example.com', username='blocked-user', password='testpass123'
 		)
 		self.client.force_authenticate(user=self.user)
 
-	def test_supported_allowlist_unchanged(self):
+	def test_supported_allowlist_includes_shared_subjects(self):
 		from .views import SUPPORTED_QUALIFICATIONS
-		self.assertEqual(set(SUPPORTED_QUALIFICATIONS), {'ALEVEL_BIOLOGY', 'GCSE_SCIENCE'})
+		self.assertEqual(
+			set(SUPPORTED_QUALIFICATIONS),
+			{'ALEVEL_BIOLOGY', 'ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS', 'GCSE_SCIENCE'},
+		)
 
 	@patch('examquestions.views.generate_questions')
 	@patch('examquestions.views.generate_gcse_questions')
 	@patch('examquestions.views.generate_essay_questions')
-	def test_generation_returns_400_for_new_choices(self, mock_essay, mock_gcse, mock_bio):
+	def test_generation_without_topic_returns_400_for_new_choices(self, mock_essay, mock_gcse, mock_bio):
 		for qualification in ('ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'):
 			with self.subTest(qualification=qualification):
 				response = self.client.post(reverse('generate-exam-questions'), {
@@ -2303,14 +2309,18 @@ class NewSubjectsStillBlockedByApiTests(APITestCase):
 	@patch('examquestions.views.evaluate_gcse_response_with_openai')
 	@patch('examquestions.views.evaluate_response_with_openai')
 	@patch('examquestions.views.evaluate_batch_responses_with_openai')
-	def test_marking_returns_400_for_new_choices(self, mock_batch, mock_single, mock_gcse, mock_essay):
+	def test_marking_never_uses_biology_or_gcse_markers_for_new_choices(
+		self, mock_batch, mock_single, mock_gcse, mock_essay
+	):
 		for qualification in ('ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'):
 			with self.subTest(qualification=qualification):
-				response = self.client.post(reverse('mark-user-answer'), {
-					'qualification': qualification, 'exam_board': 'OCR',
-					'question': 'Q [1 mark]', 'mark_scheme': ['x'], 'user_answer': 'a',
-				}, format='json')
-				self.assertEqual(response.status_code, 400)
+				with patch('examquestions.views.ai_chemistry.evaluate_response_with_openai', return_value={'score': 1, 'out_of': 1, 'feedback': ''}), \
+						patch('examquestions.views.ai_physics.evaluate_response_with_openai', return_value={'score': 1, 'out_of': 1, 'feedback': ''}):
+					response = self.client.post(reverse('mark-user-answer'), {
+						'qualification': qualification, 'exam_board': 'OCR',
+						'question': 'Q [1 mark]', 'mark_scheme': ['x'], 'user_answer': 'a',
+					}, format='json')
+				self.assertEqual(response.status_code, 200)
 		for mock in (mock_batch, mock_single, mock_gcse, mock_essay):
 			mock.assert_not_called()
 

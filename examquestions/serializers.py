@@ -70,10 +70,11 @@ class GCSESubCategoryListSerializer(serializers.ModelSerializer):
 
 class QuestionSessionSerializer(serializers.ModelSerializer):
     level = serializers.SerializerMethodField()
+    subject = serializers.SerializerMethodField()
     science_route = serializers.SerializerMethodField()
     topic = serializers.SerializerMethodField()
-    subtopic = serializers.StringRelatedField(read_only=True)
-    subcategory = serializers.StringRelatedField(read_only=True)
+    subtopic = serializers.SerializerMethodField()
+    subcategory = serializers.SerializerMethodField()
     gcse_topic = serializers.StringRelatedField(read_only=True)
     gcse_subtopic = serializers.StringRelatedField(read_only=True)
     gcse_subcategory = serializers.StringRelatedField(read_only=True)
@@ -81,16 +82,44 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
     subtopic_name = serializers.SerializerMethodField()
     subcategory_name = serializers.SerializerMethodField()
 
+    SUBJECT_BY_QUALIFICATION = {
+        "GCSE_SCIENCE": "gcse_science",
+        "ALEVEL_BIOLOGY": "alevel_biology",
+        "ALEVEL_CHEMISTRY": "alevel_chemistry",
+        "ALEVEL_PHYSICS": "alevel_physics",
+    }
+
     def get_level(self, obj):
         if obj.qualification == "GCSE_SCIENCE":
             return "GCSE"
         return "A level"
 
+    def get_subject(self, obj):
+        return self.SUBJECT_BY_QUALIFICATION.get(obj.qualification)
+
+    # Legacy Biology and GCSE links win so historical output is unchanged; the shared
+    # A-level links only supply values for sessions that have no legacy equivalent.
     def get_topic(self, obj):
         if obj.topic:
             return str(obj.topic)
         if obj.gcse_topic:
             return str(obj.gcse_topic)
+        if obj.alevel_topic:
+            return str(obj.alevel_topic)
+        return None
+
+    def get_subtopic(self, obj):
+        if obj.subtopic:
+            return str(obj.subtopic)
+        if obj.alevel_subtopic:
+            return str(obj.alevel_subtopic)
+        return None
+
+    def get_subcategory(self, obj):
+        if obj.subcategory:
+            return str(obj.subcategory)
+        if obj.alevel_subcategory:
+            return str(obj.alevel_subcategory)
         return None
 
     def get_science_route(self, obj):
@@ -101,6 +130,8 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
             return obj.topic.topic
         if obj.gcse_topic:
             return obj.gcse_topic.topic
+        if obj.alevel_topic:
+            return obj.alevel_topic.topic
         return None
 
     def get_subtopic_name(self, obj):
@@ -108,6 +139,8 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
             return obj.subtopic.title
         if obj.gcse_subtopic:
             return obj.gcse_subtopic.title
+        if obj.alevel_subtopic:
+            return obj.alevel_subtopic.title
         return None
 
     def get_subcategory_name(self, obj):
@@ -115,6 +148,8 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
             return obj.subcategory.title
         if obj.gcse_subcategory:
             return obj.gcse_subcategory.title
+        if obj.alevel_subcategory:
+            return obj.alevel_subcategory.title
         return None
 
     class Meta:
@@ -122,6 +157,7 @@ class QuestionSessionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "level",
+            "subject",
             "science_route",
             "qualification",
             "topic",

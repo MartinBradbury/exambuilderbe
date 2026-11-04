@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .services.ai import generate_questions, evaluate_batch_responses_with_openai, evaluate_response_with_openai
+from .services import ai_chemistry, ai_physics
 from .services.aiEssay import (
     generate_questions as generate_essay_questions,
     evaluate_batch_responses_with_openai as evaluate_essay_batch_responses_with_openai,
@@ -87,8 +88,24 @@ ALLOWED_BOARDS = {choice for choice, _ in ExamBoard.choices}
 EXAM_BOARD_ERROR_MESSAGE = "Invalid exam_board. Use 'OCR', 'AQA', or 'EDEXCEL'."
 ALLOWED_QUALIFICATIONS = {choice for choice, _ in QualificationPath.choices}
 # Qualifications with an implemented generation and marking path; anything else fails closed.
-SUPPORTED_QUALIFICATIONS = {QualificationPath.ALEVEL_BIOLOGY, QualificationPath.GCSE_SCIENCE}
-UNSUPPORTED_QUALIFICATION_MESSAGE = "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."
+SUPPORTED_QUALIFICATIONS = {
+    QualificationPath.ALEVEL_BIOLOGY,
+    QualificationPath.ALEVEL_CHEMISTRY,
+    QualificationPath.ALEVEL_PHYSICS,
+    QualificationPath.GCSE_SCIENCE,
+}
+# Shared-curriculum A-level subjects served by their own AI service module.
+SHARED_ALEVEL_SUBJECTS = {
+    QualificationPath.ALEVEL_CHEMISTRY: ("alevel_chemistry", ai_chemistry),
+    QualificationPath.ALEVEL_PHYSICS: ("alevel_physics", ai_physics),
+}
+UNSUPPORTED_QUALIFICATION_MESSAGE = (
+    "Invalid qualification. Use 'ALEVEL_BIOLOGY', 'ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS' or 'GCSE_SCIENCE'."
+)
+ALEVEL_GENERATION_UNAVAILABLE_MESSAGE = (
+    "We couldn't generate enough questions for this selection right now. Please try again."
+)
+ALEVEL_MARKING_UNAVAILABLE_MESSAGE = "We couldn't mark your answers right now. Please try again."
 ALLOWED_GCSE_SUBJECTS = {choice for choice, _ in GCSESubject.choices}
 ALLOWED_GCSE_TIERS = {choice for choice, _ in GCSETier.choices}
 GCSE_SUBJECT_ERROR_MESSAGE = "Invalid GCSE subject. Use 'BIOLOGY', 'CHEMISTRY', 'PHYSICS', or 'COMBINED'."
@@ -114,9 +131,6 @@ def _normalize_choice(raw_value):
 
 def _normalize_qualification(raw_value, default=QualificationPath.ALEVEL_BIOLOGY):
     normalized = CustomUser.normalize_paid_access_qualification(raw_value)
-    # Chemistry and Physics are checkout-only identifiers until their generation is wired.
-    if normalized in {'ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'}:
-        return default
     return normalized or default
 
 
@@ -804,6 +818,81 @@ def prepare_alevel_biology_shared_generation(
     }
 
 
+class AlevelGenerationUnavailable(Exception):
+    """AI generation failed or returned too few valid unique questions and no bank exists."""
+
+
+def prepare_alevel_shared_subject_generation(
+    user, qualification, board_key, specification, topic_id, subtopic_id, subcategory_id, number
+):
+    """AI-first generation for shared-curriculum A-level subjects (Chemistry, Physics).
+
+    No A-level bank exists for these subjects, so a shortfall is an error, never a GCSE or
+    Biology fallback. Sessions carry only the shared ALevel* links.
+    """
+    subject_code, ai_module = SHARED_ALEVEL_SUBJECTS[qualification]
+    topic_filters = {"id": topic_id, "exam_board": board_key, "subject__code": subject_code}
+    if board_key == ExamBoard.EDEXCEL:
+        topic_filters["specification"] = specification
+    topic = ALevelTopic.objects.select_related("subject").get(**topic_filters)
+
+    subtopic = None
+    if subtopic_id:
+        subtopic = ALevelSubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
+
+    subcategory = None
+    if subcategory_id:
+        if not subtopic_id:
+            raise ValueError("subcategory_id provided without subtopic_id")
+        subcategory = ALevelSubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
+
+    scope_key = build_shared_alevel_scope_key(subject_code, topic, subtopic, subcategory)
+    served_questions = get_user_served_question_set(user, board_key, scope_key)
+
+    scope = build_question_scope(topic.topic, subtopic, subcategory)
+    curriculum_context = {
+        "topic": topic.topic,
+        "subtopic": subtopic.title if subtopic else "",
+        "subcategory": subcategory.title if subcategory else "",
+    }
+    try:
+        ai_response = ai_module.generate_questions(
+            scope,
+            board_key,
+            number,
+            specification=topic.specification,
+            curriculum_context=curriculum_context,
+        )
+        ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
+    except Exception as exc:
+        logger.error("%s generation failed: %s", subject_code, type(exc).__name__)
+        raise AlevelGenerationUnavailable() from exc
+
+    combined_questions = collect_valid_ai_questions(ai_questions, served_questions)[:number]
+    if len(combined_questions) < number:
+        logger.warning(
+            "%s generation produced %d of %d valid unique questions and has no fallback bank.",
+            subject_code, len(combined_questions), number,
+        )
+        raise AlevelGenerationUnavailable()
+
+    total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+    return {
+        "scope_key": scope_key,
+        "combined_questions": combined_questions,
+        "session_kwargs": {
+            "alevel_topic": topic,
+            "alevel_subtopic": subtopic,
+            "alevel_subcategory": subcategory,
+            "qualification": qualification,
+            "exam_board": board_key,
+            "specification": topic.specification,
+            "number_of_questions": number,
+            "total_available": total_available,
+        },
+    }
+
+
 def prepare_essay_generation(user, board_key, specification, topic_id, subtopic_id, subcategory_id):
     topic = None
     subtopic = None
@@ -974,7 +1063,7 @@ def generate_exam_questions(request):
     if question_type != QUESTION_TYPE_ESSAY_25_MARK and not all([topic_id, exam_board, number]):
         return Response({"error": "Missing required fields"}, status=400)
     if request.data.get('qualification') in {None, ''} and question_type != QUESTION_TYPE_ESSAY_25_MARK:
-        return Response({"error": "qualification is required. Use 'GCSE_SCIENCE' or 'ALEVEL_BIOLOGY'."}, status=400)
+        return Response({"error": "qualification is required. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', 'ALEVEL_CHEMISTRY' or 'ALEVEL_PHYSICS'."}, status=400)
 
     board_key = (exam_board or "").strip().upper()
     specification = _normalize_specification(request.data.get("specification"))
@@ -986,7 +1075,7 @@ def generate_exam_questions(request):
     if specification_error:
         return Response({"error": specification_error}, status=400)
     if qualification not in SUPPORTED_QUALIFICATIONS:
-        return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
+        return Response({"error": UNSUPPORTED_QUALIFICATION_MESSAGE}, status=400)
     if question_type == QUESTION_TYPE_ESSAY_25_MARK:
         if qualification != QualificationPath.ALEVEL_BIOLOGY:
             return Response({"error": "Essay questions are only available for A-level Biology."}, status=400)
@@ -1051,6 +1140,17 @@ def generate_exam_questions(request):
                     subcategory_id=subcategory_id,
                     number=number,
                 )
+        elif qualification in SHARED_ALEVEL_SUBJECTS:
+            generation_result = prepare_alevel_shared_subject_generation(
+                user=request.user,
+                qualification=qualification,
+                board_key=board_key,
+                specification=specification,
+                topic_id=topic_id,
+                subtopic_id=subtopic_id,
+                subcategory_id=subcategory_id,
+                number=number,
+            )
         elif qualification == QualificationPath.GCSE_SCIENCE:
             gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
             gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
@@ -1123,6 +1223,8 @@ def generate_exam_questions(request):
             },
             status=403,
         )
+    except AlevelGenerationUnavailable:
+        return Response({"error": ALEVEL_GENERATION_UNAVAILABLE_MESSAGE}, status=503)
     except LegacyCurriculumLinkError as exc:
         logger.error("Shared Biology selection cannot be linked to legacy curriculum: %s", exc)
         return Response(
@@ -1165,7 +1267,7 @@ def mark_user_answer(request):
     if question_type not in ALLOWED_QUESTION_TYPES:
         return Response({"error": QUESTION_TYPE_ERROR_MESSAGE}, status=400)
     if qualification not in SUPPORTED_QUALIFICATIONS:
-        return Response({"error": "Invalid qualification. Use 'ALEVEL_BIOLOGY' or 'GCSE_SCIENCE'."}, status=400)
+        return Response({"error": UNSUPPORTED_QUALIFICATION_MESSAGE}, status=400)
     if question_type == QUESTION_TYPE_ESSAY_25_MARK:
         if qualification != QualificationPath.ALEVEL_BIOLOGY:
             return Response({"error": "Essay questions are only available for A-level Biology."}, status=400)
@@ -1175,7 +1277,13 @@ def mark_user_answer(request):
         specification_error = _validate_specification_for_board(exam_board, specification)
         if specification_error:
             return Response({"error": specification_error}, status=400)
-
+    marking_module = None
+    if qualification in SHARED_ALEVEL_SUBJECTS:
+        marking_module = SHARED_ALEVEL_SUBJECTS[qualification][1]
+        try:
+            marking_module._validate_board_and_specification(exam_board, specification)
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=400)
     gcse_subject = _normalize_gcse_subject(request.data.get("subject"))
     gcse_tier = _normalize_gcse_tier(request.data.get("tier"))
     if qualification == QualificationPath.GCSE_SCIENCE:
@@ -1193,6 +1301,15 @@ def mark_user_answer(request):
                 return Response({"error": "Each answer must include question and mark_scheme."}, status=400)
 
         try:
+            if marking_module is not None:
+                try:
+                    result = marking_module.evaluate_batch_responses_with_openai(
+                        answers, exam_board, specification=specification
+                    )
+                except Exception as exc:
+                    logger.error("Shared A-level batch marking failed: %s", type(exc).__name__)
+                    return Response({"error": ALEVEL_MARKING_UNAVAILABLE_MESSAGE}, status=503)
+                return Response(result, status=200)
             if qualification == QualificationPath.GCSE_SCIENCE:
                 result = evaluate_gcse_batch_responses_with_openai(answers, exam_board, gcse_subject, gcse_tier)
             elif qualification == QualificationPath.ALEVEL_BIOLOGY and question_type == QUESTION_TYPE_ESSAY_25_MARK:
@@ -1224,6 +1341,15 @@ def mark_user_answer(request):
         return Response({"error": "Missing one or more fields."}, status=400)
 
     try:
+        if marking_module is not None:
+            try:
+                result = marking_module.evaluate_response_with_openai(
+                    question, mark_scheme, user_answer, exam_board, specification=specification
+                )
+            except Exception as exc:
+                logger.error("Shared A-level marking failed: %s", type(exc).__name__)
+                return Response({"error": ALEVEL_MARKING_UNAVAILABLE_MESSAGE}, status=503)
+            return Response(result, status=200)
         if qualification == QualificationPath.GCSE_SCIENCE:
             result = evaluate_gcse_response_with_openai(question, mark_scheme, user_answer, exam_board, gcse_subject, gcse_tier)
         elif qualification == QualificationPath.ALEVEL_BIOLOGY and question_type == QUESTION_TYPE_ESSAY_25_MARK:
@@ -1282,7 +1408,10 @@ def get_user_sessions(request):
         'gcse_topic',
         'gcse_subtopic',
         'gcse_subcategory',
-    ).filter(user=request.user).order_by('-created_at')
+        'alevel_topic__subject',
+        'alevel_subtopic__topic__subject',
+        'alevel_subcategory__subtopic__topic__subject',
+    ).filter(user=request.user).order_by('-created_at').order_by('-created_at')
     serializer = QuestionSessionSerializer(sessions, many=True)
     return Response(serializer.data)
 

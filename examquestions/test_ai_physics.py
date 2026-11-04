@@ -413,10 +413,10 @@ class PhysicsMarkAllocationTests(SimpleTestCase):
 
 
 class PhysicsIsolationTests(SimpleTestCase):
-    def test_not_enabled_in_public_api(self):
-        self.assertNotIn("ALEVEL_PHYSICS", SUPPORTED_QUALIFICATIONS)
+    def test_enabled_in_public_api(self):
+        self.assertIn("ALEVEL_PHYSICS", SUPPORTED_QUALIFICATIONS)
         import examquestions.views as views
-        self.assertFalse(hasattr(views, "ai_physics"))
+        self.assertIs(views.ai_physics, phys)
 
     def test_public_signatures_match_chemistry(self):
         import inspect
