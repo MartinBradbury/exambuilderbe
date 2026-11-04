@@ -240,7 +240,7 @@ class StripeCheckoutSessionAPIView(GenericAPIView):
                 'checkout_url': stripe_value(session, 'url'),
                 'session_id': stripe_value(session, 'id'),
                 'publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
-                'mode': settings.STRIPE_CHECKOUT_MODE,
+                'mode': 'payment',
             },
             status=status.HTTP_200_OK,
         )

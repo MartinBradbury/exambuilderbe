@@ -8,8 +8,18 @@ SUBJECT_CODES = tuple(LEGACY_SUBJECT_FLAGS) + CustomUser.EXPLICIT_ONLY_SUBJECT_C
 QUALIFICATION_SUBJECT_CODES = {
     'GCSE_SCIENCE': ('gcse_science',),
     'ALEVEL_BIOLOGY': ('alevel_biology',),
+    'ALEVEL_CHEMISTRY': ('alevel_chemistry',),
+    'ALEVEL_PHYSICS': ('alevel_physics',),
     'BOTH': ('gcse_science', 'alevel_biology'),
 }
+
+
+def subject_codes_for_purchase(qualification, lifetime_unlocked=False):
+    """Rows a verified purchase grants; lifetime holders also keep their original subjects."""
+    codes = list(QUALIFICATION_SUBJECT_CODES[qualification])
+    if lifetime_unlocked:
+        codes.extend(c for c in QUALIFICATION_SUBJECT_CODES['BOTH'] if c not in codes)
+    return codes
 
 
 class LifetimeAccessProtectedError(Exception):

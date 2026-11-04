@@ -113,7 +113,11 @@ def _normalize_choice(raw_value):
 
 
 def _normalize_qualification(raw_value, default=QualificationPath.ALEVEL_BIOLOGY):
-    return CustomUser.normalize_paid_access_qualification(raw_value) or default
+    normalized = CustomUser.normalize_paid_access_qualification(raw_value)
+    # Chemistry and Physics are checkout-only identifiers until their generation is wired.
+    if normalized in {'ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'}:
+        return default
+    return normalized or default
 
 
 def _is_blank(raw_value):

@@ -177,5 +177,9 @@ class StripeCheckoutSessionSerializer(serializers.Serializer):
     def validate_qualification(self, value):
         normalized = CustomUser.normalize_paid_access_qualification(value)
         if not normalized:
-            raise serializers.ValidationError("Invalid qualification. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', or 'BOTH'.")
+            raise serializers.ValidationError(
+                "Invalid qualification. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', 'ALEVEL_CHEMISTRY', or 'ALEVEL_PHYSICS'."
+            )
+        if normalized == 'BOTH':
+            raise serializers.ValidationError('The combined purchase is no longer available. Buy each subject individually.')
         return normalized

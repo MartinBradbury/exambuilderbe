@@ -34,6 +34,12 @@ class CustomUser(AbstractUser):
             'A_LEVEL': 'ALEVEL_BIOLOGY',
             'ALEVEL_BIOLOGY': 'ALEVEL_BIOLOGY',
             'A_LEVEL_BIOLOGY': 'ALEVEL_BIOLOGY',
+            'CHEMISTRY': 'ALEVEL_CHEMISTRY',
+            'ALEVEL_CHEMISTRY': 'ALEVEL_CHEMISTRY',
+            'A_LEVEL_CHEMISTRY': 'ALEVEL_CHEMISTRY',
+            'PHYSICS': 'ALEVEL_PHYSICS',
+            'ALEVEL_PHYSICS': 'ALEVEL_PHYSICS',
+            'A_LEVEL_PHYSICS': 'ALEVEL_PHYSICS',
         }
         return qualification_map.get(normalized)
 
@@ -55,6 +61,10 @@ class CustomUser(AbstractUser):
             return self.has_entitlement_for_subject('gcse_science')
         if normalized == 'ALEVEL_BIOLOGY':
             return self.has_entitlement_for_subject('alevel_biology')
+        if normalized == 'ALEVEL_CHEMISTRY':
+            return self.has_entitlement_for_subject('alevel_chemistry')
+        if normalized == 'ALEVEL_PHYSICS':
+            return self.has_entitlement_for_subject('alevel_physics')
         return False
 
     def has_subject_access(self, subject_code):

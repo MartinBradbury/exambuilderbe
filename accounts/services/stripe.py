@@ -12,12 +12,13 @@ from accounts.models import (
     UserEntitlement,
 )
 from accounts.services.entitlements import (
-    QUALIFICATION_SUBJECT_CODES,
     ensure_subject_entitlement_rows,
+    subject_codes_for_purchase,
 )
 
 
 ACTIVE_SUBSCRIPTION_STATUSES = {'active', 'trialing', 'past_due'}
+NEW_PAYMENT_ONLY_QUALIFICATIONS = {'ALEVEL_CHEMISTRY', 'ALEVEL_PHYSICS'}
 SUPPORTED_CHECKOUT_MODES = {'payment', 'subscription'}
 
 
@@ -57,17 +58,24 @@ def _configure_stripe():
 def _get_price_id_for_qualification(qualification):
     normalized = CustomUser.normalize_paid_access_qualification(qualification)
     if not normalized:
-        raise ValueError("Invalid qualification. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', or 'BOTH'.")
-
+        raise ValueError(
+            "Invalid qualification. Use 'GCSE_SCIENCE', 'ALEVEL_BIOLOGY', 'ALEVEL_CHEMISTRY', or 'ALEVEL_PHYSICS'."
+        )
     if normalized == 'BOTH':
-        price_id = getattr(settings, 'STRIPE_PRICE_ID_BOTH', None) or settings.STRIPE_PRICE_ID
-    elif normalized == 'GCSE_SCIENCE':
+        raise CheckoutNotAllowedError('The combined purchase is no longer available. Buy each subject individually.')
+
+    if normalized == 'GCSE_SCIENCE':
         price_id = getattr(settings, 'STRIPE_PRICE_ID_GCSE', None) or settings.STRIPE_PRICE_ID
-    else:
+    elif normalized == 'ALEVEL_BIOLOGY':
         price_id = getattr(settings, 'STRIPE_PRICE_ID_ALEVEL', None) or settings.STRIPE_PRICE_ID
+    elif normalized == 'ALEVEL_CHEMISTRY':
+        # No shared fallback: a missing price must never charge another product's price.
+        price_id = getattr(settings, 'STRIPE_PRICE_ID_ALEVEL_CHEMISTRY', None)
+    else:
+        price_id = getattr(settings, 'STRIPE_PRICE_ID_ALEVEL_PHYSICS', None)
 
     if not price_id:
-        raise ValueError('Stripe is not configured: a price id is missing for the requested qualification.')
+        raise ValueError(f'Stripe is not configured: a price id is missing for {normalized}.')
     return normalized, price_id
 
 
@@ -107,7 +115,8 @@ def create_stripe_checkout_session(user, qualification, success_url=None, cancel
     if user.has_paid_access_for_qualification(normalized_qualification):
         raise CheckoutNotAllowedError('This account already has paid access for this qualification.')
 
-    mode = _get_checkout_mode()
+    # The four modules are always one-off payments, regardless of STRIPE_CHECKOUT_MODE.
+    mode = 'payment'
     checkout_session_params = {
         'mode': mode,
         'line_items': [{'price': price_id, 'quantity': 1}],
@@ -168,6 +177,8 @@ def _record_paid_checkout_purchase(session, user, qualification):
         'GCSE_SCIENCE': 'gcse_science',
         'ALEVEL_BIOLOGY': 'alevel_biology',
         'BOTH': 'both',
+        'ALEVEL_CHEMISTRY': 'alevel_chemistry',
+        'ALEVEL_PHYSICS': 'alevel_physics',
     }
     product_identifier = product_identifiers[qualification]
     purchase_data = {
@@ -238,6 +249,8 @@ def sync_entitlement_from_checkout_session(session, subscription=None):
     qualification = CustomUser.normalize_paid_access_qualification(stripe_value(metadata, 'qualification'))
     if qualification is None:
         return None
+    if session_mode != 'payment' and qualification in NEW_PAYMENT_ONLY_QUALIFICATIONS:
+        return None
 
     client_reference_id = stripe_value(session, 'client_reference_id')
     metadata_user_id = stripe_value(metadata, 'user_id')
@@ -284,7 +297,7 @@ def sync_entitlement_from_checkout_session(session, subscription=None):
         _sync_legacy_plan_type(entitlement)
         ensure_subject_entitlement_rows(
             user,
-            QUALIFICATION_SUBJECT_CODES['BOTH' if entitlement.lifetime_unlocked else qualification],
+            subject_codes_for_purchase(qualification, entitlement.lifetime_unlocked),
         )
         entitlement.stripe_customer_id = stripe_value(session, 'customer') or entitlement.stripe_customer_id
         entitlement.stripe_checkout_session_id = stripe_value(session, 'id') or entitlement.stripe_checkout_session_id
@@ -429,7 +442,7 @@ def sync_entitlement_from_subscription(subscription):
         return None
 
     qualification = CustomUser.normalize_paid_access_qualification(stripe_value(metadata, 'qualification'))
-    if qualification is None:
+    if qualification is None or qualification in NEW_PAYMENT_ONLY_QUALIFICATIONS:
         return None
 
     with transaction.atomic():
@@ -446,7 +459,7 @@ def sync_entitlement_from_subscription(subscription):
             entitlement.paid_at = entitlement.paid_at or timezone.now()
             ensure_subject_entitlement_rows(
                 user,
-                QUALIFICATION_SUBJECT_CODES['BOTH' if entitlement.lifetime_unlocked else qualification],
+                subject_codes_for_purchase(qualification, entitlement.lifetime_unlocked),
             )
         # Inactive subscriptions never revoke access: one-off purchases are permanent.
 

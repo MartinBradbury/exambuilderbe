@@ -16,7 +16,7 @@ from rest_framework.test import APITestCase
 from django.db import IntegrityError, OperationalError, transaction
 from django.db.models import ProtectedError
 from .models import CustomUser, Purchase, Subject, SubjectEntitlement, StripeWebhookEvent, UserEntitlement
-from .services.stripe import create_stripe_checkout_session, process_stripe_webhook_event
+from .services.stripe import CheckoutNotAllowedError, create_stripe_checkout_session, process_stripe_webhook_event
 
 
 class PurchaseModelTests(APITestCase):
@@ -412,16 +412,9 @@ class StripeBillingTests(APITestCase):
 			[{'price': 'price_alevel_123', 'quantity': 1}],
 		)
 
-	@patch('accounts.services.stripe.stripe.checkout.Session.create')
-	def test_create_checkout_session_uses_both_price_id(self, mock_session_create):
-		mock_session_create.return_value = SimpleNamespace(id='cs_both', url='https://checkout.stripe.com/c/pay/cs_both')
-
-		create_stripe_checkout_session(self.user, 'BOTH')
-
-		self.assertEqual(
-			mock_session_create.call_args.kwargs['line_items'],
-			[{'price': 'price_both_123', 'quantity': 1}],
-		)
+	def test_create_checkout_session_rejects_new_combined_purchase(self):
+		with self.assertRaises(CheckoutNotAllowedError):
+			create_stripe_checkout_session(self.user, 'BOTH')
 
 	@patch('accounts.views.create_stripe_checkout_session')
 	def test_create_checkout_session_returns_hosted_checkout_data(self, mock_create_session):
@@ -464,20 +457,12 @@ class StripeBillingTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 		self.assertEqual(response.data['detail'], 'This account already has paid access for this qualification.')
 
-	@patch('accounts.views.create_stripe_checkout_session')
-	def test_create_checkout_session_allows_combined_purchase_when_user_has_only_one_access_type(self, mock_create_session):
-		mock_create_session.return_value = SimpleNamespace(
-			id='cs_test_both',
-			url='https://checkout.stripe.com/c/pay/cs_test_both',
-		)
-		self.user.has_gcse_paid_access = True
-		self.user.save(update_fields=['has_gcse_paid_access'])
-
+	def test_create_checkout_session_endpoint_rejects_new_combined_purchase(self):
 		self.client.force_authenticate(user=self.user)
 		response = self.client.post(self.checkout_url, {'qualification': 'BOTH'}, format='json')
 
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data['session_id'], 'cs_test_both')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn('qualification', response.data)
 
 	@patch('accounts.views.construct_stripe_event')
 	def test_checkout_completed_webhook_promotes_user_to_both_paid_access(self, mock_construct_event):
