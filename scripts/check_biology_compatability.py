@@ -54,7 +54,7 @@ def run():
                     item for item in BiologySubTopic.objects.filter(
                         topic=legacy_topic
                     )
-                    if normalise(item.subtopic) == normalise(subtopic.title)
+                    if normalise(item.title) == normalise(subtopic.title)
                 ]
 
                 if len(legacy_subtopics) != 1:
@@ -74,7 +74,7 @@ def run():
                         item for item in BiologySubCategory.objects.filter(
                             subtopic=legacy_subtopic
                         )
-                        if normalise(item.subcategory)
+                        if normalise(item.title)
                         == normalise(subcategory.title)
                     ]
 
