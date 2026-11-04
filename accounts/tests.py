@@ -1355,6 +1355,14 @@ class StripeBillingTests(APITestCase):
 class ConcurrentStripeWebhookTests(TransactionTestCase):
 	reset_sequences = True
 
+	def setUp(self):
+		# TransactionTestCase flushes the migration-seeded subjects.
+		for code, name, qualification in (
+			('gcse_science', 'Science', 'GCSE'),
+			('alevel_biology', 'Biology', 'A_LEVEL'),
+		):
+			Subject.objects.get_or_create(code=code, defaults={'name': name, 'qualification': qualification})
+
 	def test_concurrent_duplicate_delivery_creates_one_purchase(self):
 		user = CustomUser.objects.create_user(
 			email='concurrent-billing@example.com',

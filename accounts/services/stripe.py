@@ -11,6 +11,10 @@ from accounts.models import (
     StripeWebhookEvent,
     UserEntitlement,
 )
+from accounts.services.entitlements import (
+    QUALIFICATION_SUBJECT_CODES,
+    ensure_subject_entitlement_rows,
+)
 
 
 ACTIVE_SUBSCRIPTION_STATUSES = {'active', 'trialing', 'past_due'}
@@ -278,6 +282,10 @@ def sync_entitlement_from_checkout_session(session, subscription=None):
             _save_user_access_flags(user, alevel_access=True)
 
         _sync_legacy_plan_type(entitlement)
+        ensure_subject_entitlement_rows(
+            user,
+            QUALIFICATION_SUBJECT_CODES['BOTH' if entitlement.lifetime_unlocked else qualification],
+        )
         entitlement.stripe_customer_id = stripe_value(session, 'customer') or entitlement.stripe_customer_id
         entitlement.stripe_checkout_session_id = stripe_value(session, 'id') or entitlement.stripe_checkout_session_id
         entitlement.stripe_subscription_id = stripe_value(session, 'subscription') or entitlement.stripe_subscription_id
@@ -436,6 +444,10 @@ def sync_entitlement_from_subscription(subscription):
             elif qualification == 'ALEVEL_BIOLOGY':
                 _save_user_access_flags(user, alevel_access=True)
             entitlement.paid_at = entitlement.paid_at or timezone.now()
+            ensure_subject_entitlement_rows(
+                user,
+                QUALIFICATION_SUBJECT_CODES['BOTH' if entitlement.lifetime_unlocked else qualification],
+            )
         # Inactive subscriptions never revoke access: one-off purchases are permanent.
 
         _sync_legacy_plan_type(entitlement)

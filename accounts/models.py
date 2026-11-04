@@ -37,18 +37,48 @@ class CustomUser(AbstractUser):
         }
         return qualification_map.get(normalized)
 
+    # Subjects that historical purchases, flags and lifetime access already cover.
+    LEGACY_SUBJECT_FLAGS = {
+        'gcse_science': 'has_gcse_paid_access',
+        'alevel_biology': 'has_alevel_paid_access',
+    }
+    # Subjects that require an explicit SubjectEntitlement; no legacy flag grants them.
+    EXPLICIT_ONLY_SUBJECT_CODES = ('alevel_chemistry', 'alevel_physics')
+
     def has_paid_access_for_qualification(self, qualification):
         normalized = self.normalize_paid_access_qualification(qualification)
         if normalized == 'BOTH':
-            return self.has_full_paid_access
+            return self.has_entitlement_for_subject('gcse_science') and self.has_entitlement_for_subject(
+                'alevel_biology'
+            )
         if normalized == 'GCSE_SCIENCE':
-            return self.has_gcse_paid_access
+            return self.has_entitlement_for_subject('gcse_science')
         if normalized == 'ALEVEL_BIOLOGY':
-            return self.has_alevel_paid_access
+            return self.has_entitlement_for_subject('alevel_biology')
         return False
 
     def has_subject_access(self, subject_code):
         return self.subject_entitlements.filter(subject__code=subject_code).exists()
+
+    def has_entitlement_for_subject(self, subject_code):
+        """Central subject permission check.
+
+        GCSE Science and A-level Biology accept the historical flag, lifetime access
+        or an explicit row. Every other subject requires an explicit row only.
+        """
+        if not self.pk:
+            return False
+        flag_name = self.LEGACY_SUBJECT_FLAGS.get(subject_code)
+        if flag_name is not None:
+            if getattr(self, flag_name):
+                return True
+            if UserEntitlement.objects.filter(user_id=self.pk, lifetime_unlocked=True).exists():
+                return True
+        elif subject_code not in self.EXPLICIT_ONLY_SUBJECT_CODES:
+            return False
+        return self.subject_entitlements.filter(
+            subject__code=subject_code, subject__is_active=True
+        ).exists()
 
     @property
     def has_full_paid_access(self):

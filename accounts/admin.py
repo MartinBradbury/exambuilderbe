@@ -1,6 +1,11 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import Case, IntegerField, Value, When
+from .services.entitlements import (
+    LifetimeAccessProtectedError,
+    grant_subject_access,
+    revoke_subject_access,
+)
 from .models import (
     CustomUser,
     CustomUserProfile,
@@ -92,6 +97,70 @@ class CustomUserAdmin(UserAdmin):
     def membership_type(self, obj):
         return membership_label_for_user(obj)
 
+    actions = (
+        'grant_gcse_science',
+        'revoke_gcse_science',
+        'grant_alevel_biology',
+        'revoke_alevel_biology',
+        'grant_alevel_chemistry',
+        'revoke_alevel_chemistry',
+        'grant_alevel_physics',
+        'revoke_alevel_physics',
+    )
+
+    def _grant(self, request, queryset, code):
+        for user in queryset:
+            grant_subject_access(user, code)
+        self.message_user(request, f'Granted {code} to {queryset.count()} user(s).')
+
+    def _revoke(self, request, queryset, code):
+        revoked, protected = 0, 0
+        for user in queryset:
+            try:
+                revoke_subject_access(user, code)
+                revoked += 1
+            except LifetimeAccessProtectedError:
+                protected += 1
+        self.message_user(request, f'Revoked {code} for {revoked} user(s).')
+        if protected:
+            self.message_user(
+                request,
+                f'{protected} user(s) skipped: lifetime access protects {code}.',
+                level=messages.WARNING,
+            )
+
+    @admin.action(description='Grant GCSE Science')
+    def grant_gcse_science(self, request, queryset):
+        self._grant(request, queryset, 'gcse_science')
+
+    @admin.action(description='Revoke GCSE Science')
+    def revoke_gcse_science(self, request, queryset):
+        self._revoke(request, queryset, 'gcse_science')
+
+    @admin.action(description='Grant A-level Biology')
+    def grant_alevel_biology(self, request, queryset):
+        self._grant(request, queryset, 'alevel_biology')
+
+    @admin.action(description='Revoke A-level Biology')
+    def revoke_alevel_biology(self, request, queryset):
+        self._revoke(request, queryset, 'alevel_biology')
+
+    @admin.action(description='Grant A-level Chemistry')
+    def grant_alevel_chemistry(self, request, queryset):
+        self._grant(request, queryset, 'alevel_chemistry')
+
+    @admin.action(description='Revoke A-level Chemistry')
+    def revoke_alevel_chemistry(self, request, queryset):
+        self._revoke(request, queryset, 'alevel_chemistry')
+
+    @admin.action(description='Grant A-level Physics')
+    def grant_alevel_physics(self, request, queryset):
+        self._grant(request, queryset, 'alevel_physics')
+
+    @admin.action(description='Revoke A-level Physics')
+    def revoke_alevel_physics(self, request, queryset):
+        self._revoke(request, queryset, 'alevel_physics')
+
 @admin.register(CustomUserProfile)
 class CustomUserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'bio', 'created_at')
@@ -172,6 +241,31 @@ class SubjectEntitlementAdmin(admin.ModelAdmin):
     search_fields = ('user__email', 'subject__code')
     list_select_related = ('user', 'subject')
     autocomplete_fields = ('user',)
+
+    def save_model(self, request, obj, form, change):
+        if change:
+            super().save_model(request, obj, form, change)
+            return
+        # Route through the service so legacy flags stay consistent with the row.
+        grant_subject_access(obj.user, obj.subject.code)
+        obj.pk = SubjectEntitlement.objects.get(user=obj.user, subject=obj.subject).pk
+
+    def _revoke(self, request, obj):
+        try:
+            revoke_subject_access(obj.user, obj.subject.code)
+        except LifetimeAccessProtectedError:
+            self.message_user(
+                request,
+                f'{obj.subject.code} is protected by lifetime access for {obj.user.email}; not revoked.',
+                level=messages.WARNING,
+            )
+
+    def delete_model(self, request, obj):
+        self._revoke(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        for obj in list(queryset.select_related('user', 'subject')):
+            self._revoke(request, obj)
 
 
 @admin.register(QuestionUsage)
