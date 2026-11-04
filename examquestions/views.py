@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -64,8 +65,8 @@ FALLBACK_QUESTIONS_DIR = EXAMQUESTIONS_DIR / "fallbackQuestions"
 # Exam board → local fallback question banks (same JSON schema)
 # ------------------------------------------------------------
 FALLBACK_QUESTION_PATHS = {
-    "OCR": FALLBACK_QUESTIONS_DIR / "ocr_questions.json",
-    "AQA": FALLBACK_QUESTIONS_DIR / "aqa_questions.json",
+    "OCR": FALLBACK_QUESTIONS_DIR / "ocr_alevelBiology_questions.json",
+    "AQA": FALLBACK_QUESTIONS_DIR / "aqa_alevelBiology_questions.json",
 }
 OCR_GCSE_SEPARATE_FALLBACK_PATHS = {
     GCSESubject.BIOLOGY: FALLBACK_QUESTIONS_DIR / "ocr_gateway_gcse_triple_biology_fallback_questions.json",
@@ -369,17 +370,65 @@ def filter_self_contained_ai_questions(ai_questions):
     return valid_questions
 
 
-def get_fallback_pool(all_fallback_questions, scope_title, topic_title, allow_generic=False):
+def normalize_bank_title(title):
+    return " ".join(str(title or "").casefold().split())
+
+
+# Curriculum titles whose A-level Biology bank key differs by more than formatting.
+# Maps board -> normalized curriculum title -> bank key.
+ALEVEL_BIOLOGY_BANK_TITLE_ALIASES = {
+    "AQA": {
+        normalize_bank_title("3.3.3 Digestion and absorbtion"): "3.3.3 Digestion and absorption",
+        normalize_bank_title("3.4.6 Biodiversity within community"): "3.4.6 Biodiversity within a community",
+    },
+    "OCR": {
+        normalize_bank_title("1.3 Nucleotides and nucleic acids"): "Nucleic Acids",
+    },
+}
+
+
+def _find_pool_by_title(all_fallback_questions, title, aliases=None):
+    pool = all_fallback_questions.get(title)
+    if isinstance(pool, list) and pool:
+        return pool
+
+    normalized = normalize_bank_title(title)
+    alias_key = (aliases or {}).get(normalized)
+    if alias_key is not None:
+        pool = all_fallback_questions.get(alias_key)
+        if isinstance(pool, list) and pool:
+            return pool
+
+    for bank_key, pool in all_fallback_questions.items():
+        if isinstance(pool, list) and pool and normalize_bank_title(bank_key) == normalized:
+            return pool
+    return None
+
+
+def get_fallback_pool(
+    all_fallback_questions,
+    scope_title,
+    topic_title,
+    allow_generic=False,
+    tolerant_titles=False,
+    title_aliases=None,
+):
     if not isinstance(all_fallback_questions, dict):
         return []
 
-    scope_pool = all_fallback_questions.get(scope_title)
-    if isinstance(scope_pool, list) and scope_pool:
-        return scope_pool
+    if tolerant_titles:
+        for title in (scope_title, topic_title):
+            pool = _find_pool_by_title(all_fallback_questions, title, title_aliases)
+            if pool:
+                return pool
+    else:
+        scope_pool = all_fallback_questions.get(scope_title)
+        if isinstance(scope_pool, list) and scope_pool:
+            return scope_pool
 
-    topic_pool = all_fallback_questions.get(topic_title)
-    if isinstance(topic_pool, list) and topic_pool:
-        return topic_pool
+        topic_pool = all_fallback_questions.get(topic_title)
+        if isinstance(topic_pool, list) and topic_pool:
+            return topic_pool
 
     if not allow_generic:
         return []
@@ -475,6 +524,15 @@ def build_scope_metadata(topic, subtopic=None, subcategory=None):
     if subtopic:
         return subtopic.title, f"subtopic:{subtopic.id}"
     return topic.topic, f"topic:{topic.id}"
+
+
+def build_shared_alevel_scope_key(subject_code, topic, subtopic=None, subcategory=None):
+    # Subject-prefixed so shared-curriculum IDs never collide across subjects or with legacy keys.
+    if subcategory:
+        return f"{subject_code}:subcategory:{subcategory.id}"
+    if subtopic:
+        return f"{subject_code}:subtopic:{subtopic.id}"
+    return f"{subject_code}:topic:{topic.id}"
 
 
 def get_user_served_question_set(user, exam_board, scope_key):
@@ -593,17 +651,24 @@ def prepare_alevel_generation(user, board_key, specification, topic_id, subtopic
             raise ValueError("subcategory_id provided without subtopic_id")
         subcategory = BiologySubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
 
-    all_fallback_questions = load_fallback_bank_for_board(board_key)
     scope_title, scope_key = build_scope_metadata(topic, subtopic, subcategory)
     served_questions = get_user_served_question_set(user, board_key, scope_key)
-    fallback_pool = get_fallback_pool(all_fallback_questions, scope_title, topic.topic)
 
     scope = build_question_scope(topic.topic, subtopic, subcategory)
     ai_response = generate_questions(scope, board_key, number, specification=specification)
     ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
     combined_questions = collect_valid_ai_questions(ai_questions, served_questions)
 
+    # The bank is only loaded when the AI result leaves a shortfall.
     if len(combined_questions) < number:
+        all_fallback_questions = load_fallback_bank_for_board(board_key)
+        fallback_pool = get_fallback_pool(
+            all_fallback_questions,
+            scope_title,
+            topic.topic,
+            tolerant_titles=True,
+            title_aliases=ALEVEL_BIOLOGY_BANK_TITLE_ALIASES.get(board_key),
+        )
         combined_questions, served_questions = replace_duplicate_questions_from_fallback(
             user=user,
             exam_board=board_key,
@@ -625,6 +690,110 @@ def prepare_alevel_generation(user, board_key, specification, topic_id, subtopic
             "qualification": QualificationPath.ALEVEL_BIOLOGY,
             "exam_board": board_key,
             "specification": specification,
+            "number_of_questions": number,
+            "total_available": total_available,
+        },
+    }
+
+
+ALEVEL_BIOLOGY_SUBJECT_CODE = "alevel_biology"
+
+
+class LegacyCurriculumLinkError(LookupError):
+    """A shared Biology selection has no unique legacy equivalent, so it cannot be dual-linked."""
+
+
+def _single_legacy_biology_record(queryset, description):
+    matches = list(queryset[:2])
+    if len(matches) != 1:
+        problem = "missing" if not matches else "ambiguous"
+        raise LegacyCurriculumLinkError(f"{problem} legacy Biology {description}")
+    return matches[0]
+
+
+def prepare_alevel_biology_shared_generation(
+    user, board_key, specification, topic_id, subtopic_id, subcategory_id, number
+):
+    """Biology generation using shared ALevel* curriculum IDs.
+
+    The session is linked to both the shared records and their title-equivalent legacy records,
+    so session history, serialization and QuestionSession.clean() keep working unchanged.
+    """
+    topic_filters = {"id": topic_id, "exam_board": board_key, "subject__code": ALEVEL_BIOLOGY_SUBJECT_CODE}
+    if board_key == ExamBoard.EDEXCEL:
+        topic_filters["specification"] = specification
+    topic = ALevelTopic.objects.select_related("subject").get(**topic_filters)
+
+    subtopic = None
+    if subtopic_id:
+        subtopic = ALevelSubTopic.objects.get(id=subtopic_id, topic_id=topic.id)
+
+    subcategory = None
+    if subcategory_id:
+        if not subtopic_id:
+            raise ValueError("subcategory_id provided without subtopic_id")
+        subcategory = ALevelSubCategory.objects.get(id=subcategory_id, subtopic_id=subtopic.id)
+
+    legacy_topic = _single_legacy_biology_record(
+        BiologyTopic.objects.filter(
+            topic=topic.topic, exam_board=topic.exam_board, specification=topic.specification
+        ),
+        "topic",
+    )
+    legacy_subtopic = None
+    if subtopic:
+        legacy_subtopic = _single_legacy_biology_record(
+            BiologySubTopic.objects.filter(topic=legacy_topic, title=subtopic.title), "subtopic"
+        )
+    legacy_subcategory = None
+    if subcategory:
+        legacy_subcategory = _single_legacy_biology_record(
+            BiologySubCategory.objects.filter(subtopic=legacy_subtopic, title=subcategory.title), "subcategory"
+        )
+
+    scope_title = (subcategory.title if subcategory else subtopic.title if subtopic else topic.topic)
+    scope_key = build_shared_alevel_scope_key(ALEVEL_BIOLOGY_SUBJECT_CODE, topic, subtopic, subcategory)
+    served_questions = get_user_served_question_set(user, board_key, scope_key)
+
+    scope = build_question_scope(topic.topic, subtopic, subcategory)
+    ai_response = generate_questions(scope, board_key, number, specification=topic.specification)
+    ai_questions = filter_self_contained_ai_questions(ai_response.get("questions", []))
+    combined_questions = collect_valid_ai_questions(ai_questions, served_questions)[:number]
+
+    # The bank is only loaded when the AI result leaves a shortfall.
+    if len(combined_questions) < number:
+        all_fallback_questions = load_fallback_bank_for_board(board_key)
+        fallback_pool = get_fallback_pool(
+            all_fallback_questions,
+            scope_title,
+            topic.topic,
+            tolerant_titles=True,
+            title_aliases=ALEVEL_BIOLOGY_BANK_TITLE_ALIASES.get(board_key),
+        )
+        combined_questions, served_questions = replace_duplicate_questions_from_fallback(
+            user=user,
+            exam_board=board_key,
+            scope_key=scope_key,
+            fallback_pool=fallback_pool if isinstance(fallback_pool, list) else [],
+            accepted_questions=combined_questions,
+            requested_count=number,
+            served_questions=served_questions,
+        )
+
+    total_available = sum(q.get("total_marks", q.get("mark", 0)) for q in combined_questions)
+    return {
+        "scope_key": scope_key,
+        "combined_questions": combined_questions,
+        "session_kwargs": {
+            "topic": legacy_topic,
+            "subtopic": legacy_subtopic,
+            "subcategory": legacy_subcategory,
+            "alevel_topic": topic,
+            "alevel_subtopic": subtopic,
+            "alevel_subcategory": subcategory,
+            "qualification": QualificationPath.ALEVEL_BIOLOGY,
+            "exam_board": board_key,
+            "specification": topic.specification,
             "number_of_questions": number,
             "total_available": total_available,
         },
@@ -746,6 +915,37 @@ def prepare_gcse_generation(user, board_key, specification, topic_id, subtopic_i
     }
 
 
+BIOLOGY_CURRICULUM_MODES = {"legacy", "shared"}
+
+
+def get_biology_curriculum_mode():
+    return "shared" if getattr(settings, "BIOLOGY_SHARED_CURRICULUM_ENABLED", False) else "legacy"
+
+
+def _validate_biology_curriculum_mode(raw_value):
+    """Return an error message when the supplied curriculum_mode is unusable, else None."""
+    active_mode = get_biology_curriculum_mode()
+    if _is_blank(raw_value):
+        if active_mode == "shared":
+            return "curriculum_mode is required and must be 'shared' while the shared Biology curriculum is active."
+        return None
+    requested_mode = str(raw_value).strip().lower()
+    if requested_mode not in BIOLOGY_CURRICULUM_MODES:
+        return "Invalid curriculum_mode. Use 'legacy' or 'shared'."
+    if requested_mode != active_mode:
+        return (
+            f"curriculum_mode '{requested_mode}' does not match the active Biology curriculum mode "
+            f"'{active_mode}'. Refresh the curriculum and try again."
+        )
+    return None
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_biology_curriculum_mode_view(request):
+    return Response({"biology_curriculum_mode": get_biology_curriculum_mode()})
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def generate_exam_questions(request):
@@ -789,6 +989,11 @@ def generate_exam_questions(request):
         if board_key != ExamBoard.AQA:
             return Response({"error": "Essay questions are only available for AQA."}, status=400)
 
+    if qualification == QualificationPath.ALEVEL_BIOLOGY and question_type != QUESTION_TYPE_ESSAY_25_MARK:
+        curriculum_mode_error = _validate_biology_curriculum_mode(request.data.get("curriculum_mode"))
+        if curriculum_mode_error:
+            return Response({"error": curriculum_mode_error, "biology_curriculum_mode": get_biology_curriculum_mode()}, status=400)
+
     entitlement = get_or_create_entitlement(request.user)
     current_plan_type = _current_plan_type(request.user, entitlement)
     today = timezone.localdate()
@@ -828,7 +1033,12 @@ def generate_exam_questions(request):
                     subcategory_id=subcategory_id,
                 )
             else:
-                generation_result = prepare_alevel_generation(
+                prepare_biology_generation = (
+                    prepare_alevel_biology_shared_generation
+                    if get_biology_curriculum_mode() == "shared"
+                    else prepare_alevel_generation
+                )
+                generation_result = prepare_biology_generation(
                     user=request.user,
                     board_key=board_key,
                     specification=specification,
@@ -909,11 +1119,17 @@ def generate_exam_questions(request):
             },
             status=403,
         )
-    except BiologyTopic.DoesNotExist:
+    except LegacyCurriculumLinkError as exc:
+        logger.error("Shared Biology selection cannot be linked to legacy curriculum: %s", exc)
+        return Response(
+            {"error": "This curriculum selection is not available yet. Please choose another topic or try again later."},
+            status=409,
+        )
+    except (BiologyTopic.DoesNotExist, ALevelTopic.DoesNotExist):
         return Response({"error": "Invalid topic selected for this exam board"}, status=400)
-    except BiologySubTopic.DoesNotExist:
+    except (BiologySubTopic.DoesNotExist, ALevelSubTopic.DoesNotExist):
         return Response({"error": "Invalid subtopic for the selected topic"}, status=400)
-    except BiologySubCategory.DoesNotExist:
+    except (BiologySubCategory.DoesNotExist, ALevelSubCategory.DoesNotExist):
         return Response({"error": "Invalid subcategory for the selected subtopic"}, status=400)
     except GCSEScienceTopic.DoesNotExist:
         return Response({"error": "Invalid GCSE topic selected for this exam board and subject"}, status=400)

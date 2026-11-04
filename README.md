@@ -577,6 +577,24 @@ The production database is selected automatically when a Heroku dyno is detected
 - Restrict CORS origins before a public production release. The current project setting allows all origins and should be tightened to trusted frontend domains.
 - Use Stripe webhook signatures; never treat a frontend redirect success as proof of payment.
 
+## Biology Curriculum Mode (Frontend Migration)
+
+`BIOLOGY_SHARED_CURRICULUM_ENABLED` (env var, default `false`) is the single backend switch deciding whether standard A-level Biology generation uses legacy Biology IDs or shared `ALevel*` IDs.
+
+`GET /api/biology-curriculum-mode/` (JWT required) returns:
+
+```json
+{ "biology_curriculum_mode": "legacy" }
+```
+
+The value is `"legacy"` or `"shared"`. In `legacy` mode use `/api/biology-topics/` etc.; in `shared` mode use `/api/alevel-topics/`, `/api/alevel-subtopics/` and `/api/alevel-subcategories/` with `subject=alevel_biology`.
+
+`POST /api/generate-questions/` accepts `curriculum_mode` (`"legacy"` or `"shared"`) for standard A-level Biology requests:
+
+- Supplied and different from the active mode: HTTP 400 (no AI call, no session, no usage recorded). The response includes the active `biology_curriculum_mode`.
+- Omitted: accepted only in `legacy` mode; HTTP 400 in `shared` mode.
+- Biology essay (`ESSAY_25_MARK`) and GCSE requests ignore this field.
+
 ## License
 
 No license is currently declared for this repository.

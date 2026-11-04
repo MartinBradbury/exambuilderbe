@@ -1332,6 +1332,85 @@ class GCSEFallbackRoutingTests(APITestCase):
 		self.assertIsNone(resolve_gcse_fallback_bank_path('AQA', 'COMBINED'))
 
 
+class ALevelBiologyFallbackBankTests(APITestCase):
+	def test_boards_resolve_to_renamed_alevel_biology_files(self):
+		from .views import FALLBACK_QUESTION_PATHS
+		self.assertEqual(FALLBACK_QUESTION_PATHS['AQA'].name, 'aqa_alevelBiology_questions.json')
+		self.assertEqual(FALLBACK_QUESTION_PATHS['OCR'].name, 'ocr_alevelBiology_questions.json')
+		self.assertNotIn('EDEXCEL', FALLBACK_QUESTION_PATHS)
+
+	def test_boards_load_questions_from_renamed_files(self):
+		from .views import FALLBACK_QUESTION_PATHS, load_fallback_bank_for_board
+		for board in ('AQA', 'OCR'):
+			self.assertTrue(FALLBACK_QUESTION_PATHS[board].exists())
+			bank = load_fallback_bank_for_board(board)
+			self.assertTrue(bank)
+			first_pool = next(iter(bank.values()))
+			self.assertTrue(first_pool[0]['question'])
+			self.assertTrue(first_pool[0]['mark_scheme'])
+
+
+class ALevelBiologyBankTitleMatchingTests(APITestCase):
+	FORMAT_AND_ALIAS_CASES = [
+		('AQA', '3.1.1 Monomers and polymers', '3.1.1 Monomers and Polymers'),
+		('AQA', '3.4.7 investigating diversity', '3.4.7 Investigating diversity'),
+		('AQA', '3.3.3 Digestion and absorbtion', '3.3.3 Digestion and absorption'),
+		('AQA', '3.4.6 Biodiversity within community', '3.4.6 Biodiversity within a community'),
+		('OCR', 'Planning experiments', 'Planning Experiments'),
+		('OCR', '3.1\t Ecosystems', '3.1 Ecosystems'),
+		('OCR', '1.3 Nucleotides and nucleic acids', 'Nucleic Acids'),
+	]
+
+	def _pool(self, board, scope_title, tolerant=True):
+		from .views import ALEVEL_BIOLOGY_BANK_TITLE_ALIASES, get_fallback_pool, load_fallback_bank_for_board
+		bank = load_fallback_bank_for_board(board)
+		pool = get_fallback_pool(
+			bank,
+			scope_title,
+			'Unmatched topic',
+			tolerant_titles=tolerant,
+			title_aliases=ALEVEL_BIOLOGY_BANK_TITLE_ALIASES.get(board),
+		)
+		return bank, pool
+
+	def test_formatting_and_alias_mismatches_resolve_to_bank_pools(self):
+		for board, curriculum_title, bank_key in self.FORMAT_AND_ALIAS_CASES:
+			with self.subTest(board=board, title=curriculum_title):
+				bank, pool = self._pool(board, curriculum_title)
+				self.assertTrue(pool)
+				self.assertEqual(pool, bank[bank_key])
+
+	def test_exact_titles_still_resolve_exactly(self):
+		bank, pool = self._pool('AQA', '3.3.3 Digestion and absorption')
+		self.assertEqual(pool, bank['3.3.3 Digestion and absorption'])
+
+	def test_unknown_title_yields_empty_pool(self):
+		_, pool = self._pool('AQA', 'Not a real subtopic')
+		self.assertEqual(pool, [])
+
+	def test_default_lookup_remains_exact_for_other_callers(self):
+		_, pool = self._pool('AQA', '3.1.1 Monomers and polymers', tolerant=False)
+		self.assertEqual(pool, [])
+
+	def test_every_alias_targets_an_existing_bank_key(self):
+		from .views import ALEVEL_BIOLOGY_BANK_TITLE_ALIASES, load_fallback_bank_for_board
+		for board in ('AQA', 'OCR'):
+			bank = load_fallback_bank_for_board(board)
+			for bank_key in ALEVEL_BIOLOGY_BANK_TITLE_ALIASES[board].values():
+				self.assertIn(bank_key, bank)
+
+	def test_shared_scope_keys_are_subject_prefixed(self):
+		from types import SimpleNamespace
+		from .views import build_shared_alevel_scope_key
+		topic, subtopic, subcategory = SimpleNamespace(id=1), SimpleNamespace(id=2), SimpleNamespace(id=3)
+		self.assertEqual(build_shared_alevel_scope_key('alevel_biology', topic), 'alevel_biology:topic:1')
+		self.assertEqual(build_shared_alevel_scope_key('alevel_chemistry', topic, subtopic), 'alevel_chemistry:subtopic:2')
+		self.assertEqual(
+			build_shared_alevel_scope_key('alevel_physics', topic, subtopic, subcategory),
+			'alevel_physics:subcategory:3',
+		)
+
+
 class GCSECombinedSubjectValidationTests(APITestCase):
 	def setUp(self):
 		self.user = CustomUser.objects.create_user(
@@ -2387,3 +2466,315 @@ class SharedALevelAdminTests(APITestCase):
 		})
 		self.assertEqual(response.status_code, 302)
 		self.assertTrue(ALevelTopic.objects.filter(topic='Created In Admin', subject=self.chem).exists())
+
+
+from django.test import override_settings
+
+
+@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=True)
+class SharedBiologyGenerationTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='shared-bio@example.com', username='shared-bio', password='testpass123',
+		)
+		self.client.force_authenticate(user=self.user)
+		self.url = reverse('generate-exam-questions')
+		biology = Subject.objects.get(code='alevel_biology')
+		self.shared_topic = ALevelTopic.objects.create(subject=biology, topic='Cells', exam_board='OCR')
+		self.shared_subtopic = ALevelSubTopic.objects.create(topic=self.shared_topic, title='Membranes')
+		self.legacy_topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+		self.legacy_subtopic = BiologySubTopic.objects.create(topic=self.legacy_topic, title='Membranes')
+
+	@staticmethod
+	def _q(text):
+		return {'question': text, 'total_marks': 1, 'mark_scheme': ['Point (1 mark)']}
+
+	def _post(self, number=2, **extra):
+		payload = {
+			'qualification': 'ALEVEL_BIOLOGY',
+			'topic_id': self.shared_topic.id,
+			'exam_board': 'OCR',
+			'number_of_questions': number,
+			'curriculum_mode': 'shared',
+		}
+		payload.update(extra)
+		return self.client.post(self.url, payload, format='json')
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_full_ai_result_never_loads_bank(self, mock_ai, mock_bank):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]'), self._q('Define diffusion. [1 mark]')]}
+		response = self._post(2)
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(len(response.data['questions']), 2)
+		mock_ai.assert_called_once()
+		self.assertEqual(mock_ai.call_args.args[2], 2)
+		mock_bank.assert_not_called()
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_partial_ai_result_fills_only_shortfall_from_bank(self, mock_ai, mock_bank):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]')]}
+		mock_bank.return_value = {'Cells': [self._q('Bank one. [1 mark]'), self._q('Bank two. [1 mark]')]}
+		response = self._post(2)
+		self.assertEqual(response.status_code, 200)
+		texts = [q['question'] for q in response.data['questions']]
+		self.assertEqual(len(texts), 2)
+		self.assertEqual(texts[0], 'Explain osmosis. [1 mark]')
+		self.assertEqual(sum(t.startswith('Bank') for t in texts), 1)
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_insufficient_bank_returns_existing_500_contract(self, mock_ai, mock_bank):
+		mock_ai.return_value = {'questions': []}
+		mock_bank.return_value = {'Cells': [self._q('Only one. [1 mark]')]}
+		self.client.raise_request_exception = False
+		response = self._post(2)
+		self.assertEqual(response.status_code, 500)
+		self.assertEqual(QuestionSession.objects.count(), 0)
+
+	@patch('examquestions.views.generate_questions')
+	def test_session_is_dual_linked_and_scope_key_is_prefixed(self, mock_ai):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]')]}
+		pre_existing = ServedQuestion.objects.count()
+		response = self._post(1, subtopic_id=self.shared_subtopic.id)
+		self.assertEqual(response.status_code, 200)
+		session = QuestionSession.objects.get(user=self.user)
+		self.assertEqual(session.alevel_topic, self.shared_topic)
+		self.assertEqual(session.alevel_subtopic, self.shared_subtopic)
+		self.assertEqual(session.topic, self.legacy_topic)
+		self.assertEqual(session.subtopic, self.legacy_subtopic)
+		keys = set(ServedQuestion.objects.values_list('scope_key', flat=True))
+		self.assertEqual(keys, {f'alevel_biology:subtopic:{self.shared_subtopic.id}'})
+		self.assertEqual(pre_existing, 0)
+
+	@patch('examquestions.views.generate_questions')
+	def test_existing_legacy_served_rows_are_untouched(self, mock_ai):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]')]}
+		response = self._post(1)
+		self.assertEqual(response.status_code, 200)
+		self.assertFalse(ServedQuestion.objects.exclude(scope_key__startswith='alevel_biology:').exists())
+
+	@patch('examquestions.views.generate_questions')
+	def test_invalid_shared_ids_return_400(self, mock_ai):
+		self.assertEqual(self._post(1, topic_id=999999).status_code, 400)
+		self.assertEqual(self._post(1, subtopic_id=999999).status_code, 400)
+		mock_ai.assert_not_called()
+
+	@patch('examquestions.views.generate_questions')
+	def test_missing_legacy_equivalent_fails_without_creating_session(self, mock_ai):
+		self.legacy_topic.delete()
+		response = self._post(1)
+		self._assert_controlled_409(response, mock_ai)
+
+	def _assert_controlled_409(self, response, mock_ai):
+		self.assertEqual(response.status_code, 409)
+		self.assertNotIn('legacy', response.data['error'].lower())
+		self.assertNotIn('LookupError', str(response.data))
+		mock_ai.assert_not_called()
+		self.assertFalse(QuestionSession.objects.exists())
+		self.assertFalse(QuestionUsage.objects.exists())
+		self.assertFalse(ServedQuestion.objects.exists())
+
+	@patch('examquestions.views.generate_questions')
+	def test_missing_legacy_subtopic_returns_controlled_409(self, mock_ai):
+		self.legacy_subtopic.delete()
+		self._assert_controlled_409(self._post(1, subtopic_id=self.shared_subtopic.id), mock_ai)
+
+	@patch('examquestions.views.generate_questions')
+	def test_missing_legacy_subcategory_returns_controlled_409(self, mock_ai):
+		shared_sub = ALevelSubCategory.objects.create(subtopic=self.shared_subtopic, title='Transport')
+		response = self._post(1, subtopic_id=self.shared_subtopic.id, subcategory_id=shared_sub.id)
+		self._assert_controlled_409(response, mock_ai)
+
+	@patch('examquestions.views.generate_questions')
+	def test_ambiguous_legacy_subtopic_returns_controlled_409(self, mock_ai):
+		# The database unique constraints prevent real duplicates, so simulate them.
+		with patch('examquestions.views.BiologySubTopic.objects') as mock_manager:
+			mock_manager.filter.return_value = [self.legacy_subtopic, self.legacy_subtopic]
+			response = self._post(1, subtopic_id=self.shared_subtopic.id)
+		self._assert_controlled_409(response, mock_ai)
+
+	@patch('examquestions.views.generate_questions')
+	def test_ambiguous_legacy_subcategory_returns_controlled_409(self, mock_ai):
+		shared_sub = ALevelSubCategory.objects.create(subtopic=self.shared_subtopic, title='Transport')
+		legacy_sub = BiologySubCategory.objects.create(subtopic=self.legacy_subtopic, title='Transport')
+		with patch('examquestions.views.BiologySubCategory.objects') as mock_manager:
+			mock_manager.filter.return_value = [legacy_sub, legacy_sub]
+			response = self._post(1, subtopic_id=self.shared_subtopic.id, subcategory_id=shared_sub.id)
+		self._assert_controlled_409(response, mock_ai)
+
+	@patch('examquestions.views.generate_questions')
+	def test_daily_free_limit_still_enforced(self, mock_ai):
+		mock_ai.side_effect = [
+			{'questions': [self._q('Explain osmosis. [1 mark]'), self._q('Define diffusion. [1 mark]')]},
+		]
+		self.assertEqual(self._post(2).status_code, 200)
+		self.assertEqual(self._post(1).status_code, 403)
+
+	@patch('examquestions.views.generate_questions')
+	def test_sessions_endpoint_serialises_shared_biology_session(self, mock_ai):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]')]}
+		self._post(1)
+		response = self.client.get(reverse('get_user_sessions'))
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data[0]['topic_name'], 'Cells')
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=False)
+	@patch('examquestions.views.generate_questions')
+	def test_flag_off_uses_legacy_ids(self, mock_ai):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]')]}
+		response = self._post(1, topic_id=self.legacy_topic.id, curriculum_mode='legacy')
+		self.assertEqual(response.status_code, 200)
+		self.assertIsNone(QuestionSession.objects.get(user=self.user).alevel_topic)
+
+
+class LegacyBiologyAIFirstTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='aifirst@example.com', username='aifirst', password='testpass123',
+		)
+		self.client.force_authenticate(user=self.user)
+		self.url = reverse('generate-exam-questions')
+		self.topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+
+	@staticmethod
+	def _q(text):
+		return {'question': text, 'total_marks': 1, 'mark_scheme': ['Point (1 mark)']}
+
+	def _post(self, number):
+		return self.client.post(self.url, {
+			'qualification': 'ALEVEL_BIOLOGY', 'topic_id': self.topic.id,
+			'exam_board': 'OCR', 'number_of_questions': number,
+		}, format='json')
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_full_ai_response_never_loads_bank(self, mock_ai, mock_bank):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]'), self._q('Define diffusion. [1 mark]')]}
+		self.assertEqual(self._post(2).status_code, 200)
+		self.assertEqual(mock_ai.call_args.args[2], 2)
+		mock_bank.assert_not_called()
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_partial_ai_response_loads_bank_for_shortfall_only(self, mock_ai, mock_bank):
+		mock_ai.return_value = {'questions': [self._q('Explain osmosis. [1 mark]')]}
+		mock_bank.return_value = {'Cells': [self._q('Bank one. [1 mark]'), self._q('Bank two. [1 mark]')]}
+		response = self._post(2)
+		self.assertEqual(response.status_code, 200)
+		texts = [q['question'] for q in response.data['questions']]
+		self.assertEqual(len(texts), 2)
+		self.assertEqual(sum(t.startswith('Bank') for t in texts), 1)
+		mock_bank.assert_called_once()
+
+	@patch('examquestions.views.load_fallback_bank_for_board')
+	@patch('examquestions.views.generate_questions')
+	def test_insufficient_bank_still_fails_without_side_effects(self, mock_ai, mock_bank):
+		self.client.raise_request_exception = False
+		mock_ai.return_value = {'questions': []}
+		mock_bank.return_value = {'Cells': [self._q('Only one. [1 mark]')]}
+		self.assertEqual(self._post(2).status_code, 500)
+		self.assertFalse(QuestionSession.objects.exists())
+		self.assertFalse(QuestionUsage.objects.exists())
+
+
+class BiologyCurriculumModeTests(APITestCase):
+	def setUp(self):
+		self.user = CustomUser.objects.create_user(
+			email='mode@example.com', username='mode-user', password='testpass123',
+		)
+		self.client.force_authenticate(user=self.user)
+		self.url = reverse('generate-exam-questions')
+		self.legacy_topic = BiologyTopic.objects.create(topic='Cells', exam_board='OCR')
+
+	def _payload(self, **extra):
+		payload = {
+			'qualification': 'ALEVEL_BIOLOGY',
+			'topic_id': self.legacy_topic.id,
+			'exam_board': 'OCR',
+			'number_of_questions': 1,
+		}
+		payload.update(extra)
+		return payload
+
+	def _assert_no_side_effects(self, mock_ai):
+		mock_ai.assert_not_called()
+		self.assertFalse(QuestionSession.objects.exists())
+		self.assertFalse(QuestionUsage.objects.exists())
+		self.assertFalse(ServedQuestion.objects.exists())
+
+	@staticmethod
+	def _ai():
+		return {'questions': [{'question': 'Explain osmosis. [1 mark]', 'total_marks': 1, 'mark_scheme': ['Point (1 mark)']}]}
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=False)
+	def test_mode_endpoint_reports_legacy(self):
+		response = self.client.get(reverse('biology-curriculum-mode'))
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.data, {'biology_curriculum_mode': 'legacy'})
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=True)
+	def test_mode_endpoint_reports_shared(self):
+		response = self.client.get(reverse('biology-curriculum-mode'))
+		self.assertEqual(response.data, {'biology_curriculum_mode': 'shared'})
+
+	def test_mode_endpoint_requires_authentication(self):
+		self.client.force_authenticate(user=None)
+		self.assertEqual(self.client.get(reverse('biology-curriculum-mode')).status_code, 401)
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=False)
+	@patch('examquestions.views.generate_questions')
+	def test_legacy_mode_accepts_omitted_and_matching_mode(self, mock_ai):
+		mock_ai.return_value = self._ai()
+		self.assertEqual(self.client.post(self.url, self._payload(), format='json').status_code, 200)
+		mock_ai.return_value = {'questions': [{'question': 'Define diffusion. [1 mark]', 'total_marks': 1, 'mark_scheme': ['Point (1 mark)']}]}
+		response = self.client.post(self.url, self._payload(curriculum_mode='legacy'), format='json')
+		self.assertEqual(response.status_code, 200)
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=False)
+	@patch('examquestions.views.generate_questions')
+	def test_legacy_mode_rejects_shared_request(self, mock_ai):
+		response = self.client.post(self.url, self._payload(curriculum_mode='shared'), format='json')
+		self.assertEqual(response.status_code, 400)
+		self.assertIn('does not match', response.data['error'])
+		self._assert_no_side_effects(mock_ai)
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=True)
+	@patch('examquestions.views.generate_questions')
+	def test_shared_mode_rejects_missing_and_legacy_mode(self, mock_ai):
+		for extra in ({}, {'curriculum_mode': 'legacy'}, {'curriculum_mode': 'bogus'}):
+			with self.subTest(extra=extra):
+				response = self.client.post(self.url, self._payload(**extra), format='json')
+				self.assertEqual(response.status_code, 400)
+				self.assertEqual(response.data['biology_curriculum_mode'], 'shared')
+		self._assert_no_side_effects(mock_ai)
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=True)
+	@patch('examquestions.views.generate_questions')
+	def test_shared_mode_accepts_matching_mode(self, mock_ai):
+		mock_ai.return_value = self._ai()
+		biology = Subject.objects.get(code='alevel_biology')
+		shared = ALevelTopic.objects.create(subject=biology, topic='Cells', exam_board='OCR')
+		response = self.client.post(
+			self.url, self._payload(topic_id=shared.id, curriculum_mode='shared'), format='json'
+		)
+		self.assertEqual(response.status_code, 200)
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=True)
+	@patch('examquestions.views.generate_questions')
+	def test_shared_mode_does_not_affect_essay_requests(self, mock_ai):
+		response = self.client.post(
+			self.url, {'question_type': 'ESSAY_25_MARK', 'exam_board': 'OCR'}, format='json'
+		)
+		self.assertNotIn('curriculum_mode', str(response.data.get('error', '')))
+
+	@override_settings(BIOLOGY_SHARED_CURRICULUM_ENABLED=True)
+	@patch('examquestions.views.generate_gcse_questions')
+	def test_shared_mode_does_not_affect_gcse_validation(self, mock_ai):
+		response = self.client.post(
+			self.url,
+			{'qualification': 'GCSE_SCIENCE', 'topic_id': 1, 'exam_board': 'AQA', 'number_of_questions': 1},
+			format='json',
+		)
+		self.assertNotIn('curriculum_mode', str(response.data.get('error', '')))

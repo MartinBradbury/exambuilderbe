@@ -35,6 +35,9 @@ OPEN_AI_KEY = os.getenv('OPENAI_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_to_bool('DEBUG', default=False)
 
+# When enabled, A-level Biology generation treats topic/subtopic/subcategory IDs as shared ALevel* IDs.
+BIOLOGY_SHARED_CURRICULUM_ENABLED = env_to_bool('BIOLOGY_SHARED_CURRICULUM_ENABLED', default=False)
+
 ALLOWED_HOSTS = [
     'exambuilder-efae14d59f03.herokuapp.com',
     'localhost',
